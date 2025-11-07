@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ISEB Platform - La Solution Comptable Intelligente Made in France. Automatisez votre comptabilité avec l'IA. OCR 95%, Sync bancaire PSD2, Factur-X.">
+    <meta name="keywords" content="logiciel comptabilité, OCR factures, synchronisation bancaire, e-facture, Factur-X, Chorus Pro, SaaS comptable">
+    <meta name="author" content="ISEB Platform">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="ISEB Platform - La Solution Comptable Intelligente">
+    <meta property="og:description" content="Automatisez votre comptabilité avec l'IA. Économisez jusqu'à 10h/semaine.">
+    <meta property="og:image" content="https://iseb.fr/images/og-image.png">
+    <meta property="og:url" content="https://iseb.fr">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ISEB Platform - La Solution Comptable Intelligente">
+    <meta name="twitter:description" content="Automatisez votre comptabilité avec l'IA. Économisez jusqu'à 10h/semaine.">
+    <meta name="twitter:image" content="https://iseb.fr/images/twitter-card.png">
+
+    <title>ISEB Platform - Solution Comptable Intelligente | Automatisez avec l'IA</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <style>
+        /* ========================================
+           RESET & BASE STYLES
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0066CC;
+            --primary-green: #00C853;
+            --dark-gray: #2C3E50;
+            --light-gray: #F5F7FA;
+            --accent-orange: #FF6F00;
+            --white: #FFFFFF;
+            --text-gray: #5A6C7D;
+            --border-gray: #E1E8ED;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--dark-gray);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* ========================================
+           TYPOGRAPHY
+        ======================================== */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-gray);
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            padding: 6rem 0;
+        }
+
+        .section-alt {
+            background: var(--light-gray);
+        }
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+            box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.35);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-orange {
+            background: var(--accent-orange);
+            color: var(--white);
+            box-shadow: 0 4px 14px rgba(255, 111, 0, 0.25);
+        }
+
+        .btn-orange:hover {
+            background: #E66300;
+            transform: translateY(-2px);
+        }
+
+        .btn-large {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.125rem;
+        }
+
+        /* ========================================
+           HEADER / NAVBAR
+        ======================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--dark-gray);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .nav-cta {
+            padding: 0.625rem 1.5rem;
+            background: var(--primary-blue);
+            color: white;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: #0052A3;
+            transform: translateY(-2px);
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .mobile-menu-toggle span {
+            width: 28px;
+            height: 3px;
+            background: var(--dark-gray);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* ========================================
+           HERO SECTION
+        ======================================== */
+        .hero {
+            padding-top: 10rem;
+            padding-bottom: 6rem;
+            background: linear-gradient(135deg, #F5F7FA 0%, #E3F2FD 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 102, 204, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 200, 83, 0.1);
+            color: var(--primary-green);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+
+        .hero-stat-label {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+        }
+
+        .hero-image {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-mockup {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* ========================================
+           FEATURES SECTION
+        ======================================== */
+        .features {
+            padding: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 102, 204, 0.1);
+            color: var(--primary-blue);
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-gray);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-blue);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+        }
+
+        .feature-benefit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--primary-green);
+            font-weight: 600;
+        }
+
+        /* ========================================
+           BENEFITS SECTION
+        ======================================== */
+        .benefits {
+            padding: 6rem 0;
+            background: var(--light-gray);
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .benefits-list {
+            list-style: none;
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: var(--white);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .benefit-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-blue));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.5rem;
+        }
+
+        .benefit-content h4 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-content p {
+            color: var(--text-gray);
+            font-size: 0.9375rem;
+            margin: 0;
+        }
+
+        .benefits-image img {
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ========================================
+           PRICING SECTION
+        ======================================== */
+        .pricing {
+            padding: 6rem 0;
+        }
+
+        .pricing-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0 4rem;
+            padding: 0.5rem;
+            background: var(--light-gray);
+            border-radius: 50px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .pricing-toggle-btn {
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-toggle-btn.active {
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--white);
+            border: 2px solid var(--border-gray);
+            border-radius: 16px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary-blue);
+            box-shadow: 0 12px 40px rgba(0, 102, 204, 0.15);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 2rem;
+            background: var(--primary-green);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pricing-plan-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--text-gray);
+        }
+
+        .pricing-description {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.9375rem;
+        }
+
+        .pricing-feature-icon {
+            color: var(--primary-green);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .pricing-cta {
+            width: 100%;
+        }
+
+        /* ========================================
+           TESTIMONIALS
+        ======================================== */
+        .testimonials {
+            padding: 6rem 0;
+            background: var(--light-gray);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .testimonial-rating {
+            color: #FFC107;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .testimonial-info h5 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-info p {
+            font-size: 0.875rem;
+            color: var(--text-gray);
+            margin: 0;
+        }
+
+        /* ========================================
+           CTA SECTION
+        ======================================== */
+        .cta-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-green));
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary-blue);
+        }
+
+        .btn-white:hover {
+            background: var(--light-gray);
+        }
+
+        /* ========================================
+           FOOTER
+        ======================================== */
+        .footer {
+            background: var(--dark-gray);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand h3 {
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary-blue);
+            transform: translateY(-4px);
+        }
+
+        .footer-links h4 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 968px) {
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 2rem; }
+
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-cta {
+                justify-content: center;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .hero {
+                padding-top: 8rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+            }
+
+            .features-grid,
+            .pricing-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+        }
+
+        /* ========================================
+           ANIMATIONS
+        ======================================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Scroll reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">
+                <div class="logo-icon">I</div>
+                ISEB Platform
+            </a>
+
+            <ul class="nav-menu">
+                <li><a href="#features" class="nav-link">Fonctionnalités</a></li>
+                <li><a href="#pricing" class="nav-link">Tarifs</a></li>
+                <li><a href="#testimonials" class="nav-link">Témoignages</a></li>
+                <li><a href="/blog" class="nav-link">Blog</a></li>
+                <li><a href="https://app.iseb.fr/login" class="nav-link">Connexion</a></li>
+                <li><a href="https://app.iseb.fr/signup" class="nav-cta">Essai gratuit</a></li>
+            </ul>
+
+            <div class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content fade-in-up">
+                <span class="hero-badge">🇫🇷 Solution Made in France · Conformité 100%</span>
+
+                <h1 class="hero-title">
+                    La Comptabilité Intelligente<br>
+                    Propulsée par l'IA
+                </h1>
+
+                <p class="hero-subtitle">
+                    Automatisez vos notes de frais, synchronisez vos banques et générez vos rapports en un clic.
+                    Économisez jusqu'à <strong>10h par semaine</strong> avec ISEB Platform.
+                </p>
+
+                <div class="hero-cta">
+                    <a href="https://app.iseb.fr/signup" class="btn btn-primary btn-large">
+                        Essayer 30 jours gratuits →
+                    </a>
+                    <a href="#demo" class="btn btn-secondary btn-large">
+                        Voir la démo
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-number">95%+</div>
+                        <div class="hero-stat-label">Précision OCR</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-number">-70%</div>
+                        <div class="hero-stat-label">Temps gagné</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-number">11+</div>
+                        <div class="hero-stat-label">Banques connectées</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-image">
+                <img src="https://via.placeholder.com/600x450/E3F2FD/0066CC?text=ISEB+Dashboard"
+                     alt="ISEB Platform Dashboard"
+                     class="hero-mockup">
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="features section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Fonctionnalités</span>
+                <h2>Tout ce dont vous avez besoin pour gérer votre comptabilité</h2>
+                <p>Une solution complète qui automatise vos tâches répétitives et vous fait gagner un temps précieux.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">OCR Intelligent</h3>
+                    <p class="feature-description">
+                        Notre IA DeepSeek-OCR analyse vos reçus et factures avec 95%+ de précision.
+                        Fini la saisie manuelle !
+                    </p>
+                    <span class="feature-benefit">✓ Gain de temps : 40 min → 5 min</span>
+                </div>
+
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🏦</div>
+                    <h3 class="feature-title">Sync Bancaire PSD2</h3>
+                    <p class="feature-description">
+                        Connectez 11+ banques françaises. Synchronisation automatique et réconciliation intelligente.
+                    </p>
+                    <span class="feature-benefit">✓ Réconciliation instantanée</span>
+                </div>
+
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📨</div>
+                    <h3 class="feature-title">E-factures 2026</h3>
+                    <p class="feature-description">
+                        Conformité Factur-X, Chorus Pro et Peppol. Prêt pour l'obligation 2026 dès aujourd'hui.
+                    </p>
+                    <span class="feature-benefit">✓ 100% conforme EN 16931</span>
+                </div>
+
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Dashboards Temps Réel</h3>
+                    <p class="feature-description">
+                        KPIs financiers interactifs. Exportez vos rapports en PDF ou Excel en un clic.
+                    </p>
+                    <span class="feature-benefit">✓ Visibilité complète</span>
+                </div>
+
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">PWA Mobile</h3>
+                    <p class="feature-description">
+                        Application installable sur smartphone. Capturez vos reçus en photo directement depuis votre mobile.
+                    </p>
+                    <span class="feature-benefit">✓ Fonctionne offline</span>
+                </div>
+
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔐</div>
+                    <h3 class="feature-title">Sécurité & RGPD</h3>
+                    <p class="feature-description">
+                        Hébergement France, chiffrement bout en bout, archivage légal 10 ans. Vos données sont protégées.
+                    </p>
+                    <span class="feature-benefit">✓ Conformité garantie</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENEFITS SECTION -->
+    <section class="benefits section section-alt">
+        <div class="container">
+            <div class="benefits-grid">
+                <div class="benefits-content">
+                    <span class="section-tag">Avantages</span>
+                    <h2>Pourquoi choisir ISEB Platform ?</h2>
+                    <p>Nous ne sommes pas qu'un simple logiciel comptable. Nous sommes votre partenaire pour une gestion financière sereine.</p>
+
+                    <ul class="benefits-list">
+                        <li class="benefit-item reveal">
+                            <div class="benefit-icon">⚡</div>
+                            <div class="benefit-content">
+                                <h4>Économisez jusqu'à 10h/semaine</h4>
+                                <p>Automatisation complète des tâches répétitives. Concentrez-vous sur votre business.</p>
+                            </div>
+                        </li>
+
+                        <li class="benefit-item reveal">
+                            <div class="benefit-icon">💰</div>
+                            <div class="benefit-content">
+                                <h4>Réduisez vos coûts de 30-50%</h4>
+                                <p>Moins d'heures comptables, moins d'erreurs, moins de régularisations.</p>
+                            </div>
+                        </li>
+
+                        <li class="benefit-item reveal">
+                            <div class="benefit-icon">🎯</div>
+                            <div class="benefit-content">
+                                <h4>Conformité légale garantie</h4>
+                                <p>E-factures, archivage légal, PSD2. Nous suivons toutes les évolutions réglementaires.</p>
+                            </div>
+                        </li>
+
+                        <li class="benefit-item reveal">
+                            <div class="benefit-icon">🚀</div>
+                            <div class="benefit-content">
+                                <h4>Déployé en moins de 48h</h4>
+                                <p>Onboarding express, import automatique de vos données, formation incluse.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="benefits-image">
+                    <img src="https://via.placeholder.com/500x600/F5F7FA/0066CC?text=ISEB+Benefits"
+                         alt="ISEB Platform Benefits">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRICING SECTION -->
+    <section id="pricing" class="pricing section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Tarifs</span>
+                <h2>Transparents & Évolutifs</h2>
+                <p>Choisissez le plan adapté à votre croissance. Sans engagement, résiliable à tout moment.</p>
+            </div>
+
+            <div class="pricing-toggle">
+                <button class="pricing-toggle-btn active" data-billing="monthly">Mensuel</button>
+                <button class="pricing-toggle-btn" data-billing="annual">Annuel <span style="color: var(--primary-green);">-20%</span></button>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="pricing-card reveal">
+                    <h3 class="pricing-plan-name">Essentielles</h3>
+                    <div class="pricing-price">49€ <span>/mois</span></div>
+                    <p class="pricing-description">Pour les TPE qui veulent automatiser leur compta</p>
+
+                    <ul class="pricing-features">
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>100 notes de frais/mois</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>3 comptes bancaires</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>20 scans OCR IA/mois</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Factur-X & Chorus Pro</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>50 GB stockage</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Support email 24h</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://app.iseb.fr/signup?plan=essentials" class="btn btn-secondary btn-large pricing-cta">
+                        Essayer 30 jours
+                    </a>
+                </div>
+
+                <div class="pricing-card featured reveal">
+                    <span class="pricing-badge">Le plus populaire</span>
+                    <h3 class="pricing-plan-name">Pro</h3>
+                    <div class="pricing-price">149€ <span>/mois</span></div>
+                    <p class="pricing-description">Pour les PME qui veulent scaler sereinement</p>
+
+                    <ul class="pricing-features">
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>500 notes de frais/mois</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>10 comptes bancaires</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>200 scans OCR IA/mois</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Tous formats e-factures</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>200 GB stockage</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Support prioritaire 4h</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Rapports planifiés</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>API & Webhooks</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://app.iseb.fr/signup?plan=pro" class="btn btn-primary btn-large pricing-cta">
+                        Essayer 30 jours
+                    </a>
+                </div>
+
+                <div class="pricing-card reveal">
+                    <h3 class="pricing-plan-name">Entreprise</h3>
+                    <div class="pricing-price">299€ <span>/mois</span></div>
+                    <p class="pricing-description">Pour les grandes PME avec besoins avancés</p>
+
+                    <ul class="pricing-features">
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Illimité notes de frais</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Illimité comptes bancaires</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>OCR IA illimité</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>1 TB stockage</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>SSO & Audit logs</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Account Manager dédié</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>SLA 2h garanti</span>
+                        </li>
+                        <li class="pricing-feature">
+                            <span class="pricing-feature-icon">✓</span>
+                            <span>Formation sur-mesure</span>
+                        </li>
+                    </ul>
+
+                    <a href="https://iseb.fr/contact" class="btn btn-orange btn-large pricing-cta">
+                        Contactez-nous
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="testimonials section section-alt">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Témoignages</span>
+                <h2>Ils ont gagné du temps avec ISEB</h2>
+                <p>Des centaines d'entreprises nous font confiance au quotidien.</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card reveal">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "Nous avons réduit de 70% le temps passé sur les notes de frais. L'OCR IA est bluffant de précision.
+                        Un vrai game-changer pour notre PME !"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">DS</div>
+                        <div class="testimonial-info">
+                            <h5>David Sanchez</h5>
+                            <p>DAF, TechConsulting (45 employés)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "Le portail client ISEB a transformé notre relation avec nos clients. Ils adorent la simplicité.
+                        Nous gagnons 30% de productivité !"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">MA</div>
+                        <div class="testimonial-info">
+                            <h5>Michel Aubert</h5>
+                            <p>Expert-Comptable, Cabinet Martin & Associés</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card reveal">
+                    <div class="testimonial-rating">★★★★★</div>
+                    <p class="testimonial-text">
+                        "Enfin une solution française moderne ! La synchronisation bancaire automatique nous fait économiser
+                        des heures chaque semaine. Merci ISEB !"
+                    </p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">SL</div>
+                        <div class="testimonial-info">
+                            <h5>Sophie Laurent</h5>
+                            <p>CEO, BonAppétit SARL (Restaurant)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Prêt à Transformer Votre Comptabilité ?</h2>
+            <p>Rejoignez des centaines d'entreprises qui ont déjà automatisé leur gestion financière.</p>
+            <div class="cta-buttons">
+                <a href="https://app.iseb.fr/signup" class="btn btn-white btn-large">
+                    Essayer 30 jours gratuits
+                </a>
+                <a href="https://calendly.com/iseb-demos" class="btn btn-secondary btn-large" style="border-color: white; color: white;">
+                    Réserver une démo
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3>ISEB Platform</h3>
+                    <p>La solution comptable intelligente Made in France. Automatisez, gagnez du temps, concentrez-vous sur l'essentiel.</p>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com/company/iseb-platform" class="social-icon">in</a>
+                        <a href="https://twitter.com/iseb_platform" class="social-icon">𝕏</a>
+                        <a href="https://youtube.com/@iseb-platform" class="social-icon">▶</a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Produit</h4>
+                    <ul>
+                        <li><a href="#features">Fonctionnalités</a></li>
+                        <li><a href="#pricing">Tarifs</a></li>
+                        <li><a href="/changelog">Changelog</a></li>
+                        <li><a href="/roadmap">Roadmap</a></li>
+                        <li><a href="/api">API</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Ressources</h4>
+                    <ul>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/guides">Guides</a></li>
+                        <li><a href="/webinaires">Webinaires</a></li>
+                        <li><a href="/case-studies">Cas clients</a></li>
+                        <li><a href="/support">Centre d'aide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Entreprise</h4>
+                    <ul>
+                        <li><a href="/about">À propos</a></li>
+                        <li><a href="/careers">Carrières</a></li>
+                        <li><a href="/partners">Partenaires</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/legal">Mentions légales</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 ISEB Platform SAS. Tous droits réservés. | <a href="/privacy">Confidentialité</a> | <a href="/terms">CGU</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll reveal animation
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal(); // Initial check
+
+        // Pricing toggle
+        const pricingToggle = document.querySelectorAll('.pricing-toggle-btn');
+        pricingToggle.forEach(btn => {
+            btn.addEventListener('click', () => {
+                pricingToggle.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Here you would update prices based on billing cycle
+                const billing = btn.dataset.billing;
+                // Update prices logic...
+            });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+        });
+    </script>
+</body>
+</html>
