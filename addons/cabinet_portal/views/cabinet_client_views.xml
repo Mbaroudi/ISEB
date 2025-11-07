@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste clients cabinet -->
+    <record id="view_cabinet_client_tree" model="ir.ui.view">
+        <field name="name">cabinet.client.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Clients Cabinet" decoration-danger="health_score == 'critical'" 
+                  decoration-warning="health_score == 'warning'" decoration-success="health_score == 'excellent'">
+                <field name="name"/>
+                <field name="accountant_id"/>
+                <field name="contract_type"/>
+                <field name="monthly_fee" sum="Total honoraires"/>
+                <field name="health_score" widget="badge" decoration-success="health_score == 'excellent'"
+                       decoration-info="health_score == 'good'" decoration-warning="health_score == 'warning'"
+                       decoration-danger="health_score == 'critical'"/>
+                <field name="total_revenue_ytd"/>
+                <field name="margin_rate" widget="percentage"/>
+                <field name="documents_pending_count"/>
+                <field name="expenses_pending_count"/>
+                <field name="tasks_overdue_count"/>
+                <field name="last_contact_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue formulaire clients cabinet -->
+    <record id="view_cabinet_client_form" model="ir.ui.view">
+        <field name="name">cabinet.client.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_view_client_dashboard" string="Dashboard Client" 
+                            type="object" class="oe_highlight" 
+                            invisible="not is_iseb_client or not latest_dashboard_id"/>
+                    <field name="health_score" widget="statusbar" 
+                           statusbar_visible="excellent,good,warning,critical"
+                           invisible="not is_iseb_client"/>
+                </header>
+            </xpath>
+            
+            <xpath expr="//page[@name='internal_notes']" position="after">
+                <page string="Informations Cabinet" name="cabinet_info" invisible="not is_iseb_client">
+                    <group>
+                        <group string="Gestion Cabinet">
+                            <field name="cabinet_id"/>
+                            <field name="accountant_id"/>
+                            <field name="client_since"/>
+                            <field name="contract_type"/>
+                            <field name="monthly_fee"/>
+                        </group>
+                        <group string="Statistiques">
+                            <field name="total_revenue_ytd"/>
+                            <field name="total_expenses_ytd"/>
+                            <field name="margin_rate" widget="percentage"/>
+                            <field name="health_score"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="En attente">
+                            <field name="documents_pending_count"/>
+                            <field name="expenses_pending_count"/>
+                            <field name="tasks_overdue_count"/>
+                        </group>
+                        <group string="Communication">
+                            <field name="last_contact_date"/>
+                            <field name="next_meeting_date"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Notes internes">
+                        <field name="internal_notes" nolabel="1" placeholder="Notes internes visibles uniquement par le cabinet..."/>
+                    </group>
+                    
+                    <group>
+                        <button name="action_view_pending_documents" string="Voir documents en attente" 
+                                type="object" class="oe_link" 
+                                invisible="documents_pending_count == 0"/>
+                        <button name="action_view_pending_expenses" string="Voir notes de frais en attente" 
+                                type="object" class="oe_link" 
+                                invisible="expenses_pending_count == 0"/>
+                        <button name="action_create_task" string="Créer une tâche" 
+                                type="object" class="btn-primary"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action pour la vue clients cabinet -->
+    <record id="action_cabinet_clients" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('is_iseb_client', '=', True)]</field>
+        <field name="context">{'default_is_iseb_client': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun client trouvé
+            </p>
+            <p>
+                Créez votre premier client pour commencer la gestion cabinet.
+            </p>
+        </field>
+    </record>
+</odoo>
