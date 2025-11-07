@@ -1,0 +1,50 @@
+# ===================================================================
+# Requirements pour tests Selenium - ISEB Platform
+# ===================================================================
+
+# Core Selenium
+selenium==4.15.2
+
+# WebDriver Manager (automatise téléchargement drivers)
+webdriver-manager==4.0.1
+
+# Pytest & plugins
+pytest==7.4.3
+pytest-html==4.1.1           # Rapports HTML
+pytest-xdist==3.5.0          # Parallélisation tests
+pytest-timeout==2.2.0        # Timeouts pour tests lents
+pytest-rerunfailures==12.0   # Relancer tests échoués
+pytest-mock==3.12.0          # Mocking
+
+# Image manipulation pour test files
+Pillow==10.1.0
+
+# Utils
+python-dotenv==1.0.0         # Variables d'environnement
+faker==20.1.0                # Données de test aléatoires
+
+# Reporting & Analysis
+allure-pytest==2.13.2        # Rapports Allure (optionnel)
+
+# Type hints
+typing-extensions==4.9.0
+
+# ===================================================================
+# Installation
+# ===================================================================
+#
+# Installation standard:
+#   pip install -r tests/selenium/requirements.txt
+#
+# Installation développement:
+#   pip install -r tests/selenium/requirements.txt -r requirements-dev.txt
+#
+# ===================================================================
+
+# ===================================================================
+# Compatibilité
+# ===================================================================
+# Python: 3.10+
+# Chrome: Latest (auto-téléchargé par webdriver-manager)
+# Firefox: Latest (si utilisation de Firefox)
+# ===================================================================
