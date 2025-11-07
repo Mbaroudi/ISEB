@@ -54,7 +54,7 @@ services:
     volumes:
       - redis-data:/data
     ports:
-      - "6379:6379"
+      - "6380:6379"  # Port externe 6380 pour éviter conflit avec Redis local
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
