@@ -17,6 +17,13 @@
 # Les dépendances Odoo de base sont gérées par Odoo lui-même
 
 # ===================================================================
+# CORE DEPENDENCIES (Required for Odoo 17)
+# ===================================================================
+
+# lxml with html_clean support (required since lxml 5.0)
+lxml[html_clean]>=5.0.0
+
+# ===================================================================
 # CLIENT PORTAL - Module client_portal
 # ===================================================================
 
