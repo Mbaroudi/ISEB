@@ -23,6 +23,11 @@
 # lxml with html_clean support (required since lxml 5.0)
 lxml[html_clean]>=5.0.0
 
+# Fix pyOpenSSL compatibility issue with Odoo 17
+# Ensures cryptography and pyOpenSSL versions are compatible
+cryptography>=41.0.0,<42.0.0
+pyOpenSSL>=23.2.0
+
 # ===================================================================
 # CLIENT PORTAL - Module client_portal
 # ===================================================================
