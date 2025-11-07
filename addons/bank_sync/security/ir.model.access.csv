@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bank_account_user,bank.sync.account.user,model_bank_sync_account,group_bank_sync_user,1,1,1,0
+access_bank_account_manager,bank.sync.account.manager,model_bank_sync_account,group_bank_sync_manager,1,1,1,1
+access_bank_transaction_user,bank.sync.transaction.user,model_bank_sync_transaction,group_bank_sync_user,1,1,0,0
+access_bank_transaction_manager,bank.sync.transaction.manager,model_bank_sync_transaction,group_bank_sync_manager,1,1,1,1
+access_bank_provider_user,bank.sync.provider.user,model_bank_sync_provider,group_bank_sync_user,1,0,0,0
+access_bank_provider_manager,bank.sync.provider.manager,model_bank_sync_provider,group_bank_sync_manager,1,1,1,1
+access_bank_sync_log_user,bank.sync.log.user,model_bank_sync_log,group_bank_sync_user,1,0,0,0
+access_bank_sync_log_manager,bank.sync.log.manager,model_bank_sync_log,group_bank_sync_manager,1,1,1,1
+access_reconciliation_rule_user,bank.sync.reconciliation.rule.user,model_bank_sync_reconciliation_rule,group_bank_sync_user,1,0,0,0
+access_reconciliation_rule_manager,bank.sync.reconciliation.rule.manager,model_bank_sync_reconciliation_rule,group_bank_sync_manager,1,1,1,1
