@@ -8,18 +8,18 @@ import re
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    # Champs spécifiques français
+    # Champs spÃ©cifiques franÃ§ais
     fec_export_date = fields.Datetime(
         string='Date export FEC',
         readonly=True,
-        help="Date du dernier export FEC incluant cette écriture"
+        help="Date du dernier export FEC incluant cette Ã©criture"
     )
 
     liasse_fiscale_id = fields.Many2one(
         'liasse.fiscale',
         string='Liasse fiscale',
         readonly=True,
-        help="Liasse fiscale associée à cette écriture"
+        help="Liasse fiscale associÃ©e Ã  cette Ã©criture"
     )
 
     french_fiscal_year = fields.Selection(
@@ -27,7 +27,7 @@ class AccountMove(models.Model):
         string='Exercice fiscal',
         compute='_compute_french_fiscal_year',
         store=True,
-        help="Exercice fiscal français (N, N-1, N-2...)"
+        help="Exercice fiscal franÃ§ais (N, N-1, N-2...)"
     )
 
     french_journal_code = fields.Char(
@@ -41,43 +41,43 @@ class AccountMove(models.Model):
         string='Hash FEC',
         compute='_compute_fec_hash',
         store=True,
-        help="Hash pour déduplication FEC"
+        help="Hash pour dÃ©duplication FEC"
     )
 
     is_fec_exported = fields.Boolean(
-        string='Exporté FEC',
+        string='ExportÃ© FEC',
         compute='_compute_is_fec_exported',
         store=True,
-        help="Indique si l'écriture a été exportée dans un FEC"
+        help="Indique si l'Ã©criture a Ã©tÃ© exportÃ©e dans un FEC"
     )
 
     def _get_fiscal_years(self):
         """Retourne les exercices fiscaux disponibles"""
         current_year = fields.Date.today().year
         years = []
-        for i in range(10):  # 10 dernières années
+        for i in range(10):  # 10 derniÃ¨res annÃ©es
             year = current_year - i
             years.append((str(year), str(year)))
         return years
 
     @api.depends('date', 'company_id')
     def _compute_french_fiscal_year(self):
-        """Calcule l'exercice fiscal français"""
+        """Calcule l'exercice fiscal franÃ§ais"""
         for move in self:
             if move.date:
-                # Par défaut, exercice = année civile
-                # TODO: Gérer les exercices décalés depuis res.company
+                # Par dÃ©faut, exercice = annÃ©e civile
+                # TODO: GÃ©rer les exercices dÃ©calÃ©s depuis res.company
                 move.french_fiscal_year = str(move.date.year)
             else:
                 move.french_fiscal_year = False
 
     @api.depends('name', 'date', 'journal_id', 'line_ids')
     def _compute_fec_hash(self):
-        """Calcule un hash unique pour l'écriture (FEC deduplication)"""
+        """Calcule un hash unique pour l'Ã©criture (FEC deduplication)"""
         import hashlib
         for move in self:
             if move.name and move.date:
-                # Hash basé sur : nom + date + journal + montant total
+                # Hash basÃ© sur : nom + date + journal + montant total
                 hash_string = f"{move.name}_{move.date}_{move.journal_id.id}"
                 move.fec_match_hash = hashlib.md5(hash_string.encode()).hexdigest()
             else:
@@ -85,59 +85,59 @@ class AccountMove(models.Model):
 
     @api.depends('fec_export_date')
     def _compute_is_fec_exported(self):
-        """Vérifie si l'écriture a été exportée"""
+        """VÃ©rifie si l'Ã©criture a Ã©tÃ© exportÃ©e"""
         for move in self:
             move.is_fec_exported = bool(move.fec_export_date)
 
     def action_post(self):
-        """Override pour valider la conformité française avant validation"""
-        # Vérifications spécifiques françaises
+        """Override pour valider la conformitÃ© franÃ§aise avant validation"""
+        # VÃ©rifications spÃ©cifiques franÃ§aises
         for move in self:
-            # Vérifier la numérotation séquentielle obligatoire
+            # VÃ©rifier la numÃ©rotation sÃ©quentielle obligatoire
             if not move.name or move.name == '/':
                 raise UserError(_(
-                    "La numérotation des écritures est obligatoire selon "
+                    "La numÃ©rotation des Ã©critures est obligatoire selon "
                     "l'article L123-22 du Code de commerce."
                 ))
 
-            # Vérifier que le journal a un code conforme
+            # VÃ©rifier que le journal a un code conforme
             if not move.journal_id.code:
                 raise UserError(_(
-                    "Le journal '%s' doit avoir un code défini."
+                    "Le journal '%s' doit avoir un code dÃ©fini."
                 ) % move.journal_id.name)
 
-            # Vérifier que toutes les lignes ont un compte défini
+            # VÃ©rifier que toutes les lignes ont un compte dÃ©fini
             for line in move.line_ids:
                 if not line.account_id:
                     raise UserError(_(
-                        "Toutes les lignes doivent avoir un compte comptable défini."
+                        "Toutes les lignes doivent avoir un compte comptable dÃ©fini."
                     ))
 
-        # Appeler la méthode parent
+        # Appeler la mÃ©thode parent
         return super(AccountMove, self).action_post()
 
     def button_draft(self):
-        """Override pour empêcher la modification des écritures validées"""
-        # En France, les écritures validées ne peuvent pas être modifiées
-        # (principe d'intouchabilité des écritures)
+        """Override pour empÃªcher la modification des Ã©critures validÃ©es"""
+        # En France, les Ã©critures validÃ©es ne peuvent pas Ãªtre modifiÃ©es
+        # (principe d'intouchabilitÃ© des Ã©critures)
         for move in self:
             if move.fec_export_date:
                 raise UserError(_(
-                    "Cette écriture a été exportée dans un FEC le %s.\n"
-                    "Elle ne peut plus être modifiée selon la réglementation française "
+                    "Cette Ã©criture a Ã©tÃ© exportÃ©e dans un FEC le %s.\n"
+                    "Elle ne peut plus Ãªtre modifiÃ©e selon la rÃ©glementation franÃ§aise "
                     "(Art. L123-22 du Code de commerce)."
                 ) % move.fec_export_date.strftime('%d/%m/%Y %H:%M'))
 
         return super(AccountMove, self).button_draft()
 
     def _check_fec_compliance(self):
-        """Vérifie la conformité FEC de l'écriture"""
+        """VÃ©rifie la conformitÃ© FEC de l'Ã©criture"""
         self.ensure_one()
         errors = []
 
-        # 1. Numéro d'écriture obligatoire
+        # 1. NumÃ©ro d'Ã©criture obligatoire
         if not self.name or self.name == '/':
-            errors.append("Numéro d'écriture manquant")
+            errors.append("NumÃ©ro d'Ã©criture manquant")
 
         # 2. Date obligatoire
         if not self.date:
@@ -147,33 +147,33 @@ class AccountMove(models.Model):
         if not self.journal_id or not self.journal_id.code:
             errors.append("Journal ou code journal manquant")
 
-        # 4. Lignes d'écriture
+        # 4. Lignes d'Ã©criture
         if not self.line_ids:
-            errors.append("Aucune ligne d'écriture")
+            errors.append("Aucune ligne d'Ã©criture")
 
         for line in self.line_ids:
             # Compte obligatoire
             if not line.account_id:
                 errors.append(f"Ligne {line.id}: compte manquant")
 
-            # Libellé obligatoire
+            # LibellÃ© obligatoire
             if not line.name:
-                errors.append(f"Ligne {line.id}: libellé manquant")
+                errors.append(f"Ligne {line.id}: libellÃ© manquant")
 
-            # Montant débit OU crédit (pas les deux)
+            # Montant dÃ©bit OU crÃ©dit (pas les deux)
             if line.debit > 0 and line.credit > 0:
-                errors.append(f"Ligne {line.id}: débit et crédit simultanés")
+                errors.append(f"Ligne {line.id}: dÃ©bit et crÃ©dit simultanÃ©s")
 
-        # 5. Équilibre débit/crédit
+        # 5. Ã‰quilibre dÃ©bit/crÃ©dit
         total_debit = sum(self.line_ids.mapped('debit'))
         total_credit = sum(self.line_ids.mapped('credit'))
         if abs(total_debit - total_credit) > 0.01:
-            errors.append(f"Écriture déséquilibrée: débit={total_debit}, crédit={total_credit}")
+            errors.append(f"Ã‰criture dÃ©sÃ©quilibrÃ©e: dÃ©bit={total_debit}, crÃ©dit={total_credit}")
 
         return errors
 
     def get_fec_line_data(self):
-        """Retourne les données formatées pour l'export FEC"""
+        """Retourne les donnÃ©es formatÃ©es pour l'export FEC"""
         self.ensure_one()
 
         lines_data = []
@@ -206,14 +206,14 @@ class AccountMove(models.Model):
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    # Champs supplémentaires pour FEC
+    # Champs supplÃ©mentaires pour FEC
     fec_line_number = fields.Integer(
-        string='Numéro ligne FEC',
-        help="Numéro séquentiel de la ligne dans l'export FEC"
+        string='NumÃ©ro ligne FEC',
+        help="NumÃ©ro sÃ©quentiel de la ligne dans l'export FEC"
     )
 
     def _check_fec_line_compliance(self):
-        """Vérifie la conformité FEC d'une ligne d'écriture"""
+        """VÃ©rifie la conformitÃ© FEC d'une ligne d'Ã©criture"""
         self.ensure_one()
         errors = []
 
@@ -221,13 +221,13 @@ class AccountMoveLine(models.Model):
         if not self.account_id:
             errors.append("Compte comptable manquant")
 
-        # Libellé obligatoire
+        # LibellÃ© obligatoire
         if not self.name:
-            errors.append("Libellé manquant")
+            errors.append("LibellÃ© manquant")
 
-        # Montant débit OU crédit (exclusif)
+        # Montant dÃ©bit OU crÃ©dit (exclusif)
         if self.debit > 0 and self.credit > 0:
-            errors.append("Débit et crédit simultanés non autorisés")
+            errors.append("DÃ©bit et crÃ©dit simultanÃ©s non autorisÃ©s")
 
         # Au moins un montant non nul
         if self.debit == 0 and self.credit == 0:

@@ -13,7 +13,7 @@ _logger = logging.getLogger(__name__)
 
 class FecExport(models.Model):
     _name = 'fec.export'
-    _description = 'Export FEC (Fichier des Écritures Comptables)'
+    _description = 'Export FEC (Fichier des Ã‰critures Comptables)'
     _order = 'create_date desc'
     _rec_name = 'display_name'
 
@@ -32,24 +32,24 @@ class FecExport(models.Model):
 
     company_id = fields.Many2one(
         'res.company',
-        string='Société',
+        string='SociÃ©tÃ©',
         required=True,
         default=lambda self: self.env.company,
-        help="Société pour laquelle générer le FEC"
+        help="SociÃ©tÃ© pour laquelle gÃ©nÃ©rer le FEC"
     )
 
     date_from = fields.Date(
-        string='Date de début',
+        string='Date de dÃ©but',
         required=True,
         default=lambda self: fields.Date.today().replace(month=1, day=1),
-        help="Date de début de la période"
+        help="Date de dÃ©but de la pÃ©riode"
     )
 
     date_to = fields.Date(
         string='Date de fin',
         required=True,
         default=fields.Date.today,
-        help="Date de fin de la période"
+        help="Date de fin de la pÃ©riode"
     )
 
     fiscal_year = fields.Selection(
@@ -61,16 +61,16 @@ class FecExport(models.Model):
 
     state = fields.Selection([
         ('draft', 'Brouillon'),
-        ('generating', 'Génération en cours'),
-        ('done', 'Terminé'),
+        ('generating', 'GÃ©nÃ©ration en cours'),
+        ('done', 'TerminÃ©'),
         ('error', 'Erreur'),
-    ], string='État', default='draft', required=True)
+    ], string='Ã‰tat', default='draft', required=True)
 
     file_data = fields.Binary(
         string='Fichier FEC',
         readonly=True,
         attachment=True,
-        help="Fichier FEC généré (format TXT)"
+        help="Fichier FEC gÃ©nÃ©rÃ© (format TXT)"
     )
 
     file_name = fields.Char(
@@ -88,13 +88,13 @@ class FecExport(models.Model):
     line_count = fields.Integer(
         string='Nombre de lignes',
         readonly=True,
-        help="Nombre de lignes d'écritures exportées"
+        help="Nombre de lignes d'Ã©critures exportÃ©es"
     )
 
     move_count = fields.Integer(
-        string='Nombre d\'écritures',
+        string='Nombre d\'Ã©critures',
         readonly=True,
-        help="Nombre d'écritures comptables exportées"
+        help="Nombre d'Ã©critures comptables exportÃ©es"
     )
 
     error_message = fields.Text(
@@ -110,24 +110,24 @@ class FecExport(models.Model):
     include_draft = fields.Boolean(
         string='Inclure les brouillons',
         default=False,
-        help="Inclure les écritures non validées (non recommandé pour FEC officiel)"
+        help="Inclure les Ã©critures non validÃ©es (non recommandÃ© pour FEC officiel)"
     )
 
     journal_ids = fields.Many2many(
         'account.journal',
         string='Journaux',
-        help="Journaux à inclure (vide = tous)"
+        help="Journaux Ã  inclure (vide = tous)"
     )
 
     # Statistiques
     total_debit = fields.Monetary(
-        string='Total Débit',
+        string='Total DÃ©bit',
         currency_field='currency_id',
         readonly=True
     )
 
     total_credit = fields.Monetary(
-        string='Total Crédit',
+        string='Total CrÃ©dit',
         currency_field='currency_id',
         readonly=True
     )
@@ -170,7 +170,7 @@ class FecExport(models.Model):
     def _compute_file_name(self):
         for record in self:
             if record.company_id and record.date_from:
-                # Format: SIREN + FEC + date_clôture + .txt
+                # Format: SIREN + FEC + date_clÃ´ture + .txt
                 siren = record.company_id.company_registry or 'XXXXXXXXX'
                 siren = siren.replace(' ', '')[:9].zfill(9)
                 date_str = record.date_to.strftime('%Y%m%d') if record.date_to else ''
@@ -190,25 +190,25 @@ class FecExport(models.Model):
     def _check_dates(self):
         for record in self:
             if record.date_from and record.date_to and record.date_from > record.date_to:
-                raise ValidationError(_("La date de début doit être antérieure à la date de fin."))
+                raise ValidationError(_("La date de dÃ©but doit Ãªtre antÃ©rieure Ã  la date de fin."))
 
     def action_generate_fec(self):
-        """Génère le fichier FEC"""
+        """GÃ©nÃ¨re le fichier FEC"""
         self.ensure_one()
 
         try:
             self.state = 'generating'
 
-            # 1. Récupérer les écritures comptables
+            # 1. RÃ©cupÃ©rer les Ã©critures comptables
             moves = self._get_account_moves()
 
             if not moves:
-                raise UserError(_("Aucune écriture comptable trouvée pour la période sélectionnée."))
+                raise UserError(_("Aucune Ã©criture comptable trouvÃ©e pour la pÃ©riode sÃ©lectionnÃ©e."))
 
-            # 2. Vérifier la conformité FEC
+            # 2. VÃ©rifier la conformitÃ© FEC
             self._check_moves_compliance(moves)
 
-            # 3. Générer le fichier
+            # 3. GÃ©nÃ©rer le fichier
             file_content = self._generate_fec_content(moves)
 
             # 4. Enregistrer le fichier
@@ -219,46 +219,46 @@ class FecExport(models.Model):
                 'line_count': sum(len(move.line_ids) for move in moves),
             })
 
-            # 5. Marquer les écritures comme exportées
+            # 5. Marquer les Ã©critures comme exportÃ©es
             moves.write({'fec_export_date': fields.Datetime.now()})
 
             # 6. Calculer les totaux
             self._compute_totals(moves)
 
-            _logger.info(f"FEC généré avec succès: {self.file_name} ({self.line_count} lignes)")
+            _logger.info(f"FEC gÃ©nÃ©rÃ© avec succÃ¨s: {self.file_name} ({self.line_count} lignes)")
 
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
-                    'title': _('Succès'),
-                    'message': _('FEC généré avec succès: %s lignes exportées') % self.line_count,
+                    'title': _('SuccÃ¨s'),
+                    'message': _('FEC gÃ©nÃ©rÃ© avec succÃ¨s: %s lignes exportÃ©es') % self.line_count,
                     'type': 'success',
                     'sticky': False,
                 }
             }
 
         except Exception as e:
-            _logger.error(f"Erreur lors de la génération du FEC: {str(e)}", exc_info=True)
+            _logger.error(f"Erreur lors de la gÃ©nÃ©ration du FEC: {str(e)}", exc_info=True)
             self.write({
                 'state': 'error',
                 'error_message': str(e),
             })
-            raise UserError(_("Erreur lors de la génération du FEC:\n%s") % str(e))
+            raise UserError(_("Erreur lors de la gÃ©nÃ©ration du FEC:\n%s") % str(e))
 
     def _get_account_moves(self):
-        """Récupère les écritures comptables à exporter"""
+        """RÃ©cupÃ¨re les Ã©critures comptables Ã  exporter"""
         domain = [
             ('company_id', '=', self.company_id.id),
             ('date', '>=', self.date_from),
             ('date', '<=', self.date_to),
         ]
 
-        # État des écritures
+        # Ã‰tat des Ã©critures
         if not self.include_draft:
             domain.append(('state', '=', 'posted'))
 
-        # Journaux spécifiques
+        # Journaux spÃ©cifiques
         if self.journal_ids:
             domain.append(('journal_id', 'in', self.journal_ids.ids))
 
@@ -266,28 +266,28 @@ class FecExport(models.Model):
         return moves
 
     def _check_moves_compliance(self, moves):
-        """Vérifie la conformité FEC des écritures"""
+        """VÃ©rifie la conformitÃ© FEC des Ã©critures"""
         errors = []
 
         for move in moves:
             move_errors = move._check_fec_compliance()
             if move_errors:
-                errors.append(f"Écriture {move.name}: {', '.join(move_errors)}")
+                errors.append(f"Ã‰criture {move.name}: {', '.join(move_errors)}")
 
         if errors:
-            error_msg = "\n".join(errors[:10])  # Limiter à 10 premières erreurs
+            error_msg = "\n".join(errors[:10])  # Limiter Ã  10 premiÃ¨res erreurs
             if len(errors) > 10:
                 error_msg += f"\n... et {len(errors) - 10} autres erreurs"
             raise UserError(_(
-                "Certaines écritures ne sont pas conformes au format FEC:\n\n%s\n\n"
-                "Veuillez corriger ces erreurs avant de générer le FEC."
+                "Certaines Ã©critures ne sont pas conformes au format FEC:\n\n%s\n\n"
+                "Veuillez corriger ces erreurs avant de gÃ©nÃ©rer le FEC."
             ) % error_msg)
 
     def _generate_fec_content(self, moves):
-        """Génère le contenu du fichier FEC"""
+        """GÃ©nÃ¨re le contenu du fichier FEC"""
         output = io.StringIO()
 
-        # En-têtes FEC (18 colonnes obligatoires)
+        # En-tÃªtes FEC (18 colonnes obligatoires)
         headers = [
             'JournalCode', 'JournalLib', 'EcritureNum', 'EcritureDate',
             'CompteNum', 'CompteLib', 'CompAuxNum', 'CompAuxLib',
@@ -295,7 +295,7 @@ class FecExport(models.Model):
             'EcritureLet', 'DateLet', 'ValidDate', 'Montantdevise', 'Idevise'
         ]
 
-        # Écrire les en-têtes
+        # Ã‰crire les en-tÃªtes
         writer = csv.DictWriter(
             output,
             fieldnames=headers,
@@ -305,7 +305,7 @@ class FecExport(models.Model):
         )
         writer.writeheader()
 
-        # Écrire les lignes
+        # Ã‰crire les lignes
         for move in moves:
             lines_data = move.get_fec_line_data()
             for line_data in lines_data:
@@ -314,7 +314,7 @@ class FecExport(models.Model):
         return output.getvalue()
 
     def _compute_totals(self, moves):
-        """Calcule les totaux débit/crédit"""
+        """Calcule les totaux dÃ©bit/crÃ©dit"""
         total_debit = 0.0
         total_credit = 0.0
 
@@ -329,10 +329,10 @@ class FecExport(models.Model):
         })
 
     def action_download_fec(self):
-        """Télécharge le fichier FEC"""
+        """TÃ©lÃ©charge le fichier FEC"""
         self.ensure_one()
         if not self.file_data:
-            raise UserError(_("Aucun fichier FEC généré. Veuillez d'abord générer le FEC."))
+            raise UserError(_("Aucun fichier FEC gÃ©nÃ©rÃ©. Veuillez d'abord gÃ©nÃ©rer le FEC."))
 
         return {
             'type': 'ir.actions.act_url',
@@ -341,20 +341,20 @@ class FecExport(models.Model):
         }
 
     def action_validate_fec(self):
-        """Valide le format du FEC généré"""
+        """Valide le format du FEC gÃ©nÃ©rÃ©"""
         self.ensure_one()
         if not self.file_data:
-            raise UserError(_("Aucun fichier FEC à valider."))
+            raise UserError(_("Aucun fichier FEC Ã  valider."))
 
-        # TODO: Implémenter validation approfondie (checksum, format, etc.)
-        # Pour l'instant, vérification basique
+        # TODO: ImplÃ©menter validation approfondie (checksum, format, etc.)
+        # Pour l'instant, vÃ©rification basique
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _('Validation'),
-                'message': _('FEC validé: %s lignes, format conforme') % self.line_count,
+                'message': _('FEC validÃ©: %s lignes, format conforme') % self.line_count,
                 'type': 'success',
             }
         }
@@ -370,11 +370,11 @@ class FecExport(models.Model):
         })
 
     def unlink(self):
-        """Empêche la suppression des exports terminés"""
+        """EmpÃªche la suppression des exports terminÃ©s"""
         for record in self:
             if record.state == 'done':
                 raise UserError(_(
-                    "Impossible de supprimer un export FEC terminé.\n"
-                    "Ceci est requis pour l'audit trail et la conformité légale."
+                    "Impossible de supprimer un export FEC terminÃ©.\n"
+                    "Ceci est requis pour l'audit trail et la conformitÃ© lÃ©gale."
                 ))
         return super(FecExport, self).unlink()
