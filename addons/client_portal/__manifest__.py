@@ -61,6 +61,11 @@ AGPL-3
         # Security
         'security/security.xml',
         'security/ir.model.access.csv',
+        # Views
+        'views/client_dashboard_views.xml',
+        'views/client_document_views.xml',
+        'views/expense_note_views.xml',
+        'views/menu_views.xml',
     ],
     'demo': [
         'demo/demo_data.xml',

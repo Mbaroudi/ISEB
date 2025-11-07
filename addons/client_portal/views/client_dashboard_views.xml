@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire dashboard client -->
+    <record id="view_client_dashboard_form" model="ir.ui.view">
+        <field name="name">client.dashboard.form</field>
+        <field name="model">client.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard Client">
+                <header>
+                    <button name="action_compute_dashboard" string="Actualiser les données" 
+                            type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,computed,validated"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="partner_id" readonly="1"/>
+                        </h1>
+                        <h2>
+                            Période du <field name="period_start" readonly="1"/> 
+                            au <field name="period_end" readonly="1"/>
+                        </h2>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="compute_date"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <!-- Onglet Vue d'ensemble -->
+                        <page string="Vue d'ensemble" name="overview">
+                            <group>
+                                <group string="Trésorerie">
+                                    <field name="cash_balance" widget="monetary" 
+                                           class="oe_inline oe_bold"/>
+                                </group>
+                                <group string="Résultat">
+                                    <field name="net_income_mtd" widget="monetary"/>
+                                    <field name="net_income_ytd" widget="monetary"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <group string="Chiffre d'affaires">
+                                    <field name="revenue_mtd" widget="monetary"/>
+                                    <field name="revenue_ytd" widget="monetary"/>
+                                    <field name="revenue_last_month" widget="monetary"/>
+                                    <field name="revenue_growth_mtd" widget="percentage"/>
+                                </group>
+                                <group string="Charges">
+                                    <field name="expenses_mtd" widget="monetary"/>
+                                    <field name="expenses_ytd" widget="monetary"/>
+                                    <field name="expenses_last_month" widget="monetary"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Onglet TVA -->
+                        <page string="TVA" name="tva">
+                            <group>
+                                <group string="TVA Collectée">
+                                    <field name="tva_collectee" widget="monetary"/>
+                                </group>
+                                <group string="TVA Déductible">
+                                    <field name="tva_deductible" widget="monetary"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="TVA à Décaisser">
+                                    <field name="tva_due" widget="monetary" 
+                                           class="oe_inline oe_bold"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Onglet Créances et Dettes -->
+                        <page string="Créances / Dettes" name="receivables">
+                            <group>
+                                <group string="Créances Clients">
+                                    <field name="receivable_amount" widget="monetary"/>
+                                    <field name="overdue_receivable" widget="monetary"/>
+                                    <field name="receivable_count"/>
+                                </group>
+                                <group string="Dettes Fournisseurs">
+                                    <field name="payable_amount" widget="monetary"/>
+                                    <field name="overdue_payable" widget="monetary"/>
+                                    <field name="payable_count"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Onglet Indicateurs -->
+                        <page string="Indicateurs Clés" name="kpis">
+                            <group>
+                                <group string="Rentabilité">
+                                    <field name="margin_rate" widget="percentage"/>
+                                    <field name="expenses_revenue_ratio" widget="percentage"/>
+                                </group>
+                                <group string="Comparaisons">
+                                    <field name="revenue_last_year" widget="monetary"/>
+                                    <field name="revenue_growth_yoy" widget="percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- Onglet Graphiques -->
+                        <page string="Graphiques" name="charts">
+                            <group string="Évolution sur 12 mois">
+                                <field name="chart_data_revenue" widget="text"/>
+                                <field name="chart_data_expenses" widget="text"/>
+                                <field name="chart_data_cash" widget="text"/>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <p>Les graphiques interactifs seront affichés dans le portail web client.</p>
+                                <p>Les données sont disponibles au format JSON dans les champs ci-dessus.</p>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste dashboard -->
+    <record id="view_client_dashboard_tree" model="ir.ui.view">
+        <field name="name">client.dashboard.tree</field>
+        <field name="model">client.dashboard</field>
+        <field name="arch" type="xml">
+            <tree string="Dashboards Client">
+                <field name="partner_id"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="cash_balance" sum="Total trésorerie"/>
+                <field name="revenue_mtd" sum="Total CA"/>
+                <field name="expenses_mtd" sum="Total charges"/>
+                <field name="net_income_mtd" sum="Total résultat"/>
+                <field name="tva_due" sum="Total TVA due"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'validated'" 
+                       decoration-info="state == 'computed'"/>
+                <field name="compute_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue recherche/filtres -->
+    <record id="view_client_dashboard_search" model="ir.ui.view">
+        <field name="name">client.dashboard.search</field>
+        <field name="model">client.dashboard</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Dashboards">
+                <field name="partner_id"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <filter string="Mois en cours" name="current_month"
+                        domain="[('period_start', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
+                                ('period_end', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]"/>
+                <filter string="Année en cours" name="current_year"
+                        domain="[('period_start', '&gt;=', (context_today().replace(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Validés" name="validated"
+                        domain="[('state', '=', 'validated')]"/>
+                <filter string="Calculés" name="computed"
+                        domain="[('state', '=', 'computed')]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Période" name="group_period" context="{'group_by': 'period_start'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action dashboard client -->
+    <record id="action_client_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboards Clients</field>
+        <field name="res_model">client.dashboard</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_current_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun dashboard trouvé
+            </p>
+            <p>
+                Les dashboards clients affichent les indicateurs financiers en temps réel.
+                Créez votre premier dashboard pour commencer.
+            </p>
+        </field>
+    </record>
+</odoo>

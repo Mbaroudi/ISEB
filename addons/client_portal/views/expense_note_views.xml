@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire note de frais -->
+    <record id="view_expense_note_form" model="ir.ui.view">
+        <field name="name">expense.note.form</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <form string="Note de Frais">
+                <header>
+                    <button name="action_submit" string="Soumettre" type="object" 
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Approuver" type="object" 
+                            class="oe_highlight" invisible="state != 'submitted'"
+                            groups="cabinet_portal.group_cabinet_accountant"/>
+                    <button name="action_pay" string="Marquer comme payé" type="object" 
+                            class="oe_highlight" invisible="state != 'approved'"
+                            groups="cabinet_portal.group_cabinet_accountant"/>
+                    <button name="action_reject" string="Rejeter" type="object" 
+                            invisible="state not in ['submitted']"
+                            groups="cabinet_portal.group_cabinet_accountant"/>
+                    <button name="action_reset_draft" string="Remettre en brouillon" 
+                            type="object" invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,submitted,approved,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_receipt" type="object" 
+                                class="oe_stat_button" icon="fa-camera"
+                                invisible="not receipt_image">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Voir Justificatif</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Description de la dépense..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="partner_id" options="{'no_create': True}"/>
+                            <field name="category"/>
+                            <field name="expense_date"/>
+                        </group>
+                        <group>
+                            <field name="amount" widget="monetary"/>
+                            <field name="tva_amount" widget="monetary"/>
+                            <field name="total_amount" widget="monetary" readonly="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Justificatif" name="receipt">
+                            <group>
+                                <field name="receipt_image" widget="image" 
+                                       options="{'size': [800, 600]}"/>
+                            </group>
+                            <div class="alert alert-info" role="alert" invisible="receipt_image">
+                                <p><i class="fa fa-info-circle"/> Prenez en photo votre justificatif (ticket, facture, etc.)</p>
+                                <p>Format accepté: JPG, PNG, PDF</p>
+                            </div>
+                        </page>
+                        
+                        <page string="Détails" name="details">
+                            <group>
+                                <field name="notes" placeholder="Notes complémentaires (contexte, participants, etc.)..."/>
+                            </group>
+                            
+                            <group string="Informations" col="4">
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="submitted_date" readonly="1"/>
+                                <field name="approved_date" readonly="1" invisible="state not in ['approved', 'paid']"/>
+                                <field name="paid_date" readonly="1" invisible="state != 'paid'"/>
+                            </group>
+                            
+                            <group string="Validation" invisible="state not in ['approved', 'paid', 'rejected']">
+                                <field name="approved_by_id" readonly="1" invisible="state not in ['approved', 'paid']"/>
+                                <field name="rejection_reason" readonly="1" invisible="state != 'rejected'"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Données OCR" name="ocr" invisible="not ocr_data">
+                            <group string="Données extraites automatiquement">
+                                <field name="ocr_data" widget="text"/>
+                                <field name="ocr_confidence" widget="percentage" readonly="1"/>
+                            </group>
+                            <div class="alert alert-warning" role="alert">
+                                <p><i class="fa fa-exclamation-triangle"/> Vérifiez les montants extraits</p>
+                                <p>L'OCR peut faire des erreurs. Assurez-vous que le montant et la TVA sont corrects.</p>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste note de frais -->
+    <record id="view_expense_note_tree" model="ir.ui.view">
+        <field name="name">expense.note.tree</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <tree string="Notes de Frais" decoration-muted="state == 'rejected'" 
+                  decoration-success="state == 'paid'" decoration-info="state == 'approved'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="expense_date"/>
+                <field name="category" widget="badge"/>
+                <field name="amount" sum="Total HT"/>
+                <field name="tva_amount" sum="Total TVA"/>
+                <field name="total_amount" sum="Total TTC"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'paid'" 
+                       decoration-info="state == 'approved'"
+                       decoration-warning="state == 'submitted'"
+                       decoration-danger="state == 'rejected'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue kanban note de frais -->
+    <record id="view_expense_note_kanban" model="ir.ui.view">
+        <field name="name">expense.note.kanban</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="expense_date"/>
+                <field name="category"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+                <field name="receipt_image"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb16">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <span class="float-end badge badge-pill">
+                                    <field name="total_amount" widget="monetary"/>
+                                </span>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div><i class="fa fa-user"/> <field name="partner_id"/></div>
+                                <div><i class="fa fa-calendar"/> <field name="expense_date"/></div>
+                                <div><field name="category" widget="badge"/></div>
+                                <t t-if="record.receipt_image.raw_value">
+                                    <div class="text-success">
+                                        <i class="fa fa-check"/> Justificatif fourni
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue pivot pour analyses -->
+    <record id="view_expense_note_pivot" model="ir.ui.view">
+        <field name="name">expense.note.pivot</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse Notes de Frais">
+                <field name="category" type="row"/>
+                <field name="expense_date" interval="month" type="col"/>
+                <field name="total_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue graphique -->
+    <record id="view_expense_note_graph" model="ir.ui.view">
+        <field name="name">expense.note.graph</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <graph string="Notes de Frais" type="bar">
+                <field name="category"/>
+                <field name="total_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vue recherche/filtres -->
+    <record id="view_expense_note_search" model="ir.ui.view">
+        <field name="name">expense.note.search</field>
+        <field name="model">expense.note</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Notes de Frais">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="category"/>
+                <filter string="Brouillons" name="draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="Soumises" name="submitted"
+                        domain="[('state', '=', 'submitted')]"/>
+                <filter string="Approuvées" name="approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <filter string="Payées" name="paid"
+                        domain="[('state', '=', 'paid')]"/>
+                <filter string="Rejetées" name="rejected"
+                        domain="[('state', '=', 'rejected')]"/>
+                <separator/>
+                <filter string="Ce mois" name="this_month"
+                        domain="[('expense_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
+                                ('expense_date', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]"/>
+                <filter string="Ce trimestre" name="this_quarter"
+                        domain="[('expense_date', '&gt;=', ((context_today() - relativedelta(months=(context_today().month-1)%3)).replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Repas" name="meal"
+                        domain="[('category', '=', 'meal')]"/>
+                <filter string="Transport" name="transport"
+                        domain="[('category', '=', 'transport')]"/>
+                <filter string="Carburant" name="fuel"
+                        domain="[('category', '=', 'fuel')]"/>
+                <filter string="Hébergement" name="accommodation"
+                        domain="[('category', '=', 'accommodation')]"/>
+                <separator/>
+                <filter string="Avec justificatif" name="with_receipt"
+                        domain="[('receipt_image', '!=', False)]"/>
+                <filter string="Sans justificatif" name="without_receipt"
+                        domain="[('receipt_image', '=', False)]"/>
+                <group expand="0" string="Regrouper par">
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Catégorie" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'expense_date'}"/>
+                    <filter string="Mois" name="group_month" context="{'group_by': 'expense_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action notes de frais -->
+    <record id="action_expense_notes" model="ir.actions.act_window">
+        <field name="name">Notes de Frais</field>
+        <field name="res_model">expense.note</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune note de frais trouvée
+            </p>
+            <p>
+                Créez vos notes de frais professionnels (repas, transport, hébergement, etc.) 
+                et joignez vos justificatifs en photo.
+            </p>
+            <p>
+                <button type="action" class="btn-primary" name="%(action_expense_notes)d" context="{'form_view_initial_mode': 'edit'}">
+                    Créer une note de frais
+                </button>
+            </p>
+        </field>
+    </record>
+</odoo>

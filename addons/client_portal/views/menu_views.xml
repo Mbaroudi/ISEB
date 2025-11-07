@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principal Client Portal -->
+    <menuitem id="menu_client_portal_root"
+              name="Mon Espace Client"
+              sequence="10"
+              web_icon="client_portal,static/description/icon.png"
+              groups="group_client_portal_user"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_client_dashboard"
+              name="Tableau de Bord"
+              parent="menu_client_portal_root"
+              action="action_client_dashboard"
+              sequence="10"/>
+
+    <!-- Documents -->
+    <menuitem id="menu_client_documents_root"
+              name="Documents"
+              parent="menu_client_portal_root"
+              sequence="20"/>
+
+    <menuitem id="menu_client_documents_all"
+              name="Tous les documents"
+              parent="menu_client_documents_root"
+              action="action_client_documents"
+              sequence="10"/>
+
+    <!-- Notes de frais -->
+    <menuitem id="menu_client_expenses_root"
+              name="Notes de Frais"
+              parent="menu_client_portal_root"
+              sequence="30"/>
+
+    <menuitem id="menu_client_expenses_all"
+              name="Toutes les notes"
+              parent="menu_client_expenses_root"
+              action="action_expense_notes"
+              sequence="10"/>
+
+    <!-- Raccourcis rapides (sous-menus) -->
+    <menuitem id="menu_client_expenses_draft"
+              name="Brouillons"
+              parent="menu_client_expenses_root"
+              action="action_expense_notes"
+              sequence="20"/>
+
+    <menuitem id="menu_client_expenses_submitted"
+              name="En attente validation"
+              parent="menu_client_expenses_root"
+              action="action_expense_notes"
+              sequence="30"/>
+
+    <!-- Action pour menu brouillons avec filtre -->
+    <record id="action_expense_notes_draft" model="ir.actions.act_window">
+        <field name="name">Notes de Frais - Brouillons</field>
+        <field name="res_model">expense.note</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'draft')]</field>
+        <field name="context">{'search_default_draft': 1}</field>
+    </record>
+
+    <!-- Action pour menu en attente avec filtre -->
+    <record id="action_expense_notes_submitted" model="ir.actions.act_window">
+        <field name="name">Notes de Frais - En Attente</field>
+        <field name="res_model">expense.note</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'submitted')]</field>
+        <field name="context">{'search_default_submitted': 1}</field>
+    </record>
+
+    <!-- Mise à jour des actions de menu -->
+    <record id="menu_client_expenses_draft" model="ir.ui.menu">
+        <field name="action" ref="action_expense_notes_draft"/>
+    </record>
+
+    <record id="menu_client_expenses_submitted" model="ir.ui.menu">
+        <field name="action" ref="action_expense_notes_submitted"/>
+    </record>
+</odoo>
