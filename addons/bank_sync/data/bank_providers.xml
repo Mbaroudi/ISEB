@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Principales banques françaises -->
+        <record id="provider_bnp_paribas" model="bank.sync.provider">
+            <field name="name">BNP Paribas</field>
+            <field name="code">bnp</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">full</field>
+        </record>
+
+        <record id="provider_credit_agricole" model="bank.sync.provider">
+            <field name="name">Crédit Agricole</field>
+            <field name="code">ca</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">full</field>
+        </record>
+
+        <record id="provider_societe_generale" model="bank.sync.provider">
+            <field name="name">Société Générale</field>
+            <field name="code">sg</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">full</field>
+        </record>
+
+        <record id="provider_lbp" model="bank.sync.provider">
+            <field name="name">La Banque Postale</field>
+            <field name="code">lbp</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">advanced</field>
+        </record>
+
+        <record id="provider_credit_mutuel" model="bank.sync.provider">
+            <field name="name">Crédit Mutuel / CIC</field>
+            <field name="code">cm</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">full</field>
+        </record>
+
+        <record id="provider_boursorama" model="bank.sync.provider">
+            <field name="name">Boursorama</field>
+            <field name="code">boursorama</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">advanced</field>
+        </record>
+
+        <record id="provider_ing" model="bank.sync.provider">
+            <field name="name">ING Direct</field>
+            <field name="code">ing</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">basic</field>
+        </record>
+
+        <record id="provider_hello_bank" model="bank.sync.provider">
+            <field name="name">Hello bank!</field>
+            <field name="code">hello</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">advanced</field>
+        </record>
+
+        <record id="provider_n26" model="bank.sync.provider">
+            <field name="name">N26</field>
+            <field name="code">n26</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.de"/>
+            <field name="supported_features">advanced</field>
+        </record>
+
+        <record id="provider_revolut" model="bank.sync.provider">
+            <field name="name">Revolut</field>
+            <field name="code">revolut</field>
+            <field name="api_type">psd2</field>
+            <field name="country_id" ref="base.uk"/>
+            <field name="supported_features">advanced</field>
+        </record>
+
+        <!-- Agrégateurs -->
+        <record id="provider_budget_insight" model="bank.sync.provider">
+            <field name="name">Budget Insight (Agrégateur)</field>
+            <field name="code">budget_insight</field>
+            <field name="api_type">budget_insight</field>
+            <field name="country_id" ref="base.fr"/>
+            <field name="supported_features">full</field>
+        </record>
+    </data>
+</odoo>

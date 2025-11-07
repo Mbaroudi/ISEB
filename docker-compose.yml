@@ -1,0 +1,235 @@
+version: '3.8'
+
+# ===================================================================
+# ISEB Platform - Docker Compose
+# ===================================================================
+#
+# Services:
+#   - odoo: Application Odoo principale
+#   - db: PostgreSQL 15
+#   - redis: Redis (cache + Celery broker)
+#   - celery: Celery worker (tâches asynchrones)
+#
+# Usage:
+#   docker-compose up -d          # Démarrer tous les services
+#   docker-compose logs -f odoo   # Voir les logs Odoo
+#   docker-compose down           # Arrêter tous les services
+#   docker-compose ps             # Statut des services
+#
+# ===================================================================
+
+services:
+  # =================================================================
+  # POSTGRESQL DATABASE
+  # =================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: iseb_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iseb-network
+
+  # =================================================================
+  # REDIS (Cache + Celery Broker)
+  # =================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: iseb_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iseb-network
+
+  # =================================================================
+  # ODOO APPLICATION
+  # =================================================================
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: iseb-platform:17.0
+    container_name: iseb_odoo
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-odoo}
+
+      # Odoo Configuration
+      ADMIN_PASSWD: ${ADMIN_PASSWORD:-admin}
+      DB_MAXCONN: 64
+      DB_TEMPLATE: template0
+
+      # Workers (production)
+      WORKERS: ${WORKERS:-4}
+      MAX_CRON_THREADS: 2
+
+      # Limits
+      LIMIT_MEMORY_SOFT: 2147483648  # 2GB
+      LIMIT_MEMORY_HARD: 2684354560  # 2.5GB
+      LIMIT_TIME_CPU: 600
+      LIMIT_TIME_REAL: 1200
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOGFILE: /var/log/odoo/odoo.log
+
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - odoo-logs:/var/log/odoo
+      - ./addons:/mnt/extra-addons:ro
+      - ./config:/etc/odoo:ro
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+      - "${LONGPOLLING_PORT:-8072}:8072"
+    networks:
+      - iseb-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # CELERY WORKER (Background Tasks)
+  # =================================================================
+  celery:
+    image: iseb-platform:17.0
+    container_name: iseb_celery
+    restart: unless-stopped
+    depends_on:
+      - odoo
+      - redis
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
+    command: celery -A addons.bank_sync.tasks worker --loglevel=info
+    volumes:
+      - ./addons:/mnt/extra-addons:ro
+    networks:
+      - iseb-network
+
+  # =================================================================
+  # NGINX (Optional - Reverse Proxy)
+  # =================================================================
+  # Décommentez cette section pour activer Nginx
+  #
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: iseb_nginx
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - odoo
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./nginx/ssl:/etc/nginx/ssl:ro
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   networks:
+  #     - iseb-network
+
+# ===================================================================
+# VOLUMES
+# ===================================================================
+volumes:
+  postgres-data:
+    name: iseb_postgres_data
+  redis-data:
+    name: iseb_redis_data
+  odoo-data:
+    name: iseb_odoo_data
+  odoo-logs:
+    name: iseb_odoo_logs
+
+# ===================================================================
+# NETWORKS
+# ===================================================================
+networks:
+  iseb-network:
+    name: iseb_network
+    driver: bridge
+
+# ===================================================================
+# CONFIGURATION
+# ===================================================================
+#
+# Créez un fichier .env à la racine pour personnaliser:
+#
+# DB_PASSWORD=votre_mot_de_passe_db
+# ADMIN_PASSWORD=votre_mot_de_passe_admin
+# WORKERS=4
+# LOG_LEVEL=info
+# ODOO_PORT=8069
+# LONGPOLLING_PORT=8072
+#
+# ===================================================================
+#
+# COMMANDES UTILES:
+#
+# Démarrer la stack:
+#   docker-compose up -d
+#
+# Voir les logs:
+#   docker-compose logs -f
+#   docker-compose logs -f odoo
+#   docker-compose logs -f db
+#
+# Redémarrer un service:
+#   docker-compose restart odoo
+#
+# Mettre à jour les images:
+#   docker-compose pull
+#   docker-compose up -d --build
+#
+# Arrêter la stack:
+#   docker-compose down
+#
+# Arrêter et supprimer les volumes:
+#   docker-compose down -v
+#
+# Exécuter une commande dans un conteneur:
+#   docker-compose exec odoo bash
+#   docker-compose exec db psql -U odoo
+#
+# Sauvegarder la base de données:
+#   docker-compose exec db pg_dump -U odoo odoo > backup.sql
+#
+# Restaurer la base de données:
+#   docker-compose exec -T db psql -U odoo odoo < backup.sql
+#
+# ===================================================================

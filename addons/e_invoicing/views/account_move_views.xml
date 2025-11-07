@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Invoice Form -->
+    <record id="view_move_form_einvoice" model="ir.ui.view">
+        <field name="name">account.move.form.einvoice</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_send_einvoice" string="Envoyer E-Facture" type="object" class="oe_highlight"
+                        invisible="einvoice_state != 'to_send' or move_type not in ['out_invoice', 'out_refund']"
+                        icon="fa-send"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Facture Électronique" name="einvoice" invisible="not einvoice_enabled">
+                    <group>
+                        <group>
+                            <field name="einvoice_enabled" invisible="1"/>
+                            <field name="einvoice_format_id"/>
+                            <field name="einvoice_state"/>
+                            <field name="einvoice_sent_date"/>
+                        </group>
+                        <group>
+                            <field name="einvoice_reference"/>
+                            <field name="einvoice_error_message" invisible="einvoice_state != 'error'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <button name="action_download_einvoice_xml" string="Télécharger XML" type="object" icon="fa-download"
+                                invisible="not einvoice_xml"/>
+                        <button name="action_view_einvoice_logs" string="Voir Logs" type="object" icon="fa-history"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

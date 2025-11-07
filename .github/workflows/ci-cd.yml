@@ -1,0 +1,295 @@
+name: ISEB Platform CI/CD
+
+on:
+  push:
+    branches: [ main, develop, "claude/*" ]
+  pull_request:
+    branches: [ main, develop ]
+
+# ===================================================================
+# Environment Variables
+# ===================================================================
+env:
+  PYTHON_VERSION: '3.10'
+  ODOO_VERSION: '17.0'
+  POSTGRES_VERSION: '15'
+
+# ===================================================================
+# Jobs
+# ===================================================================
+jobs:
+  # =================================================================
+  # 1. TESTS UNITAIRES
+  # =================================================================
+  unit-tests:
+    name: Tests Unitaires
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: odoo_test
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Tesseract OCR
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y tesseract-ocr tesseract-ocr-fra
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          python -m pytest addons/client_portal/tests/ -v
+          python -m pytest addons/bank_sync/tests/ -v
+          python -m pytest addons/reporting/tests/ -v
+          python -m pytest addons/e_invoicing/tests/ -v
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: odoo
+          DB_PASSWORD: odoo
+
+  # =================================================================
+  # 2. TESTS E2E (Selenium)
+  # =================================================================
+  e2e-tests:
+    name: Tests E2E
+    runs-on: ubuntu-latest
+    needs: unit-tests
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: odoo_test
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@latest
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install selenium webdriver-manager
+
+      - name: Start Odoo
+        run: |
+          docker-compose up -d odoo
+          sleep 30
+
+      - name: Run E2E Tests
+        run: |
+          python -m unittest tests/e2e/test_client_portal.py -v
+
+      - name: Upload Screenshots on Failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-screenshots
+          path: tests/screenshots/
+
+  # =================================================================
+  # 3. LINTING & CODE QUALITY
+  # =================================================================
+  code-quality:
+    name: Qualité du Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Linters
+        run: |
+          pip install flake8 pylint black isort
+
+      - name: Run Flake8
+        run: |
+          flake8 addons/ --max-line-length=120 --exclude=__pycache__
+
+      - name: Run Pylint
+        continue-on-error: true
+        run: |
+          pylint addons/client_portal --disable=C,R
+          pylint addons/bank_sync --disable=C,R
+          pylint addons/reporting --disable=C,R
+          pylint addons/e_invoicing --disable=C,R
+
+      - name: Check Black Formatting
+        run: |
+          black --check addons/
+
+      - name: Check Import Sorting
+        run: |
+          isort --check-only addons/
+
+  # =================================================================
+  # 4. SECURITY SCAN
+  # =================================================================
+  security-scan:
+    name: Scan de Sécurité
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Bandit (Security Linter)
+        uses: tj-actions/bandit@v5.1
+        with:
+          targets: |
+            addons/
+
+      - name: Run Safety (Dependency Check)
+        run: |
+          pip install safety
+          safety check --file requirements.txt
+
+  # =================================================================
+  # 5. BUILD DOCKER IMAGE
+  # =================================================================
+  build-docker:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [unit-tests, code-quality]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: iseb/platform
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=iseb/platform:buildcache
+          cache-to: type=registry,ref=iseb/platform:buildcache,mode=max
+
+  # =================================================================
+  # 6. DEPLOY (Production - only on main)
+  # =================================================================
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [e2e-tests, build-docker, security-scan]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd /opt/iseb
+            git pull origin main
+            docker-compose pull
+            docker-compose up -d
+            docker-compose exec -T odoo odoo -u all -d production --stop-after-init
+
+      - name: Health Check
+        run: |
+          sleep 30
+          curl -f https://iseb.fr/web/health || exit 1
+
+      - name: Notify Deployment
+        if: success()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: '🚀 ISEB Platform deployed successfully!'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+      - name: Notify Failure
+        if: failure()
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: '❌ ISEB Platform deployment failed!'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+
+# ===================================================================
+# Notes de Configuration
+# ===================================================================
+#
+# Secrets nécessaires (Settings → Secrets):
+#   - DOCKERHUB_USERNAME
+#   - DOCKERHUB_TOKEN
+#   - DEPLOY_HOST
+#   - DEPLOY_USER
+#   - DEPLOY_SSH_KEY
+#   - SLACK_WEBHOOK (optionnel)
+#
+# ===================================================================

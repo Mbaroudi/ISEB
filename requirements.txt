@@ -1,0 +1,183 @@
+# ===================================================================
+# ISEB Platform - Requirements Python
+# ===================================================================
+#
+# Installation:
+#   pip install -r requirements.txt
+#
+# Pour environnement de production, utilisez:
+#   pip install -r requirements.txt --no-cache-dir
+#
+# ===================================================================
+
+# ===================================================================
+# CORE ODOO (installé séparément via Odoo)
+# ===================================================================
+# odoo==17.0
+# Les dépendances Odoo de base sont gérées par Odoo lui-même
+
+# ===================================================================
+# CLIENT PORTAL - Module client_portal
+# ===================================================================
+
+# PDF/Excel Export
+xlsxwriter>=3.1.9
+reportlab>=4.0.7
+
+# OCR - Tesseract (Base - CPU only)
+pytesseract>=0.3.10
+Pillow>=10.1.0
+
+# OCR - DeepSeek-OCR (Avancé - GPU required) - OPTIONNEL
+# Décommentez ces lignes si vous avez un serveur GPU
+# torch==2.6.0
+# torchvision==0.21.0
+# torchaudio==2.6.0
+# transformers>=4.51.1
+# flash-attn==2.7.3
+
+# Installation DeepSeek-OCR (si GPU disponible):
+# pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu118
+# pip install transformers>=4.51.1
+# pip install flash-attn==2.7.3 --no-build-isolation
+
+# ===================================================================
+# BANK_SYNC - Module bank_sync
+# ===================================================================
+
+# HTTP Requests
+requests>=2.31.0
+
+# Cryptographie pour chiffrement credentials
+cryptography>=41.0.7
+
+# Background Tasks
+celery>=5.3.4
+redis>=5.0.1
+
+# ===================================================================
+# REPORTING - Module reporting
+# ===================================================================
+
+# Analyse de données
+pandas>=2.1.4
+openpyxl>=3.1.2
+
+# Graphiques avancés
+plotly>=5.18.0
+
+# ===================================================================
+# E_INVOICING - Module e_invoicing
+# ===================================================================
+
+# XML Processing
+lxml>=5.0.0
+
+# PDF/A-3 Generation (déjà inclus dans client_portal)
+# reportlab>=4.0.7
+
+# SOAP Client pour Chorus Pro
+zeep>=4.2.1
+
+# ===================================================================
+# TESTING - Tests E2E & Performance
+# ===================================================================
+
+# Tests End-to-End (Selenium)
+selenium>=4.16.0
+webdriver-manager>=4.0.1
+
+# Tests de Performance (Locust)
+locust>=2.20.0
+
+# Tests unitaires (inclus avec Python)
+# unittest
+
+# ===================================================================
+# UTILITIES & DEVELOPMENT
+# ===================================================================
+
+# Chargement de variables d'environnement
+python-dotenv>=1.0.0
+
+# HTTP Client amélioré
+httpx>=0.25.2
+
+# Parsing de dates
+python-dateutil>=2.8.2
+
+# JSON avancé
+ujson>=5.9.0
+
+# Logging structuré
+structlog>=23.3.0
+
+# ===================================================================
+# PRODUCTION (Optionnel mais recommandé)
+# ===================================================================
+
+# Server WSGI Production
+gunicorn>=21.2.0
+
+# Monitoring
+sentry-sdk>=1.40.0
+
+# Proxy inverse / Load Balancer (séparé)
+# nginx (installé via apt/yum)
+
+# Base de données (séparée)
+# postgresql-client (installé via apt/yum)
+
+# ===================================================================
+# NOTES D'INSTALLATION
+# ===================================================================
+
+# Tesseract OCR (système):
+# Ubuntu/Debian:
+#   sudo apt-get update
+#   sudo apt-get install tesseract-ocr tesseract-ocr-fra
+#
+# CentOS/RHEL:
+#   sudo yum install tesseract tesseract-langpack-fra
+#
+# macOS:
+#   brew install tesseract tesseract-lang
+
+# PostgreSQL (système):
+# Ubuntu/Debian:
+#   sudo apt-get install postgresql postgresql-contrib
+#
+# Docker:
+#   docker run -d --name postgres -e POSTGRES_PASSWORD=odoo -p 5432:5432 postgres:15
+
+# Redis (système):
+# Ubuntu/Debian:
+#   sudo apt-get install redis-server
+#
+# Docker:
+#   docker run -d --name redis -p 6379:6379 redis:7-alpine
+
+# ===================================================================
+# COMPATIBILITÉ
+# ===================================================================
+
+# Python 3.10+
+# Testé avec Python 3.10, 3.11, 3.12
+# Odoo 17.0
+
+# ===================================================================
+# TROUBLESHOOTING
+# ===================================================================
+
+# Si erreur avec lxml:
+#   sudo apt-get install libxml2-dev libxslt1-dev python3-dev
+#
+# Si erreur avec Pillow:
+#   sudo apt-get install libjpeg-dev zlib1g-dev
+#
+# Si erreur avec cryptography:
+#   sudo apt-get install build-essential libssl-dev libffi-dev python3-dev
+#
+# Si erreur avec flash-attn:
+#   pip install flash-attn==2.7.3 --no-build-isolation
+#   (Nécessite CUDA 11.8+ et GPU compatible)
