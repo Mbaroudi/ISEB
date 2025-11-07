@@ -62,6 +62,9 @@ AGPL-3
         'security/security.xml',
         'security/ir.model.access.csv',
     ],
+    'demo': [
+        'demo/demo_data.xml',
+    ],
     'installable': True,
     'application': True,
     'auto_install': False,

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Clients de démonstration -->
+        <record id="demo_partner_tech_startup" model="res.partner">
+            <field name="name">Tech Startup SARL</field>
+            <field name="is_company">True</field>
+            <field name="is_iseb_client">True</field>
+            <field name="email">contact@techstartup.fr</field>
+            <field name="phone">+33 1 23 45 67 89</field>
+            <field name="street">15 Rue de la Tech</field>
+            <field name="city">Paris</field>
+            <field name="zip">75001</field>
+            <field name="country_id" ref="base.fr"/>
+        </record>
+
+        <record id="demo_partner_restaurant" model="res.partner">
+            <field name="name">Restaurant Le Gourmet</field>
+            <field name="is_company">True</field>
+            <field name="is_iseb_client">True</field>
+            <field name="email">contact@legourmet.fr</field>
+            <field name="phone">+33 4 56 78 90 12</field>
+            <field name="street">8 Place du Marché</field>
+            <field name="city">Lyon</field>
+            <field name="zip">69001</field>
+            <field name="country_id" ref="base.fr"/>
+        </record>
+
+        <record id="demo_partner_consultant" model="res.partner">
+            <field name="name">Marie Consultant - Auto-Entrepreneur</field>
+            <field name="is_company">False</field>
+            <field name="is_iseb_client">True</field>
+            <field name="email">marie@consultant.fr</field>
+            <field name="phone">+33 6 12 34 56 78</field>
+            <field name="street">42 Avenue des Indépendants</field>
+            <field name="city">Bordeaux</field>
+            <field name="zip">33000</field>
+            <field name="country_id" ref="base.fr"/>
+        </record>
+
+        <!-- Dashboards de démonstration -->
+        <record id="demo_dashboard_tech_startup_jan" model="client.dashboard">
+            <field name="partner_id" ref="demo_partner_tech_startup"/>
+            <field name="period_start">2025-01-01</field>
+            <field name="period_end">2025-01-31</field>
+            <field name="cash_balance">25000.00</field>
+            <field name="revenue_mtd">15000.00</field>
+            <field name="revenue_ytd">15000.00</field>
+            <field name="revenue_last_month">12000.00</field>
+            <field name="revenue_last_year">120000.00</field>
+            <field name="expenses_mtd">8000.00</field>
+            <field name="expenses_ytd">8000.00</field>
+            <field name="net_income_mtd">7000.00</field>
+            <field name="net_income_ytd">7000.00</field>
+            <field name="tva_collectee">3000.00</field>
+            <field name="tva_deductible">1600.00</field>
+            <field name="tva_due">1400.00</field>
+            <field name="receivable_amount">5000.00</field>
+            <field name="payable_amount">2000.00</field>
+            <field name="overdue_receivable">0.00</field>
+            <field name="overdue_payable">0.00</field>
+        </record>
+
+        <record id="demo_dashboard_restaurant_jan" model="client.dashboard">
+            <field name="partner_id" ref="demo_partner_restaurant"/>
+            <field name="period_start">2025-01-01</field>
+            <field name="period_end">2025-01-31</field>
+            <field name="cash_balance">35000.00</field>
+            <field name="revenue_mtd">45000.00</field>
+            <field name="revenue_ytd">45000.00</field>
+            <field name="revenue_last_month">42000.00</field>
+            <field name="revenue_last_year">480000.00</field>
+            <field name="expenses_mtd">30000.00</field>
+            <field name="expenses_ytd">30000.00</field>
+            <field name="net_income_mtd">15000.00</field>
+            <field name="net_income_ytd">15000.00</field>
+            <field name="tva_collectee">9000.00</field>
+            <field name="tva_deductible">6000.00</field>
+            <field name="tva_due">3000.00</field>
+            <field name="receivable_amount">8000.00</field>
+            <field name="payable_amount">12000.00</field>
+            <field name="overdue_receivable">1500.00</field>
+            <field name="overdue_payable">500.00</field>
+        </record>
+
+        <record id="demo_dashboard_consultant_jan" model="client.dashboard">
+            <field name="partner_id" ref="demo_partner_consultant"/>
+            <field name="period_start">2025-01-01</field>
+            <field name="period_end">2025-01-31</field>
+            <field name="cash_balance">8500.00</field>
+            <field name="revenue_mtd">6000.00</field>
+            <field name="revenue_ytd">6000.00</field>
+            <field name="revenue_last_month">5500.00</field>
+            <field name="revenue_last_year">65000.00</field>
+            <field name="expenses_mtd">2000.00</field>
+            <field name="expenses_ytd">2000.00</field>
+            <field name="net_income_mtd">4000.00</field>
+            <field name="net_income_ytd">4000.00</field>
+            <field name="tva_collectee">1200.00</field>
+            <field name="tva_deductible">400.00</field>
+            <field name="tva_due">800.00</field>
+            <field name="receivable_amount">3000.00</field>
+            <field name="payable_amount">500.00</field>
+            <field name="overdue_receivable">0.00</field>
+            <field name="overdue_payable">0.00</field>
+        </record>
+
+        <!-- Documents de démonstration -->
+        <record id="demo_document_facture_1" model="client.document">
+            <field name="name">Facture Fournisseur OVH - Janvier 2025</field>
+            <field name="partner_id" ref="demo_partner_tech_startup"/>
+            <field name="document_type">invoice</field>
+            <field name="state">validated</field>
+            <field name="notes">Hébergement cloud mensuel</field>
+        </record>
+
+        <record id="demo_document_contract" model="client.document">
+            <field name="name">Contrat Location Bureau</field>
+            <field name="partner_id" ref="demo_partner_restaurant"/>
+            <field name="document_type">contract</field>
+            <field name="state">validated</field>
+            <field name="notes">Bail commercial 3/6/9</field>
+        </record>
+
+        <record id="demo_document_justificatif" model="client.document">
+            <field name="name">Ticket Fournitures Bureau</field>
+            <field name="partner_id" ref="demo_partner_consultant"/>
+            <field name="document_type">justificatif</field>
+            <field name="state">pending</field>
+            <field name="notes">Papeterie et matériel</field>
+        </record>
+
+        <!-- Notes de frais de démonstration -->
+        <record id="demo_expense_meal_1" model="expense.note">
+            <field name="name">Déjeuner client - Projet Alpha</field>
+            <field name="partner_id" ref="demo_partner_tech_startup"/>
+            <field name="expense_date">2025-01-15</field>
+            <field name="category">meal</field>
+            <field name="amount">85.50</field>
+            <field name="tva_amount">8.55</field>
+            <field name="state">approved</field>
+            <field name="notes">Restaurant Le Parisien avec client prospect</field>
+        </record>
+
+        <record id="demo_expense_transport_1" model="expense.note">
+            <field name="name">Taxi Aéroport</field>
+            <field name="partner_id" ref="demo_partner_consultant"/>
+            <field name="expense_date">2025-01-20</field>
+            <field name="category">transport</field>
+            <field name="amount">45.00</field>
+            <field name="tva_amount">9.00</field>
+            <field name="state">submitted</field>
+            <field name="notes">Déplacement client Lyon</field>
+        </record>
+
+        <record id="demo_expense_fuel_1" model="expense.note">
+            <field name="name">Essence - Livraisons</field>
+            <field name="partner_id" ref="demo_partner_restaurant"/>
+            <field name="expense_date">2025-01-25</field>
+            <field name="category">fuel</field>
+            <field name="amount">120.00</field>
+            <field name="tva_amount">24.00</field>
+            <field name="state">approved</field>
+            <field name="notes">Plein complet véhicule utilitaire</field>
+        </record>
+
+        <record id="demo_expense_accommodation" model="expense.note">
+            <field name="name">Hôtel - Salon Professionnel Paris</field>
+            <field name="partner_id" ref="demo_partner_consultant"/>
+            <field name="expense_date">2025-01-28</field>
+            <field name="category">accommodation</field>
+            <field name="amount">180.00</field>
+            <field name="tva_amount">18.00</field>
+            <field name="state">draft</field>
+            <field name="notes">2 nuits - Salon Tech Paris</field>
+        </record>
+
+        <record id="demo_expense_parking" model="expense.note">
+            <field name="name">Parking Centre-ville</field>
+            <field name="partner_id" ref="demo_partner_tech_startup"/>
+            <field name="expense_date">2025-01-30</field>
+            <field name="category">parking</field>
+            <field name="amount">25.00</field>
+            <field name="tva_amount">5.00</field>
+            <field name="state">submitted</field>
+            <field name="notes">RDV client - 3 heures</field>
+        </record>
+    </data>
+</odoo>

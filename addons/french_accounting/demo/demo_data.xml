@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Déclarations TVA de démonstration -->
+        <record id="demo_tva_declaration_jan_2025" model="tva.declaration">
+            <field name="name">TVA-2025-01</field>
+            <field name="regime_tva">reel_normal</field>
+            <field name="declaration_type">ca3</field>
+            <field name="period_type">monthly</field>
+            <field name="period_start">2025-01-01</field>
+            <field name="period_end">2025-01-31</field>
+            <field name="tva_collectee_20">4000.00</field>
+            <field name="tva_collectee_10">500.00</field>
+            <field name="tva_collectee_55">100.00</field>
+            <field name="tva_deductible_immobilisations">200.00</field>
+            <field name="tva_deductible_biens_services">1500.00</field>
+            <field name="base_ht_20">20000.00</field>
+            <field name="base_ht_10">5000.00</field>
+            <field name="base_ht_55">1818.18</field>
+            <field name="credit_precedent">0.00</field>
+            <field name="state">computed</field>
+        </record>
+
+        <record id="demo_tva_declaration_feb_2025" model="tva.declaration">
+            <field name="name">TVA-2025-02</field>
+            <field name="regime_tva">reel_normal</field>
+            <field name="declaration_type">ca3</field>
+            <field name="period_type">monthly</field>
+            <field name="period_start">2025-02-01</field>
+            <field name="period_end">2025-02-28</field>
+            <field name="tva_collectee_20">3500.00</field>
+            <field name="tva_collectee_10">450.00</field>
+            <field name="tva_collectee_55">90.00</field>
+            <field name="tva_deductible_immobilisations">150.00</field>
+            <field name="tva_deductible_biens_services">1200.00</field>
+            <field name="base_ht_20">17500.00</field>
+            <field name="base_ht_10">4500.00</field>
+            <field name="base_ht_55">1636.36</field>
+            <field name="credit_precedent">0.00</field>
+            <field name="state">computed</field>
+        </record>
+
+        <!-- Export FEC de démonstration -->
+        <record id="demo_fec_export_2025" model="fec.export">
+            <field name="name">FEC Exercice 2025</field>
+            <field name="date_from">2025-01-01</field>
+            <field name="date_to">2025-12-31</field>
+            <field name="export_type">full</field>
+            <field name="include_draft">False</field>
+            <field name="state">draft</field>
+        </record>
+
+        <record id="demo_fec_export_q1_2025" model="fec.export">
+            <field name="name">FEC T1 2025</field>
+            <field name="date_from">2025-01-01</field>
+            <field name="date_to">2025-03-31</field>
+            <field name="export_type">partial</field>
+            <field name="include_draft">False</field>
+            <field name="state">draft</field>
+        </record>
+
+        <!-- Liasses fiscales de démonstration -->
+        <record id="demo_liasse_2024" model="liasse.fiscale">
+            <field name="name">Liasse Fiscale 2024</field>
+            <field name="fiscal_year">2024</field>
+            <field name="type">2033</field>
+            <field name="state">draft</field>
+        </record>
+
+        <!-- Configuration exemple société -->
+        <function model="res.company" name="write">
+            <value eval="[ref('base.main_company')]"/>
+            <value eval="{'french_regime_tva': 'reel_normal', 'french_fiscal_year_start': '01-01'}"/>
+        </function>
+    </data>
+</odoo>
