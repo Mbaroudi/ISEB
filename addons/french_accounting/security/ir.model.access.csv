@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fec_export_user,fec.export.user,model_fec_export,group_french_accounting_user,1,0,0,0
+access_fec_export_accountant,fec.export.accountant,model_fec_export,group_french_accounting_accountant,1,1,1,0
+access_fec_export_manager,fec.export.manager,model_fec_export,group_french_accounting_manager,1,1,1,1
+access_tva_declaration_user,tva.declaration.user,model_tva_declaration,group_french_accounting_user,1,0,0,0
+access_tva_declaration_accountant,tva.declaration.accountant,model_tva_declaration,group_french_accounting_accountant,1,1,1,0
+access_tva_declaration_manager,tva.declaration.manager,model_tva_declaration,group_french_accounting_manager,1,1,1,1
+access_liasse_fiscale_user,liasse.fiscale.user,model_liasse_fiscale,group_french_accounting_user,1,0,0,0
+access_liasse_fiscale_accountant,liasse.fiscale.accountant,model_liasse_fiscale,group_french_accounting_accountant,1,1,1,0
+access_liasse_fiscale_manager,liasse.fiscale.manager,model_liasse_fiscale,group_french_accounting_manager,1,1,1,1

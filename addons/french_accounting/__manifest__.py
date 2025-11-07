@@ -3,37 +3,37 @@
     'name': 'French Accounting - ISEB',
     'version': '17.0.1.0.0',
     'category': 'Accounting/Localizations/Account Charts',
-    'summary': 'Comptabilité française complète pour cabinets d\'expertise-comptable',
+    'summary': 'Comptabilitï¿½ franï¿½aise complï¿½te pour cabinets d\'expertise-comptable',
     'description': """
 French Accounting Module - ISEB Platform
 =========================================
 
-Module de comptabilité française complet incluant :
+Module de comptabilitï¿½ franï¿½aise complet incluant :
 
-Fonctionnalités principales
+Fonctionnalitï¿½s principales
 ----------------------------
-* Plan Comptable Général (PCG) 2025 complet
-* Déclarations de TVA automatisées (CA3, CA12)
+* Plan Comptable Gï¿½nï¿½ral (PCG) 2025 complet
+* Dï¿½clarations de TVA automatisï¿½es (CA3, CA12)
 * Liasses fiscales (2033, 2035, 2050)
-* Export FEC (Fichier des Écritures Comptables)
+* Export FEC (Fichier des ï¿½critures Comptables)
 * Gestion des immobilisations et amortissements
-* Conformité légale française (Code de commerce)
-* Régimes fiscaux français (réel normal, réel simplifié, BNC)
-* Comptes spéciaux français (6XX, 7XX selon PCG)
+* Conformitï¿½ lï¿½gale franï¿½aise (Code de commerce)
+* Rï¿½gimes fiscaux franï¿½ais (rï¿½el normal, rï¿½el simplifiï¿½, BNC)
+* Comptes spï¿½ciaux franï¿½ais (6XX, 7XX selon PCG)
 
-Conformité réglementaire
+Conformitï¿½ rï¿½glementaire
 -------------------------
 * Art. L123-22 du Code de commerce
-* Règlement ANC 2014-03 (PCG)
+* Rï¿½glement ANC 2014-03 (PCG)
 * Art. A47 A-1 du LPF (FEC)
 * CGI art. 242 nonies A (facturation)
-* Norme EDI-TVA pour télédéclaration
+* Norme EDI-TVA pour tï¿½lï¿½dï¿½claration
 
-Intégrations
+Intï¿½grations
 ------------
-* Intégration avec l'Accounting Odoo standard
+* Intï¿½gration avec l'Accounting Odoo standard
 * Compatible avec le module de facturation
-* Support multi-sociétés
+* Support multi-sociï¿½tï¿½s
 * API pour connexions externes
 
 Auteur
@@ -50,52 +50,17 @@ AGPL-3
     'depends': [
         'base',
         'account',
-        'account_accountant',
-        'l10n_fr',
-        'account_asset',
-        'account_reports',
+        'mail',
     ],
     'data': [
         # Security
-        'security/ir.model.access.csv',
         'security/security.xml',
-
-        # Data
-        'data/account_chart_template_data.xml',
-        'data/account.account.template.csv',
-        'data/account_tax_data.xml',
-        'data/fiscal_position_data.xml',
-        'data/fec_export_data.xml',
+        'security/ir.model.access.csv',
 
         # Views
-        'views/account_move_views.xml',
-        'views/account_journal_views.xml',
-        'views/res_company_views.xml',
-        'views/account_tax_views.xml',
         'views/fec_export_views.xml',
-        'views/fiscal_declaration_views.xml',
-        'views/liasse_fiscale_views.xml',
+        'views/tva_declaration_views.xml',
         'views/menu_views.xml',
-
-        # Wizards
-        'wizard/fec_export_wizard_views.xml',
-        'wizard/tva_declaration_wizard_views.xml',
-        'wizard/liasse_fiscale_wizard_views.xml',
-
-        # Reports
-        'reports/report_templates.xml',
-        'reports/fec_report.xml',
-        'reports/tva_report.xml',
-    ],
-    'assets': {
-        'web.assets_backend': [
-            'french_accounting/static/src/js/fec_export.js',
-            'french_accounting/static/src/js/tva_dashboard.js',
-            'french_accounting/static/src/css/french_accounting.css',
-        ],
-    },
-    'demo': [
-        'demo/demo_data.xml',
     ],
     'images': [
         'static/description/icon.png',
