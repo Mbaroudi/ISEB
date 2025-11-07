@@ -26,9 +26,9 @@
         <field name="arch" type="xml">
             <form string="Export FEC">
                 <header>
-                    <button name="action_generate_fec" string="Générer FEC" type="object"
+                    <button name="action_generate_fec" string="GÃ©nÃ©rer FEC" type="object"
                             class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
-                    <button name="action_download_fec" string="Télécharger" type="object"
+                    <button name="action_download_fec" string="TÃ©lÃ©charger" type="object"
                             class="oe_highlight" attrs="{'invisible': [('state', '!=', 'done')]}"/>
                     <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
                             attrs="{'invisible': [('state', 'in', ['draft', 'generating'])]}"/>
@@ -92,10 +92,10 @@
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Créer un export FEC
+                CrÃ©er un export FEC
             </p>
             <p>
-                Le Fichier des Écritures Comptables (FEC) est obligatoire pour toutes les entreprises tenant leur comptabilité au moyen de systèmes informatisés.
+                Le Fichier des Ã‰critures Comptables (FEC) est obligatoire pour toutes les entreprises tenant leur comptabilitÃ© au moyen de systÃ¨mes informatisÃ©s.
             </p>
         </field>
     </record>

@@ -5,7 +5,7 @@
         <field name="name">tva.declaration.tree</field>
         <field name="model">tva.declaration</field>
         <field name="arch" type="xml">
-            <tree string="Déclarations TVA" decoration-success="state=='paid'" decoration-info="state=='draft'">
+            <tree string="DÃ©clarations TVA" decoration-success="state=='paid'" decoration-info="state=='draft'">
                 <field name="name"/>
                 <field name="company_id" groups="base.group_multi_company"/>
                 <field name="period_label"/>
@@ -22,13 +22,13 @@
         <field name="name">tva.declaration.form</field>
         <field name="model">tva.declaration</field>
         <field name="arch" type="xml">
-            <form string="Déclaration TVA">
+            <form string="DÃ©claration TVA">
                 <header>
                     <button name="action_compute_tva" string="Calculer TVA" type="object"
                             class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
-                    <button name="action_submit" string="Déclarer" type="object"
+                    <button name="action_submit" string="DÃ©clarer" type="object"
                             class="oe_highlight" attrs="{'invisible': [('state', '!=', 'computed')]}"/>
-                    <button name="action_mark_paid" string="Marquer comme payée" type="object"
+                    <button name="action_mark_paid" string="Marquer comme payÃ©e" type="object"
                             attrs="{'invisible': [('state', '!=', 'submitted')]}"/>
                     <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
                             attrs="{'invisible': [('state', 'in', ['draft', 'paid'])]}"/>
@@ -58,7 +58,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="TVA Collectée" name="tva_collectee">
+                        <page string="TVA CollectÃ©e" name="tva_collectee">
                             <group>
                                 <group>
                                     <field name="base_ht_20" widget="monetary"/>
@@ -83,7 +83,7 @@
                                 <field name="tva_collectee_total" widget="monetary" class="oe_subtotal_footer_separator"/>
                             </group>
                         </page>
-                        <page string="TVA Déductible" name="tva_deductible">
+                        <page string="TVA DÃ©ductible" name="tva_deductible">
                             <group>
                                 <field name="tva_deductible_immobilisations" widget="monetary"/>
                                 <field name="tva_deductible_biens_services" widget="monetary"/>
@@ -116,15 +116,15 @@
 
     <!-- Action TVA Declaration -->
     <record id="action_tva_declaration" model="ir.actions.act_window">
-        <field name="name">Déclarations TVA</field>
+        <field name="name">DÃ©clarations TVA</field>
         <field name="res_model">tva.declaration</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Créer une déclaration de TVA
+                CrÃ©er une dÃ©claration de TVA
             </p>
             <p>
-                Gérez vos déclarations de TVA mensuelles, trimestrielles ou annuelles.
+                GÃ©rez vos dÃ©clarations de TVA mensuelles, trimestrielles ou annuelles.
             </p>
         </field>
     </record>

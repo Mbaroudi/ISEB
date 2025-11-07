@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Déclarations TVA de démonstration -->
+        <!-- DÃ©clarations TVA de dÃ©monstration -->
         <record id="demo_tva_declaration_jan_2025" model="tva.declaration">
             <field name="name">TVA-2025-01</field>
             <field name="regime_tva">reel_normal</field>
@@ -40,7 +40,7 @@
             <field name="state">computed</field>
         </record>
 
-        <!-- Export FEC de démonstration -->
+        <!-- Export FEC de dÃ©monstration -->
         <record id="demo_fec_export_2025" model="fec.export">
             <field name="name">FEC Exercice 2025</field>
             <field name="date_from">2025-01-01</field>
@@ -59,7 +59,7 @@
             <field name="state">draft</field>
         </record>
 
-        <!-- Liasses fiscales de démonstration -->
+        <!-- Liasses fiscales de dÃ©monstration -->
         <record id="demo_liasse_2024" model="liasse.fiscale">
             <field name="name">Liasse Fiscale 2024</field>
             <field name="fiscal_year">2024</field>
@@ -67,7 +67,7 @@
             <field name="state">draft</field>
         </record>
 
-        <!-- Configuration exemple société -->
+        <!-- Configuration exemple sociÃ©tÃ© -->
         <function model="res.company" name="write">
             <value eval="[ref('base.main_company')]"/>
             <value eval="{'french_regime_tva': 'reel_normal', 'french_fiscal_year_start': '01-01'}"/>
