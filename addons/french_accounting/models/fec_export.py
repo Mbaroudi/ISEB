@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 class FecExport(models.Model):
     _name = 'fec.export'
     _description = 'Export FEC (Fichier des Écritures Comptables)'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
     _rec_name = 'display_name'
 
