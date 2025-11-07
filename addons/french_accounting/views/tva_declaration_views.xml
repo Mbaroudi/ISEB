@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Tree TVA Declaration -->
+    <record id="view_tva_declaration_tree" model="ir.ui.view">
+        <field name="name">tva.declaration.tree</field>
+        <field name="model">tva.declaration</field>
+        <field name="arch" type="xml">
+            <tree string="Déclarations TVA" decoration-success="state=='paid'" decoration-info="state=='draft'">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="period_label"/>
+                <field name="declaration_type"/>
+                <field name="tva_a_payer" widget="monetary"/>
+                <field name="due_date"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Form TVA Declaration -->
+    <record id="view_tva_declaration_form" model="ir.ui.view">
+        <field name="name">tva.declaration.form</field>
+        <field name="model">tva.declaration</field>
+        <field name="arch" type="xml">
+            <form string="Déclaration TVA">
+                <header>
+                    <button name="action_compute_tva" string="Calculer TVA" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_submit" string="Déclarer" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'computed')]}"/>
+                    <button name="action_mark_paid" string="Marquer comme payée" type="object"
+                            attrs="{'invisible': [('state', '!=', 'submitted')]}"/>
+                    <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'paid'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,submitted,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                        <h2>
+                            <field name="period_label" readonly="1"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="regime_tva" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="declaration_type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="period_type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        </group>
+                        <group>
+                            <field name="period_start" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="period_end" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="due_date" readonly="1"/>
+                            <field name="payment_date" readonly="1" attrs="{'invisible': [('state', '!=', 'paid')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="TVA Collectée" name="tva_collectee">
+                            <group>
+                                <group>
+                                    <field name="base_ht_20" widget="monetary"/>
+                                    <field name="tva_collectee_20" widget="monetary"/>
+                                </group>
+                                <group>
+                                    <field name="base_ht_10" widget="monetary"/>
+                                    <field name="tva_collectee_10" widget="monetary"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="base_ht_55" widget="monetary"/>
+                                    <field name="tva_collectee_55" widget="monetary"/>
+                                </group>
+                                <group>
+                                    <field name="base_ht_21" widget="monetary"/>
+                                    <field name="tva_collectee_21" widget="monetary"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="tva_collectee_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page string="TVA Déductible" name="tva_deductible">
+                            <group>
+                                <field name="tva_deductible_immobilisations" widget="monetary"/>
+                                <field name="tva_deductible_biens_services" widget="monetary"/>
+                                <field name="tva_deductible_total" widget="monetary" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page string="Calcul Final" name="calcul">
+                            <group>
+                                <field name="tva_collectee_total" readonly="1" widget="monetary"/>
+                                <field name="tva_deductible_total" readonly="1" widget="monetary"/>
+                                <field name="tva_nette" readonly="1" widget="monetary"/>
+                                <field name="credit_precedent" widget="monetary"/>
+                                <field name="tva_a_payer" readonly="1" widget="monetary" class="oe_subtotal_footer_separator"/>
+                                <field name="credit_a_reporter" readonly="1" widget="monetary"/>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes internes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action TVA Declaration -->
+    <record id="action_tva_declaration" model="ir.actions.act_window">
+        <field name="name">Déclarations TVA</field>
+        <field name="res_model">tva.declaration</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une déclaration de TVA
+            </p>
+            <p>
+                Gérez vos déclarations de TVA mensuelles, trimestrielles ou annuelles.
+            </p>
+        </field>
+    </record>
+
+    <!-- Vue Liasse Fiscale (simple) -->
+    <record id="view_liasse_fiscale_tree" model="ir.ui.view">
+        <field name="name">liasse.fiscale.tree</field>
+        <field name="model">liasse.fiscale</field>
+        <field name="arch" type="xml">
+            <tree string="Liasses Fiscales">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="fiscal_year"/>
+                <field name="type"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_liasse_fiscale_form" model="ir.ui.view">
+        <field name="name">liasse.fiscale.form</field>
+        <field name="model">liasse.fiscale</field>
+        <field name="arch" type="xml">
+            <form string="Liasse Fiscale">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="fiscal_year"/>
+                        <field name="type"/>
+                        <field name="state"/>
+                        <field name="filename" invisible="1"/>
+                        <field name="file" filename="filename"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_liasse_fiscale" model="ir.actions.act_window">
+        <field name="name">Liasses Fiscales</field>
+        <field name="res_model">liasse.fiscale</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

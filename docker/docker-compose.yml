@@ -1,0 +1,255 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: iseb-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: iseb-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redispassword}
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Odoo Application
+  odoo:
+    build:
+      context: ./odoo
+      dockerfile: Dockerfile
+      args:
+        ODOO_VERSION: ${ODOO_VERSION:-17.0}
+    container_name: iseb-odoo
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      DATABASE: ${POSTGRES_DB:-odoo}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redispassword}
+      ODOO_ADMIN_PASSWD: ${ODOO_ADMIN_PASSWD:-admin}
+      ODOO_DB_FILTER: ${ODOO_DB_FILTER:-^%d$}
+      ODOO_WORKERS: ${ODOO_WORKERS:-4}
+      ODOO_MAX_CRON_THREADS: ${ODOO_MAX_CRON_THREADS:-2}
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - odoo-extra-addons:/mnt/extra-addons
+      - ../../addons:/mnt/custom-addons
+      - ../../config/odoo.conf:/etc/odoo/odoo.conf:ro
+    ports:
+      - "8069:8069"
+      - "8072:8072"  # Longpolling
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Odoo Worker (for background tasks)
+  odoo-worker:
+    build:
+      context: ./odoo
+      dockerfile: Dockerfile
+      args:
+        ODOO_VERSION: ${ODOO_VERSION:-17.0}
+    container_name: iseb-odoo-worker
+    command: ["odoo", "--workers=0", "--max-cron-threads=4", "--no-http"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      DATABASE: ${POSTGRES_DB:-odoo}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-redispassword}
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - odoo-extra-addons:/mnt/extra-addons
+      - ../../addons:/mnt/custom-addons
+      - ../../config/odoo.conf:/etc/odoo/odoo.conf:ro
+    networks:
+      - iseb-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: iseb-nginx
+    depends_on:
+      - odoo
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx-certs:/etc/nginx/certs
+      - nginx-logs:/var/log/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PgAdmin (optional - for database management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: iseb-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@iseb.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  # Prometheus (monitoring)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: iseb-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Grafana (monitoring dashboard)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: iseb-grafana
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3000:3000"
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Backup service (automated backups)
+  backup:
+    image: prodrigestivill/postgres-backup-local:alpine
+    container_name: iseb-backup
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-odoo}
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 7
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+      HEALTHCHECK_PORT: 8080
+    volumes:
+      - backups:/backups
+    networks:
+      - iseb-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+networks:
+  iseb-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  odoo-data:
+    driver: local
+  odoo-extra-addons:
+    driver: local
+  pgadmin-data:
+    driver: local
+  nginx-certs:
+    driver: local
+  nginx-logs:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+  backups:
+    driver: local

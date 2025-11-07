@@ -1,0 +1,210 @@
+[options]
+# ===========================
+# Database Settings
+# ===========================
+db_host = postgres
+db_port = 5432
+db_user = odoo_user
+db_password = change_me_in_production
+db_name = False
+db_maxconn = 64
+db_template = template0
+
+# Database filter - only allow databases matching this pattern
+db_filter = ^iseb_.*$
+
+# ===========================
+# Addons Path
+# ===========================
+addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/custom-addons
+
+# ===========================
+# Data Directory
+# ===========================
+data_dir = /var/lib/odoo
+
+# ===========================
+# Security
+# ===========================
+# Master password for database operations
+admin_passwd = change_me_master_password_in_production
+
+# List databases - set to False in production for security
+list_db = True
+
+# ===========================
+# Server Configuration
+# ===========================
+# Interface to listen on (0.0.0.0 for all interfaces)
+interface = 0.0.0.0
+
+# HTTP port
+http_port = 8069
+
+# Longpolling port (for real-time features)
+longpolling_port = 8072
+
+# Enable proxy mode (required when behind Nginx)
+proxy_mode = True
+
+# ===========================
+# Workers Configuration
+# ===========================
+# Number of workers (0 = no multiprocessing)
+# Recommended: (2 * CPU_CORES) + 1
+workers = 4
+
+# Maximum number of requests per worker before restart
+max_cron_threads = 2
+
+# Limit the number of requests per worker
+limit_request = 8192
+
+# ===========================
+# Performance Limits
+# ===========================
+# Timeout for CPU operations (seconds)
+limit_time_cpu = 600
+
+# Timeout for real operations (seconds)
+limit_time_real = 1200
+
+# Maximum allowed virtual memory per worker (bytes) - 2.5 GB
+limit_memory_hard = 2684354560
+
+# Memory threshold for worker restart (bytes) - 2 GB
+limit_memory_soft = 2147483648
+
+# ===========================
+# Logging
+# ===========================
+# Log level: debug, debug_rpc, debug_rpc_answer, debug_sql,
+#            info, warn, error, critical
+log_level = info
+
+# Log file path (False = stdout)
+logfile = /var/log/odoo/odoo.log
+
+# Enable log rotation
+logrotate = True
+
+# Log handler (can be prefixed with module names)
+# Example: odoo.addons.custom_module:DEBUG
+log_handler = :INFO
+
+# Log database operations (slow queries)
+log_db = False
+log_db_level = warning
+
+# ===========================
+# Email Configuration
+# ===========================
+# SMTP server
+smtp_server = smtp.gmail.com
+smtp_port = 587
+smtp_user = noreply@iseb-accounting.fr
+smtp_password = change_me_smtp_password
+smtp_ssl = False
+email_from = noreply@iseb-accounting.fr
+
+# ===========================
+# Session Configuration
+# ===========================
+# Session timeout (seconds) - 1 hour
+session_timeout = 3600
+
+# ===========================
+# French Localization
+# ===========================
+# Default language
+lang = fr_FR
+
+# Timezone
+timezone = Europe/Paris
+
+# ===========================
+# Advanced Settings
+# ===========================
+# CSV separator
+csv_internal_sep = ,
+
+# PDF report directory (for temp files)
+reportgz = False
+
+# Enable server-wide modules (comma-separated)
+# These modules are loaded automatically
+server_wide_modules = base,web
+
+# ===========================
+# Development Settings (disable in production!)
+# ===========================
+# Enable development mode (auto-reload on code changes)
+# NEVER use in production!
+dev_mode = False
+
+# Enable debug mode (detailed error messages)
+# NEVER use in production!
+debug_mode = False
+
+# ===========================
+# Odoo 17 Specific Settings
+# ===========================
+# Maximum file upload size (MB)
+http_enable = True
+http_interface = 0.0.0.0
+
+# WebSocket settings (for real-time features)
+websocket_port = 8072
+websocket_rate_limit_burst = 10
+websocket_rate_limit = 10
+
+# ===========================
+# Database Management
+# ===========================
+# Allow database creation through web interface
+# Set to False in production
+db_create = True
+
+# Allow database drop through web interface
+# Set to False in production
+db_drop = True
+
+# Allow database backup through web interface
+db_backup = True
+
+# Allow database restore through web interface
+db_restore = True
+
+# ===========================
+# Report Configuration
+# ===========================
+# Report directory
+reportgz = False
+
+# ===========================
+# Geolocation
+# ===========================
+# Geolocation API (for address autocomplete)
+# geoip_database = /usr/share/GeoIP/GeoLite2-City.mmdb
+
+# ===========================
+# Testing (for CI/CD)
+# ===========================
+# Enable test mode
+# test_enable = False
+# test_file = False
+# test_tags = False
+
+# ===========================
+# Notes for Production Deployment
+# ===========================
+# 1. Change all passwords (admin_passwd, db_password, smtp_password)
+# 2. Set list_db = False
+# 3. Set db_create = False, db_drop = False
+# 4. Set debug_mode = False, dev_mode = False
+# 5. Adjust workers based on server capacity
+# 6. Configure proper logging (logfile path)
+# 7. Set proper db_filter to restrict database access
+# 8. Enable proxy_mode when behind Nginx/Apache
+# 9. Configure proper SMTP settings for email notifications
+# 10. Set appropriate memory and time limits

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Catégorie de module -->
+    <record id="module_category_french_accounting" model="ir.module.category">
+        <field name="name">French Accounting</field>
+        <field name="description">Gestion de la comptabilité française</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Groupe: Utilisateur -->
+    <record id="group_french_accounting_user" model="res.groups">
+        <field name="name">Utilisateur Comptabilité FR</field>
+        <field name="category_id" ref="module_category_french_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Groupe: Comptable -->
+    <record id="group_french_accounting_accountant" model="res.groups">
+        <field name="name">Comptable</field>
+        <field name="category_id" ref="module_category_french_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('group_french_accounting_user'))]"/>
+    </record>
+
+    <!-- Groupe: Expert-comptable -->
+    <record id="group_french_accounting_manager" model="res.groups">
+        <field name="name">Expert-comptable</field>
+        <field name="category_id" ref="module_category_french_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('group_french_accounting_accountant'))]"/>
+    </record>
+
+    <!-- Règles d'enregistrement: FEC Export -->
+    <record id="fec_export_company_rule" model="ir.rule">
+        <field name="name">FEC Export: multi-société</field>
+        <field name="model_id" ref="model_fec_export"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Règles d'enregistrement: TVA Declaration -->
+    <record id="tva_declaration_company_rule" model="ir.rule">
+        <field name="name">TVA Declaration: multi-société</field>
+        <field name="model_id" ref="model_tva_declaration"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <!-- Règles d'enregistrement: Liasse Fiscale -->
+    <record id="liasse_fiscale_company_rule" model="ir.rule">
+        <field name="name">Liasse Fiscale: multi-société</field>
+        <field name="model_id" ref="model_liasse_fiscale"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

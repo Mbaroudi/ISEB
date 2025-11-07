@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Tree FEC Export -->
+    <record id="view_fec_export_tree" model="ir.ui.view">
+        <field name="name">fec.export.tree</field>
+        <field name="model">fec.export</field>
+        <field name="arch" type="xml">
+            <tree string="Exports FEC" decoration-success="state=='done'" decoration-danger="state=='error'">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="fiscal_year"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="move_count"/>
+                <field name="line_count"/>
+                <field name="state" widget="badge" decoration-success="state=='done'" decoration-info="state=='draft'"/>
+                <field name="file_size" widget="integer"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue Form FEC Export -->
+    <record id="view_fec_export_form" model="ir.ui.view">
+        <field name="name">fec.export.form</field>
+        <field name="model">fec.export</field>
+        <field name="arch" type="xml">
+            <form string="Export FEC">
+                <header>
+                    <button name="action_generate_fec" string="Générer FEC" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_download_fec" string="Télécharger" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                    <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
+                            attrs="{'invisible': [('state', 'in', ['draft', 'generating'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,generating,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de l'export FEC"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="fiscal_year"/>
+                            <field name="export_type"/>
+                        </group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="include_draft"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Informations" name="info">
+                            <group>
+                                <group>
+                                    <field name="file_name" readonly="1"/>
+                                    <field name="file_size" readonly="1" widget="integer"/>
+                                    <field name="move_count" readonly="1"/>
+                                    <field name="line_count" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="total_debit" readonly="1"/>
+                                    <field name="total_credit" readonly="1"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </group>
+                            <group attrs="{'invisible': [('error_message', '=', False)]}">
+                                <field name="error_message" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Journaux" name="journals">
+                            <field name="journal_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action FEC Export -->
+    <record id="action_fec_export" model="ir.actions.act_window">
+        <field name="name">Exports FEC</field>
+        <field name="res_model">fec.export</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un export FEC
+            </p>
+            <p>
+                Le Fichier des Écritures Comptables (FEC) est obligatoire pour toutes les entreprises tenant leur comptabilité au moyen de systèmes informatisés.
+            </p>
+        </field>
+    </record>
+</odoo>
