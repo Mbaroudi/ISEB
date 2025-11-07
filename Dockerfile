@@ -49,6 +49,9 @@ RUN apt-get update && apt-get install -y \
 # PYTHON DEPENDENCIES
 # ===================================================================
 
+# Fix lxml issue for Odoo 17 - Install lxml_html_clean separately first
+RUN pip3 install --no-cache-dir lxml_html_clean
+
 # Copy requirements file
 COPY requirements.txt /tmp/requirements.txt
 
