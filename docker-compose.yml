@@ -125,21 +125,23 @@ services:
   # =================================================================
   # CELERY WORKER (Background Tasks)
   # =================================================================
-  celery:
-    image: iseb-platform:17.0
-    container_name: iseb_celery
-    restart: unless-stopped
-    depends_on:
-      - odoo
-      - redis
-    environment:
-      CELERY_BROKER_URL: redis://redis:6379/0
-      CELERY_RESULT_BACKEND: redis://redis:6379/0
-    command: celery -A addons.bank_sync.tasks worker --loglevel=info
-    volumes:
-      - ./addons:/mnt/extra-addons:ro
-    networks:
-      - iseb-network
+  # Temporairement désactivé - à configurer après le premier démarrage d'Odoo
+  #
+  # celery:
+  #   image: iseb-platform:17.0
+  #   container_name: iseb_celery
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - odoo
+  #     - redis
+  #   environment:
+  #     CELERY_BROKER_URL: redis://redis:6379/0
+  #     CELERY_RESULT_BACKEND: redis://redis:6379/0
+  #   command: celery -A addons.bank_sync.tasks worker --loglevel=info
+  #   volumes:
+  #     - ./addons:/mnt/extra-addons:ro
+  #   networks:
+  #     - iseb-network
 
   # =================================================================
   # NGINX (Optional - Reverse Proxy)
