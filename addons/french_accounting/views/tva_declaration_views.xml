@@ -25,13 +25,13 @@
             <form string="Déclaration TVA">
                 <header>
                     <button name="action_compute_tva" string="Calculer TVA" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_submit" string="Déclarer" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'computed')]}"/>
+                            class="oe_highlight" invisible="state != 'computed'"/>
                     <button name="action_mark_paid" string="Marquer comme payée" type="object"
-                            attrs="{'invisible': [('state', '!=', 'submitted')]}"/>
+                            invisible="state != 'submitted'"/>
                     <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
-                            attrs="{'invisible': [('state', 'in', ['draft', 'paid'])]}"/>
+                            invisible="state in ['draft', 'paid']"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,computed,submitted,paid"/>
                 </header>
                 <sheet>
@@ -45,16 +45,16 @@
                     </div>
                     <group>
                         <group>
-                            <field name="company_id" groups="base.group_multi_company" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="regime_tva" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="declaration_type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="period_type" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                            <field name="regime_tva" readonly="state != 'draft'"/>
+                            <field name="declaration_type" readonly="state != 'draft'"/>
+                            <field name="period_type" readonly="state != 'draft'"/>
                         </group>
                         <group>
-                            <field name="period_start" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                            <field name="period_end" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="period_start" readonly="state != 'draft'"/>
+                            <field name="period_end" readonly="state != 'draft'"/>
                             <field name="due_date" readonly="1"/>
-                            <field name="payment_date" readonly="1" attrs="{'invisible': [('state', '!=', 'paid')]}"/>
+                            <field name="payment_date" readonly="1" invisible="state != 'paid'"/>
                         </group>
                     </group>
                     <notebook>

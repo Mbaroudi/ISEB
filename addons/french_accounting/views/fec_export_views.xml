@@ -27,11 +27,11 @@
             <form string="Export FEC">
                 <header>
                     <button name="action_generate_fec" string="Générer FEC" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_download_fec" string="Télécharger" type="object"
-                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'done')]}"/>
+                            class="oe_highlight" invisible="state != 'done'"/>
                     <button name="action_reset_to_draft" string="Remettre en brouillon" type="object"
-                            attrs="{'invisible': [('state', 'in', ['draft', 'generating'])]}"/>
+                            invisible="state in ['draft', 'generating']"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,generating,done"/>
                 </header>
                 <sheet>
@@ -67,7 +67,7 @@
                                     <field name="currency_id" invisible="1"/>
                                 </group>
                             </group>
-                            <group attrs="{'invisible': [('error_message', '=', False)]}">
+                            <group invisible="not error_message">
                                 <field name="error_message" readonly="1"/>
                             </group>
                         </page>
