@@ -1,0 +1,356 @@
+/**
+ * Client Portal - ISEB
+ * Styles pour l'interface utilisateur
+ */
+
+/* === Dashboard Charts === */
+.o_client_dashboard {
+    padding: 20px 0;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.chart-card h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* === Upload Drag & Drop === */
+.o_document_upload {
+    margin: 20px 0;
+}
+
+.upload-zone {
+    border: 3px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 60px 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: #007bff;
+    background-color: #e7f3ff;
+}
+
+.upload-zone.dragging {
+    border-color: #28a745;
+    background-color: #d4edda;
+}
+
+.upload-zone i {
+    font-size: 48px;
+    color: #6c757d;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.upload-zone p {
+    margin: 10px 0;
+    color: #6c757d;
+}
+
+.upload-zone input[type="file"] {
+    display: none;
+}
+
+.upload-preview {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.file-preview {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+    background: white;
+}
+
+.file-preview img {
+    max-width: 100%;
+    max-height: 100px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.file-preview i {
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.file-preview p {
+    margin: 5px 0;
+    font-size: 14px;
+    word-break: break-all;
+}
+
+.file-preview small {
+    color: #6c757d;
+}
+
+.upload-progress {
+    width: 100%;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.upload-progress .progress-bar {
+    height: 100%;
+    background: #007bff;
+    transition: width 0.3s ease;
+}
+
+/* === Photo Capture === */
+.o_photo_capture {
+    margin: 20px 0;
+}
+
+.photo-capture-zone {
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background-color: #f8f9fa;
+}
+
+.btn-capture-photo {
+    margin-top: 15px;
+    padding: 12px 30px;
+    font-size: 16px;
+}
+
+.btn-capture-photo i {
+    margin-right: 8px;
+}
+
+.photo-preview {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.photo-preview img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: none;
+}
+
+/* === Export Buttons === */
+.o_data_export {
+    margin: 20px 0;
+}
+
+.export-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-export-pdf,
+.btn-export-excel {
+    padding: 10px 20px;
+}
+
+.btn-export-pdf i,
+.btn-export-excel i {
+    margin-right: 5px;
+}
+
+/* === Cards KPI avec animations === */
+.kpi-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.kpi-label {
+    color: #6c757d;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.kpi-change {
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+.kpi-change.positive {
+    color: #28a745;
+}
+
+.kpi-change.negative {
+    color: #dc3545;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px;
+    }
+    
+    .upload-zone {
+        padding: 40px 15px;
+    }
+    
+    .upload-preview {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+    
+    .export-buttons {
+        flex-direction: column;
+    }
+    
+    .export-buttons .btn {
+        width: 100%;
+    }
+}
+
+/* === Notifications === */
+.notification-badge {
+    position: relative;
+}
+
+.notification-badge .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+}
+
+/* === Loading Spinner === */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === PWA Install Prompt === */
+.pwa-install-prompt {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    display: none;
+}
+
+.pwa-install-prompt.show {
+    display: block;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.pwa-install-prompt .btn-install {
+    margin-top: 10px;
+}
+
+/* === OCR Result Highlight === */
+.ocr-result {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.ocr-confidence {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.ocr-confidence.high {
+    color: #28a745;
+}
+
+.ocr-confidence.medium {
+    color: #ffc107;
+}
+
+.ocr-confidence.low {
+    color: #dc3545;
+}
+
+/* === Dark Mode Support === */
+@media (prefers-color-scheme: dark) {
+    .chart-card,
+    .file-preview {
+        background-color: #2d3748;
+        color: #e2e8f0;
+    }
+    
+    .upload-zone {
+        background-color: #2d3748;
+        border-color: #4a5568;
+    }
+    
+    .upload-zone:hover {
+        background-color: #374151;
+    }
+}

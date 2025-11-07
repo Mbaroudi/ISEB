@@ -2,3 +2,5 @@
 
 from . import main
 from . import portal
+from . import exports
+from . import ocr

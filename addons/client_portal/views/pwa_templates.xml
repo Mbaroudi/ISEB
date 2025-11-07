@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ajouter les meta tags PWA et le manifest au layout portal -->
+    <template id="portal_layout_pwa" inherit_id="portal.frontend_layout">
+        <xpath expr="//head" position="inside">
+            <!-- PWA Manifest -->
+            <link rel="manifest" href="/client_portal/static/manifest.json"/>
+
+            <!-- Theme color -->
+            <meta name="theme-color" content="#007bff"/>
+            <meta name="msapplication-TileColor" content="#007bff"/>
+
+            <!-- Apple Mobile Web App -->
+            <meta name="apple-mobile-web-app-capable" content="yes"/>
+            <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+            <meta name="apple-mobile-web-app-title" content="ISEB Client"/>
+
+            <!-- Apple Touch Icons -->
+            <link rel="apple-touch-icon" sizes="72x72" href="/client_portal/static/img/icon-72x72.png"/>
+            <link rel="apple-touch-icon" sizes="96x96" href="/client_portal/static/img/icon-96x96.png"/>
+            <link rel="apple-touch-icon" sizes="128x128" href="/client_portal/static/img/icon-128x128.png"/>
+            <link rel="apple-touch-icon" sizes="144x144" href="/client_portal/static/img/icon-144x144.png"/>
+            <link rel="apple-touch-icon" sizes="152x152" href="/client_portal/static/img/icon-152x152.png"/>
+            <link rel="apple-touch-icon" sizes="192x192" href="/client_portal/static/img/icon-192x192.png"/>
+
+            <!-- Favicon -->
+            <link rel="icon" type="image/png" sizes="32x32" href="/client_portal/static/img/icon-32x32.png"/>
+            <link rel="icon" type="image/png" sizes="16x16" href="/client_portal/static/img/icon-16x16.png"/>
+
+            <!-- Microsoft Tiles -->
+            <meta name="msapplication-TileImage" content="/client_portal/static/img/icon-144x144.png"/>
+            <meta name="msapplication-config" content="/client_portal/static/browserconfig.xml"/>
+
+            <!-- Viewport optimisé pour mobile -->
+            <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, viewport-fit=cover"/>
+
+            <!-- Description pour moteurs de recherche -->
+            <meta name="description" content="Plateforme SaaS de gestion comptable pour indépendants et TPE - ISEB"/>
+            <meta name="keywords" content="comptabilité, SaaS, gestion, indépendants, TPE, factures, notes de frais"/>
+
+            <!-- Open Graph (Facebook, LinkedIn) -->
+            <meta property="og:title" content="ISEB - Mon Espace Client"/>
+            <meta property="og:description" content="Plateforme SaaS de gestion comptable pour indépendants et TPE"/>
+            <meta property="og:type" content="website"/>
+            <meta property="og:url" content="https://iseb.fr/my/"/>
+            <meta property="og:image" content="/client_portal/static/img/og-image.png"/>
+
+            <!-- Twitter Card -->
+            <meta name="twitter:card" content="summary_large_image"/>
+            <meta name="twitter:title" content="ISEB - Mon Espace Client"/>
+            <meta name="twitter:description" content="Plateforme SaaS de gestion comptable pour indépendants et TPE"/>
+            <meta name="twitter:image" content="/client_portal/static/img/twitter-card.png"/>
+
+            <!-- PWA Script -->
+            <script src="/client_portal/static/js/pwa.js" defer="defer"/>
+        </xpath>
+    </template>
+
+    <!-- Page offline pour PWA -->
+    <template id="portal_offline_page" name="Offline Page">
+        <t t-call="portal.frontend_layout">
+            <div class="container mt-5 text-center">
+                <div class="row">
+                    <div class="col-12">
+                        <i class="fa fa-wifi fa-5x text-muted mb-4" style="opacity: 0.3;"/>
+                        <h1>Pas de connexion</h1>
+                        <p class="lead">Vous êtes actuellement hors ligne.</p>
+                        <p>Certaines fonctionnalités peuvent être limitées.</p>
+
+                        <div class="mt-5">
+                            <button class="btn btn-primary" onclick="window.location.reload()">
+                                <i class="fa fa-refresh"/> Réessayer
+                            </button>
+                        </div>
+
+                        <div class="mt-5">
+                            <h4>Pages disponibles hors ligne :</h4>
+                            <ul class="list-unstyled mt-3">
+                                <li><a href="/my/home"><i class="fa fa-home"/> Accueil</a></li>
+                                <li><a href="/my/dashboard"><i class="fa fa-dashboard"/> Tableau de bord</a></li>
+                                <li><a href="/my/documents"><i class="fa fa-file"/> Documents</a></li>
+                                <li><a href="/my/expenses"><i class="fa fa-credit-card"/> Notes de frais</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Route pour la page offline -->
+    <record id="portal_offline_route" model="ir.ui.view">
+        <field name="name">Portal Offline</field>
+        <field name="key">client_portal.offline</field>
+        <field name="type">qweb</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="portal.frontend_layout"/>
+        <field name="arch" type="xml">
+            <xpath expr="." position="inside">
+                <t t-call="client_portal.portal_offline_page"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

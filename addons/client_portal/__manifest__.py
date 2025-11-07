@@ -57,6 +57,14 @@ AGPL-3
         'mail',
         'web',
     ],
+    'external_dependencies': {
+        'python': [
+            'xlsxwriter',
+            'reportlab',
+            'pytesseract',
+            'PIL',
+        ],
+    },
     'data': [
         # Security
         'security/security.xml',
@@ -68,7 +76,18 @@ AGPL-3
         'views/menu_views.xml',
         # Portal Templates
         'views/portal_templates.xml',
+        'views/portal_templates_enhanced.xml',
+        'views/pwa_templates.xml',
+        # Data
+        'data/email_templates.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'client_portal/static/css/client_portal.css',
+            'client_portal/static/js/client_portal.js',
+            'client_portal/static/js/pwa.js',
+        ],
+    },
     'demo': [
         'demo/demo_data.xml',
     ],
