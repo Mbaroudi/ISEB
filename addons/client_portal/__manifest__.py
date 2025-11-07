@@ -66,6 +66,8 @@ AGPL-3
         'views/client_document_views.xml',
         'views/expense_note_views.xml',
         'views/menu_views.xml',
+        # Portal Templates
+        'views/portal_templates.xml',
     ],
     'demo': [
         'demo/demo_data.xml',
