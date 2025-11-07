@@ -354,3 +354,65 @@
         background-color: #374151;
     }
 }
+
+/* ===========================
+   OCR Loader & Results
+   =========================== */
+
+.ocr-loader {
+    text-align: center;
+    padding: 15px;
+    margin: 15px 0;
+    background-color: #e3f2fd;
+    border: 1px solid #2196f3;
+    border-radius: 4px;
+    color: #1976d2;
+    font-weight: 500;
+}
+
+.ocr-loader i {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+/* OCR Success/Error messages */
+.photo-capture-zone .alert {
+    margin-top: 10px;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* OCR Backend badge */
+.ocr-backend-info {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #2e7d32;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+.ocr-backend-info.deepseek {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    color: #1565c0;
+}
+
+.ocr-backend-info.tesseract {
+    background-color: #fff3e0;
+    border-color: #ff9800;
+    color: #e65100;
+}

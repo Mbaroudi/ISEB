@@ -350,25 +350,69 @@ odoo.define('client_portal.dashboard', function (require) {
         },
 
         _performOCR: function (imageData) {
-            // Appeler le backend pour OCR (Tesseract)
+            var self = this;
+
+            // Afficher un loader
+            var $loader = $('<div class="ocr-loader">').html(
+                '<i class="fa fa-spinner fa-spin"></i> Analyse en cours...'
+            );
+            self.$('.photo-capture-zone').append($loader);
+
+            // Appeler le backend pour OCR (auto-sélection DeepSeek ou Tesseract)
             $.ajax({
                 url: '/my/expense/ocr',
                 type: 'POST',
                 data: JSON.stringify({
                     image: imageData,
+                    backend: 'auto',  // Sélection automatique du meilleur backend
                     csrf_token: odoo.csrf_token
                 }),
                 contentType: 'application/json',
                 success: function (data) {
+                    $loader.remove();
+
                     if (data.success) {
                         // Pré-remplir les champs avec les données OCR
                         $('input[name="amount"]').val(data.amount);
                         $('input[name="expense_date"]').val(data.date);
                         $('input[name="vendor"]').val(data.vendor);
+
+                        // Afficher un message de succès avec le backend utilisé
+                        var backendName = data.backend === 'deepseek' ? 'DeepSeek-OCR (IA)' : 'Tesseract';
+                        var confidence = Math.round(data.confidence * 100);
+
+                        var $success = $('<div class="alert alert-success alert-dismissible fade show mt-2">').html(
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                            '<i class="fa fa-check-circle"></i> ' +
+                            '<strong>Données extraites avec succès!</strong><br/>' +
+                            '<small>Backend: ' + backendName + ' | Confiance: ' + confidence + '%</small>'
+                        );
+
+                        self.$('.photo-capture-zone').append($success);
+
+                        // Auto-fermer après 5 secondes
+                        setTimeout(function() {
+                            $success.fadeOut(function() { $(this).remove(); });
+                        }, 5000);
+                    } else {
+                        // Erreur OCR
+                        var $error = $('<div class="alert alert-warning alert-dismissible fade show mt-2">').html(
+                            '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                            '<i class="fa fa-exclamation-triangle"></i> ' +
+                            'Impossible d\'extraire les données automatiquement. Veuillez les saisir manuellement.'
+                        );
+                        self.$('.photo-capture-zone').append($error);
                     }
                 },
                 error: function () {
+                    $loader.remove();
                     console.log('OCR non disponible');
+
+                    var $error = $('<div class="alert alert-info alert-dismissible fade show mt-2">').html(
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '<i class="fa fa-info-circle"></i> Service OCR indisponible.'
+                    );
+                    self.$('.photo-capture-zone').append($error);
                 }
             });
         }

@@ -1,0 +1,90 @@
+# ISEB Client Portal - Python Dependencies
+
+# ===========================
+# Core Odoo Dependencies
+# ===========================
+# (Installed with Odoo core - no need to specify)
+
+# ===========================
+# PDF/Excel Export
+# ===========================
+xlsxwriter>=3.1.9
+reportlab>=4.0.7
+
+# ===========================
+# OCR - Option 1: Tesseract (Lightweight, CPU-based)
+# ===========================
+# Tesseract OCR - Requires system package: apt-get install tesseract-ocr tesseract-ocr-fra
+pytesseract>=0.3.10
+Pillow>=10.1.0
+
+# ===========================
+# OCR - Option 2: DeepSeek-OCR (AI-powered, GPU-based)
+# ===========================
+# Requires CUDA 11.8+ and GPU with sufficient VRAM
+# Only install if GPU infrastructure is available
+
+# PyTorch with CUDA support (for DeepSeek-OCR)
+# torch==2.6.0+cu118
+# torchvision==0.21.0+cu118
+# torchaudio==2.6.0+cu118
+
+# Transformers for loading DeepSeek model
+# transformers>=4.51.1
+
+# Flash Attention 2 for optimized inference
+# flash-attn==2.7.3
+
+# Note: To install DeepSeek-OCR dependencies, uncomment above lines and run:
+# pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu118
+# pip install transformers>=4.51.1
+# pip install flash-attn==2.7.3 --no-build-isolation
+
+# ===========================
+# Installation Instructions
+# ===========================
+
+# 1. BASIC INSTALLATION (Tesseract only - recommended for most users):
+#    sudo apt-get update
+#    sudo apt-get install tesseract-ocr tesseract-ocr-fra
+#    pip install -r requirements.txt
+
+# 2. ADVANCED INSTALLATION (with DeepSeek-OCR for GPU servers):
+#    - Ensure CUDA 11.8+ is installed
+#    - Uncomment DeepSeek dependencies above
+#    - Run:
+#      pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu118
+#      pip install transformers>=4.51.1
+#      pip install flash-attn==2.7.3 --no-build-isolation
+#    - Model will be downloaded automatically on first use (~2GB)
+
+# ===========================
+# Optional: vLLM for Production DeepSeek
+# ===========================
+# For high-throughput production deployments with DeepSeek-OCR:
+# vllm>=0.8.5
+
+# ===========================
+# System Requirements
+# ===========================
+# Tesseract:
+#   - CPU: Any modern CPU
+#   - RAM: 512MB minimum
+#   - Disk: 50MB
+#
+# DeepSeek-OCR:
+#   - GPU: NVIDIA with 8GB+ VRAM (tested on A100-40G)
+#   - RAM: 16GB minimum
+#   - Disk: 5GB (model + dependencies)
+#   - CUDA: 11.8 or higher
+
+# ===========================
+# License Information
+# ===========================
+# xlsxwriter: BSD License
+# reportlab: BSD License
+# pytesseract: Apache License 2.0
+# Pillow: HPND License
+# torch: BSD License
+# transformers: Apache License 2.0
+# DeepSeek-OCR model: MIT License
