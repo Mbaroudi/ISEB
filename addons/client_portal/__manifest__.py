@@ -78,7 +78,7 @@ AGPL-3
         'views/portal_templates.xml',
         'views/portal_templates_enhanced.xml',
         # Assets
-        'views/assets.xml',
+        # 'views/assets.xml',  # TODO: Disabled - requires 'website' module for website.assets_frontend
         # Data
         # 'data/email_templates.xml',  # TODO: Fix RNG validation issue
     ],
