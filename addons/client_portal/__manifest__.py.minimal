@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+{
+    'name': 'Client Portal - ISEB (MINIMAL TEST)',
+    'version': '17.0.1.0.0',
+    'category': 'Accounting/Accounting',
+    'summary': 'Version minimale pour test d\'installation',
+    'author': 'ISEB',
+    'website': 'https://www.iseb-accounting.fr',
+    'license': 'AGPL-3',
+
+    # Dépendances minimales
+    'depends': [
+        'base',
+        'account',
+        'portal',
+    ],
+
+    # Pas de dépendances externes pour le test
+    # 'external_dependencies': {},
+
+    'data': [
+        # Security seulement
+        'security/security.xml',
+        'security/ir.model.access.csv',
+        # Une seule vue simple pour tester
+        'views/menu_views.xml',
+    ],
+
+    'demo': [],
+    'installable': True,
+    'application': False,  # Changé à False pour le test
+    'auto_install': False,
+}
