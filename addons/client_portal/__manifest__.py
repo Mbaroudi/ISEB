@@ -56,6 +56,7 @@ AGPL-3
         'portal',
         'mail',
         'web',
+        'website',  # Required for frontend assets (website.assets_frontend)
     ],
     'external_dependencies': {
         'python': [

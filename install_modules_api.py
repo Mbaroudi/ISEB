@@ -19,6 +19,7 @@ PASSWORD = 'admin'
 # Modules to install in order
 MODULES = [
     ('french_accounting', 'Comptabilité Française'),
+    ('website', 'Website (requis pour client_portal frontend assets)'),  # Dependency for client_portal
     ('client_portal', 'Portail Client'),
     ('cabinet_portal', 'Portail Cabinet'),
     ('bank_sync', 'Synchronisation Bancaire'),

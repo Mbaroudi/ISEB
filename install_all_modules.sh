@@ -25,7 +25,7 @@ docker-compose stop odoo
 echo "2. Installing modules..."
 docker-compose run --rm odoo odoo \
     -d $DB_NAME \
-    -i french_accounting,client_portal,cabinet_portal,bank_sync,e_invoicing,reporting \
+    -i french_accounting,website,client_portal,cabinet_portal,bank_sync,e_invoicing,reporting \
     --stop-after-init \
     --without-demo=all
 
@@ -46,6 +46,7 @@ echo "  Password: $ADMIN_PASSWORD"
 echo ""
 echo "Installed modules:"
 echo "  - french_accounting (French Accounting)"
+echo "  - website (Website - required for client_portal frontend)"
 echo "  - client_portal (Client Portal)"
 echo "  - cabinet_portal (Cabinet Portal)"
 echo "  - bank_sync (Bank Synchronization)"
