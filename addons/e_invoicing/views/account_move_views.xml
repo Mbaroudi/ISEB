@@ -16,6 +16,7 @@
                     <group>
                         <group>
                             <field name="einvoice_enabled" invisible="1"/>
+                            <field name="einvoice_xml" invisible="1"/>
                             <field name="einvoice_format_id"/>
                             <field name="einvoice_state"/>
                             <field name="einvoice_sent_date"/>

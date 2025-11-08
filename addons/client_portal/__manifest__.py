@@ -77,20 +77,12 @@ AGPL-3
         # Portal Templates
         'views/portal_templates.xml',
         'views/portal_templates_enhanced.xml',
-        'views/pwa_templates.xml',
+        # Assets
+        'views/assets.xml',
         # Data
-        'data/email_templates.xml',
+        # 'data/email_templates.xml',  # TODO: Fix RNG validation issue
     ],
-    'assets': {
-        'web.assets_frontend': [
-            'client_portal/static/css/client_portal.css',
-            'client_portal/static/js/client_portal.js',
-            'client_portal/static/js/pwa.js',
-        ],
-    },
-    'demo': [
-        'demo/demo_data.xml',
-    ],
+    'demo': [],
     'installable': True,
     'application': True,
     'auto_install': False,

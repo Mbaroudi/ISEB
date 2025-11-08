@@ -63,13 +63,7 @@ License: AGPL-3
     },
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
-        'data/invoice_formats.xml',
         'views/account_move_views.xml',
-        'views/res_partner_views.xml',
-        'views/einvoice_config_views.xml',
-        'views/menu_views.xml',
-        'wizards/einvoice_send_wizard_views.xml',
     ],
     'installable': True,
     'application': False,

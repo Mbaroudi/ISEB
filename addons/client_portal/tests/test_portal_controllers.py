@@ -238,7 +238,7 @@ class TestPortalControllers(HttpCase):
         
         response = self.url_open('/my/dashboard')
         # Devrait voir la page d'erreur
-        self.assertIn(b"Acc\u00e8s non autoris\u00e9", response.content)
+        self.assertIn("Accès non autorisé".encode('utf-8'), response.content)
 
     def test_home_redirect_to_dashboard(self):
         """Test redirection de /my/home vers /my/dashboard pour clients ISEB"""

@@ -84,7 +84,6 @@ AGPL-3
     'depends': [
         'base',
         'account',
-        'account_accountant',
         'mail',
     ],
     'external_dependencies': {
@@ -101,16 +100,13 @@ AGPL-3
         'security/ir.model.access.csv',
         # Data
         'data/bank_providers.xml',
-        'data/transaction_categories.xml',
         # Views
-        'views/bank_account_views.xml',
-        'views/bank_transaction_views.xml',
         'views/bank_sync_log_views.xml',
+        'views/bank_transaction_views.xml',
+        'views/bank_provider_views.xml',
         'views/reconciliation_rule_views.xml',
+        'views/bank_account_views.xml',
         'views/menu_views.xml',
-        # Wizards
-        'wizard/bank_account_wizard_views.xml',
-        'wizard/transaction_import_wizard_views.xml',
     ],
     'demo': [],
     'installable': True,

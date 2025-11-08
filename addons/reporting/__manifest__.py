@@ -42,12 +42,9 @@ License: AGPL-3
     },
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
-        'data/report_templates.xml',
         'views/custom_report_views.xml',
         'views/report_template_views.xml',
         'views/menu_views.xml',
-        'wizards/report_generator_wizard_views.xml',
     ],
     'installable': True,
     'application': False,

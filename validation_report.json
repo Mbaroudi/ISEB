@@ -1,0 +1,368 @@
+{
+  "validation_date": "/Users/malek/ISEB/ISEB",
+  "modules": {
+    "client_portal": {
+      "issues": [],
+      "summary": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0
+      }
+    },
+    "cabinet_portal": {
+      "issues": [],
+      "summary": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0
+      }
+    },
+    "bank_sync": {
+      "issues": [
+        {
+          "severity": "WARNING",
+          "type": "missing_model",
+          "file": "/Users/malek/ISEB/ISEB/addons/bank_sync/wizard/bank_account_wizard_views.xml",
+          "line": 3,
+          "message": "Model 'bank.account.wizard' referenced in XML but not found in module",
+          "suggestion": "Ensure the model is defined or is from a dependency module"
+        }
+      ],
+      "summary": {
+        "errors": 0,
+        "warnings": 1,
+        "info": 0
+      }
+    },
+    "e_invoicing": {
+      "issues": [],
+      "summary": {
+        "errors": 0,
+        "warnings": 0,
+        "info": 0
+      }
+    },
+    "french_accounting": {
+      "issues": [
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 11,
+          "message": "Field 'period_label' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'period_label' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 12,
+          "message": "Field 'declaration_type' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'declaration_type' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 13,
+          "message": "Field 'tva_a_payer' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_a_payer' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 14,
+          "message": "Field 'due_date' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'due_date' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 11,
+          "message": "Field 'period_label' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'period_label' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 49,
+          "message": "Field 'regime_tva' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'regime_tva' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 12,
+          "message": "Field 'declaration_type' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'declaration_type' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 51,
+          "message": "Field 'period_type' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'period_type' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 54,
+          "message": "Field 'period_start' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'period_start' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 55,
+          "message": "Field 'period_end' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'period_end' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 14,
+          "message": "Field 'due_date' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'due_date' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 57,
+          "message": "Field 'payment_date' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'payment_date' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 64,
+          "message": "Field 'base_ht_20' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'base_ht_20' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 65,
+          "message": "Field 'tva_collectee_20' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_20' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 68,
+          "message": "Field 'base_ht_10' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'base_ht_10' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 69,
+          "message": "Field 'tva_collectee_10' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_10' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 74,
+          "message": "Field 'base_ht_55' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'base_ht_55' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 75,
+          "message": "Field 'tva_collectee_55' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_55' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 78,
+          "message": "Field 'base_ht_21' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'base_ht_21' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 79,
+          "message": "Field 'tva_collectee_21' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_21' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 83,
+          "message": "Field 'tva_collectee_total' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_total' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 88,
+          "message": "Field 'tva_deductible_immobilisations' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_deductible_immobilisations' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 89,
+          "message": "Field 'tva_deductible_biens_services' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_deductible_biens_services' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 90,
+          "message": "Field 'tva_deductible_total' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_deductible_total' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 83,
+          "message": "Field 'tva_collectee_total' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_collectee_total' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 90,
+          "message": "Field 'tva_deductible_total' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_deductible_total' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 97,
+          "message": "Field 'tva_nette' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_nette' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 98,
+          "message": "Field 'credit_precedent' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'credit_precedent' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 13,
+          "message": "Field 'tva_a_payer' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'tva_a_payer' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 100,
+          "message": "Field 'credit_a_reporter' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'credit_a_reporter' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 104,
+          "message": "Field 'notes' referenced in XML but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the field 'notes' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_action",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 27,
+          "message": "Action method 'action_compute_tva' referenced in button but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the method 'def action_compute_tva(self):' to the model class"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_action",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 29,
+          "message": "Action method 'action_submit' referenced in button but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the method 'def action_submit(self):' to the model class"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_action",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 31,
+          "message": "Action method 'action_mark_paid' referenced in button but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the method 'def action_mark_paid(self):' to the model class"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_action",
+          "file": "/Users/malek/ISEB/ISEB/addons/french_accounting/views/tva_declaration_views.xml",
+          "line": 33,
+          "message": "Action method 'action_reset_to_draft' referenced in button but not found in model 'liasse.fiscale'",
+          "suggestion": "Add the method 'def action_reset_to_draft(self):' to the model class"
+        }
+      ],
+      "summary": {
+        "errors": 35,
+        "warnings": 0,
+        "info": 0
+      }
+    },
+    "reporting": {
+      "issues": [
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/reporting/views/custom_report_views.xml",
+          "line": 46,
+          "message": "Field 'sequence' referenced in XML but not found in model 'custom.report'",
+          "suggestion": "Add the field 'sequence' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/reporting/views/custom_report_views.xml",
+          "line": 48,
+          "message": "Field 'computation_type' referenced in XML but not found in model 'custom.report'",
+          "suggestion": "Add the field 'computation_type' to the model or check for typos"
+        },
+        {
+          "severity": "ERROR",
+          "type": "missing_field",
+          "file": "/Users/malek/ISEB/ISEB/addons/reporting/views/custom_report_views.xml",
+          "line": 50,
+          "message": "Field 'level' referenced in XML but not found in model 'custom.report'",
+          "suggestion": "Add the field 'level' to the model or check for typos"
+        }
+      ],
+      "summary": {
+        "errors": 3,
+        "warnings": 0,
+        "info": 0
+      }
+    }
+  }
+}

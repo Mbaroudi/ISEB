@@ -28,7 +28,7 @@ class ClientDashboard(models.Model):
 
     company_id = fields.Many2one(
         'res.company',
-        string='Société',
+        string='SociÃ©tÃ©',
         required=True,
         default=lambda self: self.env.company
     )
@@ -40,20 +40,20 @@ class ClientDashboard(models.Model):
     )
 
     period_start = fields.Date(
-        string='Début période',
+        string='DÃ©but pÃ©riode',
         required=True,
         default=lambda self: fields.Date.today().replace(day=1)
     )
 
     period_end = fields.Date(
-        string='Fin période',
+        string='Fin pÃ©riode',
         required=True,
         default=fields.Date.today
     )
 
-    # Trésorerie
+    # TrÃ©sorerie
     cash_balance = fields.Monetary(
-        string='Solde de trésorerie',
+        string='Solde de trÃ©sorerie',
         currency_field='currency_id',
         compute='_compute_cash_balance',
         store=True,
@@ -61,9 +61,9 @@ class ClientDashboard(models.Model):
     )
 
     cash_evolution_data = fields.Text(
-        string='Évolution trésorerie (JSON)',
+        string='Ã‰volution trÃ©sorerie (JSON)',
         compute='_compute_cash_evolution',
-        help="Données pour graphique évolution trésorerie sur 12 mois"
+        help="DonnÃ©es pour graphique Ã©volution trÃ©sorerie sur 12 mois"
     )
 
     # Chiffre d'affaires
@@ -76,7 +76,7 @@ class ClientDashboard(models.Model):
     )
 
     revenue_ytd = fields.Monetary(
-        string='CA de l\'année',
+        string='CA de l\'annÃ©e',
         currency_field='currency_id',
         compute='_compute_revenue',
         store=True,
@@ -91,7 +91,7 @@ class ClientDashboard(models.Model):
     )
 
     revenue_last_year = fields.Monetary(
-        string='CA année dernière',
+        string='CA annÃ©e derniÃ¨re',
         currency_field='currency_id',
         compute='_compute_revenue',
         store=True
@@ -104,7 +104,7 @@ class ClientDashboard(models.Model):
     )
 
     revenue_growth_ytd = fields.Float(
-        string='Croissance CA année (%)',
+        string='Croissance CA annÃ©e (%)',
         compute='_compute_growth',
         store=True
     )
@@ -118,22 +118,22 @@ class ClientDashboard(models.Model):
     )
 
     expenses_ytd = fields.Monetary(
-        string='Charges de l\'année',
+        string='Charges de l\'annÃ©e',
         currency_field='currency_id',
         compute='_compute_expenses',
         store=True
     )
 
-    # Résultat
+    # RÃ©sultat
     net_income_mtd = fields.Monetary(
-        string='Résultat du mois',
+        string='RÃ©sultat du mois',
         currency_field='currency_id',
         compute='_compute_net_income',
         store=True
     )
 
     net_income_ytd = fields.Monetary(
-        string='Résultat de l\'année',
+        string='RÃ©sultat de l\'annÃ©e',
         currency_field='currency_id',
         compute='_compute_net_income',
         store=True
@@ -141,28 +141,28 @@ class ClientDashboard(models.Model):
 
     # TVA
     tva_due = fields.Monetary(
-        string='TVA à décaisser',
+        string='TVA Ã  dÃ©caisser',
         currency_field='currency_id',
         compute='_compute_tva',
         store=True,
-        help="Montant de TVA à payer pour la période"
+        help="Montant de TVA Ã  payer pour la pÃ©riode"
     )
 
     tva_collectee = fields.Monetary(
-        string='TVA collectée',
+        string='TVA collectÃ©e',
         currency_field='currency_id',
         compute='_compute_tva',
         store=True
     )
 
     tva_deductible = fields.Monetary(
-        string='TVA déductible',
+        string='TVA dÃ©ductible',
         currency_field='currency_id',
         compute='_compute_tva',
         store=True
     )
 
-    # Indicateurs clés (KPIs)
+    # Indicateurs clÃ©s (KPIs)
     margin_rate = fields.Float(
         string='Taux de marge (%)',
         compute='_compute_kpis',
@@ -171,11 +171,11 @@ class ClientDashboard(models.Model):
     )
 
     receivable_amount = fields.Monetary(
-        string='Créances clients',
+        string='CrÃ©ances clients',
         currency_field='currency_id',
         compute='_compute_receivables',
         store=True,
-        help="Montant total des factures clients impayées"
+        help="Montant total des factures clients impayÃ©es"
     )
 
     payable_amount = fields.Monetary(
@@ -183,18 +183,18 @@ class ClientDashboard(models.Model):
         currency_field='currency_id',
         compute='_compute_payables',
         store=True,
-        help="Montant total des factures fournisseurs impayées"
+        help="Montant total des factures fournisseurs impayÃ©es"
     )
 
     overdue_receivable = fields.Monetary(
-        string='Créances échues',
+        string='CrÃ©ances Ã©chues',
         currency_field='currency_id',
         compute='_compute_overdue',
         store=True
     )
 
     overdue_payable = fields.Monetary(
-        string='Dettes échues',
+        string='Dettes Ã©chues',
         currency_field='currency_id',
         compute='_compute_overdue',
         store=True
@@ -207,14 +207,14 @@ class ClientDashboard(models.Model):
         readonly=True
     )
 
-    # Données pour graphiques
+    # DonnÃ©es pour graphiques
     revenue_chart_data = fields.Text(
-        string='Données CA (JSON)',
+        string='DonnÃ©es CA (JSON)',
         compute='_compute_chart_data'
     )
 
     expenses_chart_data = fields.Text(
-        string='Données charges (JSON)',
+        string='DonnÃ©es charges (JSON)',
         compute='_compute_chart_data'
     )
 
@@ -229,9 +229,9 @@ class ClientDashboard(models.Model):
 
     @api.depends('partner_id', 'company_id', 'period_end')
     def _compute_cash_balance(self):
-        """Calcule le solde de trésorerie"""
+        """Calcule le solde de trÃ©sorerie"""
         for record in self:
-            # Récupérer tous les comptes bancaires (51xxxx)
+            # RÃ©cupÃ©rer tous les comptes bancaires (51xxxx)
             domain = [
                 ('company_id', '=', record.company_id.id),
                 ('code', '=like', '51%'),
@@ -270,7 +270,7 @@ class ClientDashboard(models.Model):
             )
             record.revenue_mtd = revenue_mtd
 
-            # CA année en cours (YTD - Year To Date)
+            # CA annÃ©e en cours (YTD - Year To Date)
             year_start = record.period_start.replace(month=1, day=1)
 
             moves_ytd = self.env['account.move'].search([
@@ -308,7 +308,7 @@ class ClientDashboard(models.Model):
                 for move in moves_last_month
             )
 
-            # CA année dernière
+            # CA annÃ©e derniÃ¨re
             last_year_start = year_start - relativedelta(years=1)
             last_year_end = record.period_end - relativedelta(years=1)
 
@@ -351,7 +351,7 @@ class ClientDashboard(models.Model):
             )
             record.expenses_mtd = abs(expenses_mtd)
 
-            # Charges année en cours
+            # Charges annÃ©e en cours
             year_start = record.period_start.replace(month=1, day=1)
 
             moves_ytd = self.env['account.move'].search([
@@ -388,7 +388,7 @@ class ClientDashboard(models.Model):
 
     @api.depends('revenue_mtd', 'expenses_mtd', 'revenue_ytd', 'expenses_ytd')
     def _compute_net_income(self):
-        """Calcule le résultat net"""
+        """Calcule le rÃ©sultat net"""
         for record in self:
             record.net_income_mtd = record.revenue_mtd - record.expenses_mtd
             record.net_income_ytd = record.revenue_ytd - record.expenses_ytd
@@ -397,7 +397,7 @@ class ClientDashboard(models.Model):
     def _compute_tva(self):
         """Calcule la TVA"""
         for record in self:
-            # Récupérer les lignes de TVA pour la période
+            # RÃ©cupÃ©rer les lignes de TVA pour la pÃ©riode
             tva_lines = self.env['account.move.line'].search([
                 ('company_id', '=', record.company_id.id),
                 ('move_id.partner_id', '=', record.partner_id.id),
@@ -422,7 +422,7 @@ class ClientDashboard(models.Model):
 
     @api.depends('revenue_mtd', 'expenses_mtd')
     def _compute_kpis(self):
-        """Calcule les indicateurs clés"""
+        """Calcule les indicateurs clÃ©s"""
         for record in self:
             if record.revenue_mtd:
                 record.margin_rate = ((record.revenue_mtd - record.expenses_mtd) / record.revenue_mtd) * 100
@@ -431,7 +431,7 @@ class ClientDashboard(models.Model):
 
     @api.depends('partner_id', 'company_id')
     def _compute_receivables(self):
-        """Calcule les créances clients"""
+        """Calcule les crÃ©ances clients"""
         for record in self:
             receivables = self.env['account.move'].search([
                 ('company_id', '=', record.company_id.id),
@@ -457,11 +457,11 @@ class ClientDashboard(models.Model):
 
     @api.depends('partner_id', 'company_id')
     def _compute_overdue(self):
-        """Calcule les factures échues"""
+        """Calcule les factures Ã©chues"""
         for record in self:
             today = fields.Date.today()
 
-            # Créances échues
+            # CrÃ©ances Ã©chues
             overdue_receivables = self.env['account.move'].search([
                 ('company_id', '=', record.company_id.id),
                 ('partner_id', '=', record.partner_id.id),
@@ -472,7 +472,7 @@ class ClientDashboard(models.Model):
             ])
             record.overdue_receivable = sum(overdue_receivables.mapped('amount_residual'))
 
-            # Dettes échues
+            # Dettes Ã©chues
             overdue_payables = self.env['account.move'].search([
                 ('company_id', '=', record.company_id.id),
                 ('partner_id', '=', record.partner_id.id),
@@ -484,13 +484,13 @@ class ClientDashboard(models.Model):
             record.overdue_payable = sum(overdue_payables.mapped('amount_residual'))
 
     def _compute_cash_evolution(self):
-        """Calcule l'évolution de la trésorerie sur 12 mois"""
+        """Calcule l'Ã©volution de la trÃ©sorerie sur 12 mois"""
         for record in self:
-            # Données pour graphique (12 derniers mois)
+            # DonnÃ©es pour graphique (12 derniers mois)
             data = []
             for i in range(12, 0, -1):
                 month_date = (fields.Date.today() - relativedelta(months=i)).replace(day=1)
-                # TODO: Calculer le solde de trésorerie à cette date
+                # TODO: Calculer le solde de trÃ©sorerie Ã  cette date
                 data.append({
                     'month': month_date.strftime('%b %Y'),
                     'balance': record.cash_balance  # Placeholder
@@ -498,9 +498,9 @@ class ClientDashboard(models.Model):
             record.cash_evolution_data = json.dumps(data)
 
     def _compute_chart_data(self):
-        """Génère les données pour les graphiques"""
+        """GÃ©nÃ¨re les donnÃ©es pour les graphiques"""
         for record in self:
-            # Données CA par mois (12 derniers mois)
+            # DonnÃ©es CA par mois (12 derniers mois)
             revenue_data = []
             expenses_data = []
 
@@ -555,7 +555,7 @@ class ClientDashboard(models.Model):
             record.expenses_chart_data = json.dumps(expenses_data)
 
     def action_refresh_dashboard(self):
-        """Rafraîchit le dashboard"""
+        """RafraÃ®chit le dashboard"""
         self.ensure_one()
         self.compute_date = fields.Datetime.now()
         # Force le recalcul de tous les champs computed
@@ -568,8 +568,8 @@ class ClientDashboard(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Dashboard actualisé'),
-                'message': _('Les données ont été mises à jour'),
+                'title': _('Dashboard actualisÃ©'),
+                'message': _('Les donnÃ©es ont Ã©tÃ© mises Ã  jour'),
                 'type': 'success',
             }
         }

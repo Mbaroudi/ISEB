@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menu principal Cabinet -->
     <menuitem id="menu_cabinet_portal_root"
               name="Cabinet"
               sequence="20"
-              web_icon="cabinet_portal,static/description/icon.png"
-              groups="group_cabinet_user"/>
+              web_icon="cabinet_portal,static/description/icon.png"/>
 
     <!-- Dashboard -->
     <menuitem id="menu_cabinet_dashboard"
@@ -55,6 +53,5 @@
     <menuitem id="menu_cabinet_config"
               name="Configuration"
               parent="menu_cabinet_portal_root"
-              groups="group_cabinet_manager"
               sequence="100"/>
 </odoo>

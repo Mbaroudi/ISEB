@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vue liste tâches -->
     <record id="view_cabinet_task_tree" model="ir.ui.view">
         <field name="name">cabinet.task.tree</field>
         <field name="model">cabinet.task</field>

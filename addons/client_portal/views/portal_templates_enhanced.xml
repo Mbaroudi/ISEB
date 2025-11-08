@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Template Dashboard amélioré avec graphiques -->
     <template id="portal_my_dashboard_enhanced" name="Enhanced Dashboard" inherit_id="client_portal.portal_my_dashboard">
         <xpath expr="//div[@class='row mt32'][last()]" position="after">
             <!-- Section Graphiques -->
@@ -190,17 +189,4 @@
         </t>
     </template>
 
-    <!-- Assets (JS et CSS) -->
-    <template id="assets_frontend" inherit_id="web.assets_frontend">
-        <xpath expr="." position="inside">
-            <!-- Chart.js -->
-            <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"/>
-            
-            <!-- CSS personnalisé -->
-            <link rel="stylesheet" href="/client_portal/static/css/client_portal.css"/>
-            
-            <!-- JS personnalisé -->
-            <script src="/client_portal/static/js/client_portal.js"/>
-        </xpath>
-    </template>
 </odoo>

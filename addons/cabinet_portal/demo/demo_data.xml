@@ -1,121 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
-        <!-- Expert-comptable référent -->
-        <record id="demo_accountant_sophie" model="res.users">
-            <field name="name">Sophie Martin</field>
-            <field name="login">sophie.martin@iseb.fr</field>
-            <field name="email">sophie.martin@iseb.fr</field>
-            <field name="groups_id" eval="[(4, ref('cabinet_portal.group_cabinet_accountant'))]"/>
-        </record>
+<odoo noupdate="1">
+    <record id="demo_cabinet_task_1" model="cabinet.task">
+        <field name="name">Validation TVA T4 2024</field>
+        <field name="partner_id" ref="client_portal.demo_partner_entrepreneur_1"/>
+        <field name="task_type">tax_declaration</field>
+        <field name="priority">high</field>
+        <field name="deadline">2025-02-10</field>
+        <field name="state">in_progress"/>
+        <field name="description">Préparer et valider la déclaration de TVA du 4ème trimestre</field>
+    </record>
 
-        <record id="demo_accountant_thomas" model="res.users">
-            <field name="name">Thomas Dubois</field>
-            <field name="login">thomas.dubois@iseb.fr</field>
-            <field name="email">thomas.dubois@iseb.fr</field>
-            <field name="groups_id" eval="[(4, ref('cabinet_portal.group_cabinet_accountant'))]"/>
-        </record>
+    <record id="demo_cabinet_task_2" model="cabinet.task">
+        <field name="name">Rapprochement bancaire Décembre</field>
+        <field name="partner_id" ref="client_portal.demo_partner_entrepreneur_2"/>
+        <field name="task_type">bank_reconciliation</field>
+        <field name="priority">medium</field>
+        <field name="deadline">2025-02-05</field>
+        <field name="state">todo"/>
+        <field name="description">Effectuer le rapprochement bancaire du mois de décembre</field>
+    </record>
 
-        <!-- Extension des clients de démo avec info cabinet -->
-        <record id="client_portal.demo_partner_tech_startup" model="res.partner">
-            <field name="accountant_id" ref="demo_accountant_sophie"/>
-            <field name="client_since">2024-01-15</field>
-            <field name="contract_type">serenite</field>
-            <field name="monthly_fee">350.00</field>
-            <field name="last_contact_date">2025-01-20</field>
-            <field name="next_meeting_date">2025-02-15</field>
-            <field name="internal_notes">Client dynamique, très organisé. Bonne collaboration.</field>
-        </record>
-
-        <record id="client_portal.demo_partner_restaurant" model="res.partner">
-            <field name="accountant_id" ref="demo_accountant_sophie"/>
-            <field name="client_since">2023-06-01</field>
-            <field name="contract_type">pme</field>
-            <field name="monthly_fee">500.00</field>
-            <field name="last_contact_date">2025-01-18</field>
-            <field name="next_meeting_date">2025-02-10</field>
-            <field name="internal_notes">Besoin de suivi régulier pour la trésorerie. Attention aux créances clients.</field>
-        </record>
-
-        <record id="client_portal.demo_partner_consultant" model="res.partner">
-            <field name="accountant_id" ref="demo_accountant_thomas"/>
-            <field name="client_since">2024-09-01</field>
-            <field name="contract_type">liberte</field>
-            <field name="monthly_fee">200.00</field>
-            <field name="last_contact_date">2025-01-25</field>
-            <field name="next_meeting_date">2025-03-01</field>
-            <field name="internal_notes">Auto-entrepreneur, peu de transactions. Client autonome.</field>
-        </record>
-
-        <!-- Tâches de démo -->
-        <record id="demo_task_tva_jan_startup" model="cabinet.task">
-            <field name="name">Déclaration TVA Janvier - Tech Startup</field>
-            <field name="partner_id" ref="client_portal.demo_partner_tech_startup"/>
-            <field name="assigned_to_id" ref="demo_accountant_sophie"/>
-            <field name="task_type">declaration</field>
-            <field name="priority">2</field>
-            <field name="deadline">2025-02-15</field>
-            <field name="state">todo</field>
-            <field name="description">Préparer et soumettre la déclaration TVA CA3 de janvier 2025</field>
-            <field name="estimated_hours">2.0</field>
-        </record>
-
-        <record id="demo_task_review_docs_restaurant" model="cabinet.task">
-            <field name="name">Révision documents Restaurant Le Gourmet</field>
-            <field name="partner_id" ref="client_portal.demo_partner_restaurant"/>
-            <field name="assigned_to_id" ref="demo_accountant_sophie"/>
-            <field name="task_type">document_review</field>
-            <field name="priority">1</field>
-            <field name="deadline">2025-02-05</field>
-            <field name="state">in_progress</field>
-            <field name="description">Vérifier et valider les factures fournisseurs du mois</field>
-            <field name="estimated_hours">3.0</field>
-            <field name="spent_hours">1.5</field>
-            <field name="started_date">2025-01-28 09:00:00</field>
-        </record>
-
-        <record id="demo_task_meeting_consultant" model="cabinet.task">
-            <field name="name">RDV Bilan Trimestriel - Marie Consultant</field>
-            <field name="partner_id" ref="client_portal.demo_partner_consultant"/>
-            <field name="assigned_to_id" ref="demo_accountant_thomas"/>
-            <field name="task_type">meeting</field>
-            <field name="priority">1</field>
-            <field name="deadline">2025-03-01</field>
-            <field name="state">todo</field>
-            <field name="description">Point trimestre Q1 2025 et préparation déclarations</field>
-            <field name="estimated_hours">1.5</field>
-        </record>
-
-        <record id="demo_task_expense_validation" model="cabinet.task">
-            <field name="name">Valider notes de frais Tech Startup</field>
-            <field name="partner_id" ref="client_portal.demo_partner_tech_startup"/>
-            <field name="assigned_to_id" ref="demo_accountant_sophie"/>
-            <field name="task_type">expense_validation</field>
-            <field name="priority">3</field>
-            <field name="deadline">2025-02-02</field>
-            <field name="state">todo</field>
-            <field name="description">3 notes de frais en attente - URGENT</field>
-            <field name="estimated_hours">0.5</field>
-            <field name="expense_id" ref="client_portal.demo_expense_meal_1"/>
-        </record>
-
-        <record id="demo_task_overdue" model="cabinet.task">
-            <field name="name">Relance factures impayées - Restaurant</field>
-            <field name="partner_id" ref="client_portal.demo_partner_restaurant"/>
-            <field name="assigned_to_id" ref="demo_accountant_sophie"/>
-            <field name="task_type">followup</field>
-            <field name="priority">2</field>
-            <field name="deadline">2025-01-25</field>
-            <field name="state">todo</field>
-            <field name="description">Relancer les clients pour 1500€ de factures échues</field>
-            <field name="estimated_hours">1.0</field>
-        </record>
-
-        <!-- Dashboard cabinet pour janvier 2025 -->
-        <record id="demo_cabinet_dashboard_jan" model="cabinet.dashboard">
-            <field name="period_start">2025-01-01</field>
-            <field name="period_end">2025-01-31</field>
-            <field name="compute_date">2025-01-31 18:00:00</field>
-        </record>
-    </data>
+    <record id="demo_cabinet_dashboard_1" model="cabinet.dashboard">
+        <field name="name">Dashboard Cabinet - Janvier 2025</field>
+        <field name="period_start">2025-01-01</field>
+        <field name="period_end">2025-01-31</field>
+        <field name="total_clients">25</field>
+        <field name="active_clients">23</field>
+        <field name="total_revenue">8750.00</field>
+        <field name="pending_tasks">12</field>
+        <field name="overdue_tasks">2</field>
+    </record>
 </odoo>

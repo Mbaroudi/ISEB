@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Ajouter les meta tags PWA et le manifest au layout portal -->
     <template id="portal_layout_pwa" inherit_id="portal.frontend_layout">
         <xpath expr="//head" position="inside">
             <!-- PWA Manifest -->

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vue formulaire document -->
     <record id="view_client_document_form" model="ir.ui.view">
         <field name="name">client.document.form</field>
         <field name="model">client.document</field>
@@ -11,10 +10,10 @@
                             class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_validate" string="Valider" type="object" 
                             class="oe_highlight" invisible="state != 'pending'"
-                            groups="cabinet_portal.group_cabinet_accountant"/>
+                            groups="base.group_system"/>
                     <button name="action_reject" string="Rejeter" type="object" 
                             invisible="state not in ['pending', 'submitted']"
-                            groups="cabinet_portal.group_cabinet_accountant"/>
+                            groups="base.group_system"/>
                     <button name="action_reset_draft" string="Remettre en brouillon" 
                             type="object" invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar" 
@@ -24,7 +23,7 @@
                     <div class="oe_button_box" name="button_box">
                         <button name="action_download" type="object" 
                                 class="oe_stat_button" icon="fa-download"
-                                invisible="not file_data">
+                                invisible="not file">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Télécharger</span>
                             </div>
@@ -41,23 +40,18 @@
                         <group>
                             <field name="partner_id" options="{'no_create': True}"/>
                             <field name="document_type"/>
-                            <field name="document_date"/>
                         </group>
                         <group>
                             <field name="company_id" groups="base.group_multi_company"/>
-                            <field name="uploaded_date" readonly="1"/>
-                            <field name="validated_date" readonly="1" 
-                                   invisible="state != 'validated'"/>
+                            <field name="upload_date" readonly="1"/>
                         </group>
                     </group>
                     
                     <notebook>
                         <page string="Fichier" name="file">
                             <group>
-                                <field name="file_data" filename="file_name" widget="binary"/>
-                                <field name="file_name" invisible="1"/>
-                                <field name="file_size" widget="integer" readonly="1"/>
-                                <field name="mime_type" readonly="1"/>
+                                <field name="file" filename="filename" widget="binary"/>
+                                <field name="filename" invisible="1"/>
                             </group>
                         </page>
                         
@@ -65,24 +59,6 @@
                             <group>
                                 <field name="notes" placeholder="Notes ou description du document..."/>
                             </group>
-                            
-                            <group string="Validation" invisible="state not in ['validated', 'rejected']">
-                                <field name="validated_by_id" readonly="1"/>
-                                <field name="rejection_reason" readonly="1" 
-                                       invisible="state != 'rejected'"/>
-                            </group>
-                        </page>
-                        
-                        <page string="Données OCR" name="ocr" 
-                              invisible="not ocr_data or document_type not in ['invoice', 'justificatif']">
-                            <group string="Données extraites automatiquement">
-                                <field name="ocr_data" widget="text"/>
-                                <field name="ocr_confidence" widget="percentage" readonly="1"/>
-                            </group>
-                            <div class="alert alert-info" role="alert">
-                                <p>Ces données ont été extraites automatiquement par OCR.</p>
-                                <p>Vérifiez leur exactitude avant validation.</p>
-                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -105,9 +81,7 @@
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="document_type"/>
-                <field name="document_date"/>
-                <field name="file_size" widget="integer"/>
-                <field name="uploaded_date"/>
+                <field name="upload_date"/>
                 <field name="state" widget="badge" 
                        decoration-success="state == 'validated'" 
                        decoration-info="state == 'pending'"
@@ -126,9 +100,9 @@
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="document_type"/>
-                <field name="document_date"/>
+                <field name="upload_date"/>
                 <field name="state"/>
-                <field name="file_name"/>
+                <field name="filename"/>
                 <templates>
                     <t t-name="kanban-box">
                         <div class="oe_kanban_global_click">
@@ -144,9 +118,9 @@
                             </div>
                             <div class="o_kanban_record_body">
                                 <div><i class="fa fa-user"/> <field name="partner_id"/></div>
-                                <div><i class="fa fa-calendar"/> <field name="document_date"/></div>
+                                <div><i class="fa fa-calendar"/> <field name="upload_date"/></div>
                                 <div class="text-muted">
-                                    <i class="fa fa-file-o"/> <field name="file_name"/>
+                                    <i class="fa fa-file-o"/> <field name="filename"/>
                                 </div>
                             </div>
                         </div>
@@ -175,8 +149,8 @@
                         domain="[('state', '=', 'rejected')]"/>
                 <separator/>
                 <filter string="Ce mois" name="this_month"
-                        domain="[('document_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
-                                ('document_date', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]"/>
+                        domain="[('upload_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
+                                ('upload_date', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]" />
                 <separator/>
                 <filter string="Factures" name="invoices"
                         domain="[('document_type', '=', 'invoice')]"/>
@@ -188,7 +162,7 @@
                     <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Type" name="group_type" context="{'group_by': 'document_type'}"/>
                     <filter string="État" name="group_state" context="{'group_by': 'state'}"/>
-                    <filter string="Date" name="group_date" context="{'group_by': 'document_date'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'upload_date'}"/>
                 </group>
             </search>
         </field>
@@ -206,11 +180,6 @@
             </p>
             <p>
                 Déposez vos documents (factures, contrats, justificatifs) pour validation par votre cabinet comptable.
-            </p>
-            <p>
-                <button type="action" class="btn-primary" name="%(action_client_documents)d" context="{'form_view_initial_mode': 'edit'}">
-                    Déposer un document
-                </button>
             </p>
         </field>
     </record>

@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Template de base pour les pages du portail client -->
-    <template id="portal_layout_iseb" name="Portal Layout ISEB" inherit_id="portal.portal_layout">
+    <template id="portal_layout_iseb" name="Portal Layout ISEB" inherit_id="portal.portal_breadcrumbs" priority="40">
         <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
             <t t-if="request.env.user.partner_id.is_iseb_client">
                 <li t-if="page_name == 'dashboard'" class="breadcrumb-item active">
                     <span>Tableau de Bord</span>
                 </li>
-                <li t-if="page_name == 'documents' or page_name == 'document'" class="col-lg-12">
+                <li t-if="page_name == 'documents' or page_name == 'document'" class="breadcrumb-item">
                     <a t-if="page_name != 'documents'" href="/my/documents">Documents</a>
-                    <span t-if="page_name == 'documents'">Documents</span>
+                    <span t-if="page_name == 'documents'" class="active">Documents</span>
                 </li>
-                <li t-if="page_name == 'expenses' or page_name == 'expense'" class="col-lg-12">
+                <li t-if="page_name == 'expenses' or page_name == 'expense'" class="breadcrumb-item">
                     <a t-if="page_name != 'expenses'" href="/my/expenses">Notes de Frais</a>
-                    <span t-if="page_name == 'expenses'">Notes de Frais</span>
+                    <span t-if="page_name == 'expenses'" class="active">Notes de Frais</span>
                 </li>
             </t>
         </xpath>
@@ -253,7 +252,7 @@
                                                     </a>
                                                 </td>
                                                 <td><span class="badge badge-info"><t t-esc="dict(doc._fields['document_type'].selection).get(doc.document_type)"/></span></td>
-                                                <td><t t-esc="doc.document_date" t-options="{'widget': 'date'}"/></td>
+                                                <td><t t-esc="doc.upload_date" t-options="{'widget': 'date'}"/></td>
                                                 <td>
                                                     <span t-attf-class="badge badge-{{doc.state == 'validated' and 'success' or doc.state == 'rejected' and 'danger' or doc.state == 'pending' and 'warning' or 'secondary'}}">
                                                         <t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
@@ -263,7 +262,7 @@
                                                     <a t-attf-href="/my/document/#{doc.id}" class="btn btn-sm btn-primary">
                                                         <i class="fa fa-eye"/> Voir
                                                     </a>
-                                                    <a t-if="doc.file_data" t-attf-href="/my/document/#{doc.id}/download" class="btn btn-sm btn-secondary">
+                                                    <a t-if="doc.file" t-attf-href="/my/document/#{doc.id}/download" class="btn btn-sm btn-secondary">
                                                         <i class="fa fa-download"/> Télécharger
                                                     </a>
                                                 </td>
@@ -317,13 +316,13 @@
                                         <dd class="col-sm-8"><t t-esc="dict(document._fields['document_type'].selection).get(document.document_type)"/></dd>
                                         
                                         <dt class="col-sm-4">Date</dt>
-                                        <dd class="col-sm-8"><t t-esc="document.document_date" t-options="{'widget': 'date'}"/></dd>
+                                        <dd class="col-sm-8"><t t-esc="document.upload_date" t-options="{'widget': 'date'}"/></dd>
                                         
                                         <dt class="col-sm-4">Fichier</dt>
                                         <dd class="col-sm-8">
-                                            <t t-if="document.file_data">
+                                            <t t-if="document.file">
                                                 <a t-attf-href="/my/document/#{document.id}/download" class="btn btn-sm btn-primary">
-                                                    <i class="fa fa-download"/> <t t-esc="document.file_name"/>
+                                                    <i class="fa fa-download"/> <t t-esc="document.filename"/>
                                                 </a>
                                             </t>
                                             <t t-else="">
@@ -345,7 +344,7 @@
                                     <a href="/my/documents" class="btn btn-secondary btn-block mb-2">
                                         <i class="fa fa-arrow-left"/> Retour à la liste
                                     </a>
-                                    <t t-if="document.file_data">
+                                    <t t-if="document.file">
                                         <a t-attf-href="/my/document/#{document.id}/download" class="btn btn-primary btn-block">
                                             <i class="fa fa-download"/> Télécharger
                                         </a>
@@ -423,7 +422,7 @@
                                                 </td>
                                                 <td><span class="badge badge-info"><t t-esc="dict(expense._fields['category'].selection).get(expense.category)"/></span></td>
                                                 <td><t t-esc="expense.expense_date" t-options="{'widget': 'date'}"/></td>
-                                                <td><strong><t t-esc="expense.total_amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></td>
+                                                <td><strong><t t-esc="expense.amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></td>
                                                 <td>
                                                     <span t-attf-class="badge badge-{{expense.state == 'paid' and 'success' or expense.state == 'approved' and 'info' or expense.state == 'rejected' and 'danger' or 'secondary'}}">
                                                         <t t-esc="dict(expense._fields['state'].selection).get(expense.state)"/>
@@ -440,7 +439,7 @@
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-right"><strong>Total:</strong></td>
-                                            <td><strong><t t-esc="sum(expenses.mapped('total_amount'))" t-options="{'widget': 'float', 'precision': 2}"/> €</strong></td>
+                                            <td><strong><t t-esc="sum(expenses.mapped('amount'))" t-options="{'widget': 'float', 'precision': 2}"/> €</strong></td>
                                             <td colspan="2"></td>
                                         </tr>
                                     </tfoot>
@@ -500,7 +499,7 @@
                                         <dd class="col-sm-8"><t t-esc="expense.tva_amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></dd>
                                         
                                         <dt class="col-sm-4">Montant TTC</dt>
-                                        <dd class="col-sm-8"><strong><t t-esc="expense.total_amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></dd>
+                                        <dd class="col-sm-8"><strong><t t-esc="expense.amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></dd>
                                         
                                         <dt class="col-sm-4" t-if="expense.notes">Notes</dt>
                                         <dd class="col-sm-8" t-if="expense.notes"><t t-esc="expense.notes"/></dd>

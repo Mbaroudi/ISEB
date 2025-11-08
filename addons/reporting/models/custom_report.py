@@ -34,9 +34,7 @@ class CustomReport(models.Model):
     date_from = fields.Date(string='Du')
     date_to = fields.Date(string='Au')
 
-    comparison_enabled = fields.Boolean(string='Compara
-
-ison N-1', default=False)
+    comparison_enabled = fields.Boolean(string='Comparaison N-1', default=False)
     budget_comparison = fields.Boolean(string='Comparaison budget', default=False)
 
     line_ids = fields.One2many('custom.report.line', 'report_id', string='Lignes')

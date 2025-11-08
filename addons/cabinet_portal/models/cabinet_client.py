@@ -11,8 +11,7 @@ class CabinetClient(models.Model):
     # Informations cabinet
     cabinet_id = fields.Many2one('res.company', string='Cabinet', 
                                   help='Cabinet comptable en charge du client')
-    accountant_id = fields.Many2one('res.users', string='Expert-comptable référent',
-                                     domain="[('groups_id', '=', %(cabinet_portal.group_cabinet_accountant)d)]")
+    accountant_id = fields.Many2one('res.users', string='Expert-comptable référent')
     client_since = fields.Date(string='Client depuis', default=fields.Date.today)
     contract_type = fields.Selection([
         ('liberte', 'Formule Liberté (200€/mois)'),

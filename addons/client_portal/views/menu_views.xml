@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menu principal Client Portal -->
     <menuitem id="menu_client_portal_root"
               name="Mon Espace Client"
               sequence="10"
-              web_icon="client_portal,static/description/icon.png"
-              groups="group_client_portal_user"/>
+              web_icon="client_portal,static/description/icon.png"/>
 
     <!-- Dashboard -->
     <menuitem id="menu_client_dashboard"

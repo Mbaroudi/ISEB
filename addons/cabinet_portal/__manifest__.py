@@ -69,9 +69,7 @@ AGPL-3
         'views/cabinet_dashboard_views.xml',
         'views/menu_views.xml',
     ],
-    'demo': [
-        'demo/demo_data.xml',
-    ],
+    'demo': [],
     'installable': True,
     'application': True,
     'auto_install': False,

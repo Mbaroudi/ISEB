@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vue formulaire note de frais -->
     <record id="view_expense_note_form" model="ir.ui.view">
         <field name="name">expense.note.form</field>
         <field name="model">expense.note</field>
@@ -11,13 +10,13 @@
                             class="oe_highlight" invisible="state != 'draft'"/>
                     <button name="action_approve" string="Approuver" type="object" 
                             class="oe_highlight" invisible="state != 'submitted'"
-                            groups="cabinet_portal.group_cabinet_accountant"/>
+                            groups="base.group_system"/>
                     <button name="action_pay" string="Marquer comme payé" type="object" 
                             class="oe_highlight" invisible="state != 'approved'"
-                            groups="cabinet_portal.group_cabinet_accountant"/>
+                            groups="base.group_system"/>
                     <button name="action_reject" string="Rejeter" type="object" 
                             invisible="state not in ['submitted']"
-                            groups="cabinet_portal.group_cabinet_accountant"/>
+                            groups="base.group_system"/>
                     <button name="action_reset_draft" string="Remettre en brouillon" 
                             type="object" invisible="state == 'draft'"/>
                     <field name="state" widget="statusbar" 
@@ -49,7 +48,6 @@
                         <group>
                             <field name="amount" widget="monetary"/>
                             <field name="tva_amount" widget="monetary"/>
-                            <field name="total_amount" widget="monetary" readonly="1"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
                     </group>
@@ -71,28 +69,9 @@
                                 <field name="notes" placeholder="Notes complémentaires (contexte, participants, etc.)..."/>
                             </group>
                             
-                            <group string="Informations" col="4">
+                            <group string="Informations" col="2">
                                 <field name="company_id" groups="base.group_multi_company"/>
-                                <field name="submitted_date" readonly="1"/>
-                                <field name="approved_date" readonly="1" invisible="state not in ['approved', 'paid']"/>
-                                <field name="paid_date" readonly="1" invisible="state != 'paid'"/>
                             </group>
-                            
-                            <group string="Validation" invisible="state not in ['approved', 'paid', 'rejected']">
-                                <field name="approved_by_id" readonly="1" invisible="state not in ['approved', 'paid']"/>
-                                <field name="rejection_reason" readonly="1" invisible="state != 'rejected'"/>
-                            </group>
-                        </page>
-                        
-                        <page string="Données OCR" name="ocr" invisible="not ocr_data">
-                            <group string="Données extraites automatiquement">
-                                <field name="ocr_data" widget="text"/>
-                                <field name="ocr_confidence" widget="percentage" readonly="1"/>
-                            </group>
-                            <div class="alert alert-warning" role="alert">
-                                <p><i class="fa fa-exclamation-triangle"/> Vérifiez les montants extraits</p>
-                                <p>L'OCR peut faire des erreurs. Assurez-vous que le montant et la TVA sont corrects.</p>
-                            </div>
                         </page>
                     </notebook>
                 </sheet>
@@ -116,9 +95,8 @@
                 <field name="partner_id"/>
                 <field name="expense_date"/>
                 <field name="category" widget="badge"/>
-                <field name="amount" sum="Total HT"/>
+                <field name="amount" sum="Total"/>
                 <field name="tva_amount" sum="Total TVA"/>
-                <field name="total_amount" sum="Total TTC"/>
                 <field name="state" widget="badge" 
                        decoration-success="state == 'paid'" 
                        decoration-info="state == 'approved'"
@@ -138,7 +116,7 @@
                 <field name="partner_id"/>
                 <field name="expense_date"/>
                 <field name="category"/>
-                <field name="total_amount"/>
+                <field name="amount"/>
                 <field name="state"/>
                 <field name="receipt_image"/>
                 <templates>
@@ -151,7 +129,7 @@
                                     </strong>
                                 </div>
                                 <span class="float-end badge badge-pill">
-                                    <field name="total_amount" widget="monetary"/>
+                                    <field name="amount" widget="monetary"/>
                                 </span>
                             </div>
                             <div class="o_kanban_record_body">
@@ -179,7 +157,7 @@
             <pivot string="Analyse Notes de Frais">
                 <field name="category" type="row"/>
                 <field name="expense_date" interval="month" type="col"/>
-                <field name="total_amount" type="measure"/>
+                <field name="amount" type="measure"/>
             </pivot>
         </field>
     </record>
@@ -191,7 +169,7 @@
         <field name="arch" type="xml">
             <graph string="Notes de Frais" type="bar">
                 <field name="category"/>
-                <field name="total_amount" type="measure"/>
+                <field name="amount" type="measure"/>
             </graph>
         </field>
     </record>
@@ -259,11 +237,6 @@
             <p>
                 Créez vos notes de frais professionnels (repas, transport, hébergement, etc.) 
                 et joignez vos justificatifs en photo.
-            </p>
-            <p>
-                <button type="action" class="btn-primary" name="%(action_expense_notes)d" context="{'form_view_initial_mode': 'edit'}">
-                    Créer une note de frais
-                </button>
             </p>
         </field>
     </record>

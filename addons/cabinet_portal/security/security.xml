@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Groupes d'utilisateurs cabinet -->
     <record id="group_cabinet_user" model="res.groups">
         <field name="name">Cabinet User</field>
         <field name="category_id" ref="base.module_category_accounting_accounting"/>

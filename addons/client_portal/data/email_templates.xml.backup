@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Email Template: Document Validé -->
     <record id="email_document_validated" model="mail.template">
         <field name="name">Document Validé - Client Portal</field>
         <field name="model_id" ref="model_client_document"/>
@@ -61,7 +60,6 @@
         </field>
     </record>
 
-    <!-- Email Template: Document Rejeté -->
     <record id="email_document_rejected" model="mail.template">
         <field name="name">Document Rejeté - Client Portal</field>
         <field name="model_id" ref="model_client_document"/>
@@ -123,7 +121,6 @@
         </field>
     </record>
 
-    <!-- Email Template: Note de Frais Approuvée -->
     <record id="email_expense_approved" model="mail.template">
         <field name="name">Note de Frais Approuvée - Client Portal</field>
         <field name="model_id" ref="model_expense_note"/>
@@ -184,7 +181,6 @@
         </field>
     </record>
 
-    <!-- Email Template: Note de Frais Rejetée -->
     <record id="email_expense_rejected" model="mail.template">
         <field name="name">Note de Frais Rejetée - Client Portal</field>
         <field name="model_id" ref="model_expense_note"/>
@@ -246,7 +242,6 @@
         </field>
     </record>
 
-    <!-- Email Template: Note de Frais Payée -->
     <record id="email_expense_paid" model="mail.template">
         <field name="name">Note de Frais Payée - Client Portal</field>
         <field name="model_id" ref="model_expense_note"/>
@@ -306,7 +301,6 @@
         </field>
     </record>
 
-    <!-- Email Template: Dashboard Mensuel -->
     <record id="email_dashboard_monthly" model="mail.template">
         <field name="name">Rapport Mensuel Dashboard - Client Portal</field>
         <field name="model_id" ref="model_client_dashboard"/>

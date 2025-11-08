@@ -41,11 +41,4 @@ class BankProvider(models.Model):
 
     def _get_sync_service(self):
         """Retourner le service de synchronisation approprié"""
-        if self.api_type == 'budget_insight':
-            from ..services import budget_insight_service
-            return budget_insight_service.BudgetInsightService(self)
-        elif self.api_type == 'psd2':
-            from ..services import psd2_service
-            return psd2_service.PSD2Service(self)
-        else:
-            raise NotImplementedError(f"API type {self.api_type} not implemented")
+        raise NotImplementedError("Sync services not yet implemented")

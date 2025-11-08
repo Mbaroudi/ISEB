@@ -65,8 +65,8 @@ else
 fi
 
 # Check Docker Compose
-if command -v docker-compose &> /dev/null; then
-    print_success "Docker Compose est installé ($(docker-compose --version))"
+if command -v docker compose &> /dev/null; then
+    print_success "Docker Compose est installé ($(docker compose --version))"
 else
     print_error "Docker Compose n'est pas installé"
     print_info "Installez Docker Compose: https://docs.docker.com/compose/install/"
@@ -109,7 +109,7 @@ fi
 print_header "3. Build des images Docker"
 
 print_info "Construction de l'image ISEB..."
-docker-compose build
+docker compose build
 print_success "Image ISEB construite"
 
 # ===================================================================
@@ -119,17 +119,17 @@ print_success "Image ISEB construite"
 print_header "4. Démarrage des services"
 
 print_info "Démarrage de PostgreSQL et Redis..."
-docker-compose up -d db redis
+docker compose up -d db redis
 
 # Wait for database
 print_info "Attente de PostgreSQL..."
 sleep 10
 
 print_info "Démarrage d'Odoo..."
-docker-compose up -d odoo
+docker compose up -d odoo
 
 print_info "Démarrage de Celery..."
-docker-compose up -d celery
+docker compose up -d celery
 
 print_success "Tous les services sont démarrés"
 
@@ -142,7 +142,7 @@ print_header "5. Vérification"
 sleep 5
 
 # Check services health
-docker-compose ps
+docker compose ps
 
 print_success "Installation terminée!"
 
@@ -180,10 +180,10 @@ echo "   - Guide utilisateur: USER_GUIDE.md"
 echo "   - Documentation OCR: addons/client_portal/OCR_README.md"
 echo ""
 echo "🔧 Commandes utiles:"
-echo "   - docker-compose logs -f          # Voir les logs"
-echo "   - docker-compose restart odoo     # Redémarrer Odoo"
-echo "   - docker-compose down             # Arrêter tous les services"
-echo "   - docker-compose exec odoo bash   # Shell dans le conteneur"
+echo "   - docker compose logs -f          # Voir les logs"
+echo "   - docker compose restart odoo     # Redémarrer Odoo"
+echo "   - docker compose down             # Arrêter tous les services"
+echo "   - docker compose exec odoo bash   # Shell dans le conteneur"
 echo ""
 echo "⚠️  SÉCURITÉ:"
 echo "   - Changez les mots de passe dans .env"
