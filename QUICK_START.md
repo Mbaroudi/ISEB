@@ -1,239 +1,120 @@
-# ISEB Platform - Quick Start Guide
+# 🚀 Guide de Démarrage Rapide - ISEB Platform
 
-## 🚀 Current Status
-✅ All containers running and healthy
-✅ All code issues fixed
-✅ Ready for module installation
+Guide pour démarrer rapidement avec l'architecture Next.js + Odoo + Alpine.js.
 
-## 📍 Access URLs
+## 📋 Prérequis
 
-| Service | URL | Credentials |
-|---------|-----|-------------|
-| **Admin Backend** | http://localhost:8069 | admin / (your password) |
-| **Client Portal** | http://localhost:8069/my | (portal user) |
-| **Health Check** | http://localhost:8069/web/health | - |
+- **Docker Desktop** installé et en cours d'exécution
+- **Node.js 18+** et **npm 9+**
+- **Git**
 
-## 📦 ISEB Modules
+## ⚡ Démarrage Rapide (5 minutes)
 
-### Installation Order (IMPORTANT!)
-
-1. **Base Odoo Accounting** (first!)
-   - Accounting
-   - Invoicing
-
-2. **French Localization** (second!)
-   - France - Accounting (includes PCG, TVA)
-
-3. **ISEB Custom Modules** (in this order):
-   - `french_accounting` - FEC export, TVA declarations
-   - `client_portal` - Client web interface
-   - `reporting` - Custom financial reports
-   - `e_invoicing` - Factur-X, Chorus Pro
-   - `bank_sync` - Bank synchronization
-   - `cabinet_portal` - Accounting firm portal
-
-## 🔧 Installation Steps
-
-### Step 1: Access Odoo
-```bash
-# Open browser
-open http://localhost:8069
-```
-
-### Step 2: Install Base Modules
-1. Go to **Apps**
-2. Search **"Accounting"** → Click **Install**
-3. Wait for installation to complete
-
-### Step 3: Install French Localization
-1. **Apps** → Remove **"Apps"** filter (top left)
-2. Search **"France - Accounting"**
-3. Click **Install**
-4. This installs:
-   - French Chart of Accounts (PCG)
-   - French Tax Rules (TVA 20%, 10%, 5.5%, 2.1%)
-   - FEC compliance
-
-### Step 4: Configure Company
-1. **Settings** → **General Settings** → **Companies**
-2. Edit your company:
-   - **Country**: France
-   - **Currency**: EUR (€)
-   - **Language**: French
-
-### Step 5: Install ISEB Modules
-1. **Apps** → Remove **"Apps"** filter
-2. Click **"Update Apps List"** (⟳ icon, top right)
-3. Install in order:
-
-```
-french_accounting    → FEC Export, TVA Declarations
-client_portal        → Client Interface
-reporting            → Custom Reports
-e_invoicing          → Electronic Invoicing
-bank_sync            → Bank Synchronization
-cabinet_portal       → Cabinet Management
-```
-
-## 👥 Create Test Users
-
-### Admin User (Already exists)
-- Username: `admin`
-- Access: Full backend access
-
-### Portal User (Create new)
-1. **Settings** → **Users & Companies** → **Users**
-2. Click **Create**
-3. Fill in:
-   - **Name**: Test Client
-   - **Email**: client@test.com
-   - **Access Rights**: Portal
-4. Link to Partner (create if needed)
-5. Set password: `test123` (or your choice)
-6. Click **Save**
-
-## 🧪 Test the Platform
-
-### Test Client Portal
-1. Open incognito/private window
-2. Go to: http://localhost:8069/my
-3. Login with portal user credentials
-4. You should see:
-   - Dashboard with financial indicators
-   - Document upload area
-   - Expense notes
-   - Reports
-
-### Test Document Upload
-1. As portal user, go to **Documents**
-2. Click **Upload**
-3. Select a PDF invoice
-4. Fill in details
-5. Click **Submit**
-6. As admin, validate the document
-
-### Test Dashboard
-1. As admin: **Client Portal** → **Dashboards**
-2. Create a dashboard for a client
-3. Click **Refresh Data**
-4. View financial indicators
-
-## 🐳 Docker Commands
+### Option 1: Stack Complète (Frontend + Backend)
 
 ```bash
-# View logs
-docker compose logs -f odoo
+# 1. Démarrer toute la stack avec Docker
+docker-compose -f docker-compose.frontend.yml up -d
 
-# Restart Odoo
-docker compose restart odoo
+# 2. Attendre que tous les services soient healthy (1-2 min)
+docker-compose -f docker-compose.frontend.yml ps
 
-# Stop all services
-docker compose down
-
-# Start all services
-docker compose up -d
-
-# Check status
-docker compose ps
-
-# Access Odoo shell
-docker compose exec odoo odoo shell -d iseb_prod
-
-# Access PostgreSQL
-docker compose exec db psql -U odoo -d iseb_prod
+# 3. Accéder à l'application
+# Frontend: http://localhost:3000
+# Backend Odoo: http://localhost:8069
 ```
 
-## 📊 Key Features to Test
+### Option 2: Développement Frontend Local
 
-### 1. Client Portal
-- ✅ Document upload with OCR
-- ✅ Financial dashboard
-- ✅ Expense notes
-- ✅ Document validation workflow
-
-### 2. French Accounting
-- ✅ FEC export
-- ✅ TVA declarations (CA3, CA12)
-- ✅ French chart of accounts (PCG)
-
-### 3. Reporting
-- ✅ Custom financial reports
-- ✅ Balance sheet
-- ✅ Income statement
-- ✅ Cash flow
-
-### 4. E-Invoicing
-- ✅ Factur-X generation
-- ✅ Chorus Pro integration (needs config)
-- ✅ Electronic signature
-
-### 5. Bank Sync
-- ✅ Bank account connection
-- ✅ Automatic transaction import
-- ✅ Reconciliation rules
-
-## 🔍 Troubleshooting
-
-### Module not found
 ```bash
-# Update app list in Odoo
-Apps → Update Apps List (⟳ icon)
+# 1. Démarrer seulement le backend Odoo
+docker-compose up -d
 
-# Or restart Odoo
-docker compose restart odoo
+# 2. Installer les dépendances frontend
+cd frontend
+npm install
+
+# 3. Démarrer le serveur de développement
+npm run dev
+
+# 4. Accéder à l'application
+# Frontend: http://localhost:3000 (avec hot reload)
+# Backend Odoo: http://localhost:8069
 ```
 
-### Installation error
-```bash
-# Check logs
-docker compose logs odoo --tail=100
+## 🎯 Ce qui a été Implémenté
 
-# Look for Python errors or missing dependencies
+### ✅ Frontend Next.js
+- Landing page moderne avec Alpine.js
+- Animations fluides au scroll
+- Hero section avec gradients
+- 6 Features cards animées
+- Section Pricing (3 formules: 200€, 350€, 500€)
+- CTA call-to-action
+- Design responsive mobile-first
+
+### ✅ Client API Odoo
+- Client TypeScript complet
+- Authentification JSON-RPC
+- Méthodes CRUD (search, read, create, write, unlink)
+- Types TypeScript pour tous les modèles
+- Gestion d'erreurs
+
+### ✅ Infrastructure
+- Docker Compose pour stack complète
+- Dockerfile optimisé (multi-stage)
+- Configuration Tailwind CSS
+- ESLint + Prettier
+- Hot reload en développement
+
+## 📁 Structure Créée
+
+```
+ISEB/
+├── frontend/                    # Application Next.js
+│   ├── app/
+│   │   ├── page.tsx            # Landing page avec Alpine.js ✅
+│   │   ├── layout.tsx          # Layout principal ✅
+│   │   └── globals.css         # Styles Tailwind ✅
+│   ├── components/
+│   │   └── ui/
+│   │       └── button.tsx      # Composant Button ✅
+│   ├── lib/
+│   │   ├── odoo/
+│   │   │   ├── client.ts       # Client API Odoo ✅
+│   │   │   └── types.ts        # Types TypeScript ✅
+│   │   └── utils.ts            # Utilitaires ✅
+│   ├── package.json            ✅
+│   ├── tsconfig.json           ✅
+│   ├── tailwind.config.ts      ✅
+│   └── Dockerfile              ✅
+├── docker-compose.frontend.yml  ✅
+└── IMPLEMENTATION_PLAN.md       ✅
 ```
 
-### Portal not accessible
-```bash
-# Verify user has portal access
-Settings → Users → Check "Portal" group
+## 🚀 Prochaines Étapes
 
-# Verify partner is linked
-User → Related Partner field must be set
-```
+Voir `IMPLEMENTATION_PLAN.md` pour le plan complet (34 jours).
 
-### OCR not working
-```bash
-# Verify Tesseract is installed
-docker compose exec odoo tesseract --version
+### Phase 1: Compléter Landing Page (1-2 jours)
+- [ ] Formulaire de contact
+- [ ] FAQ accordion
+- [ ] Témoignages clients
 
-# Should show: tesseract 5.x.x
-```
+### Phase 2: Authentication (3-5 jours)
+- [ ] Page de login
+- [ ] Page de signup  
+- [ ] Protected routes
+- [ ] Session management
 
-## 📞 Support & Documentation
+### Phase 3: Dashboard (7-10 jours)
+- [ ] Layout avec sidebar
+- [ ] Dashboard avec stats + charts
+- [ ] Documents page (upload + list)
+- [ ] Expenses page
 
-- **Installation Guide**: `install_modules.sh`
-- **User Guide**: `USER_GUIDE.md`
-- **OCR Documentation**: `addons/client_portal/OCR_README.md`
-- **Deployment Guide**: `DEPLOYMENT.md`
+## 📚 Documentation Complète
 
-## 🎯 Next Steps
-
-1. ✅ Install all modules
-2. ✅ Create test data (clients, invoices)
-3. ✅ Test client portal workflow
-4. ✅ Configure email notifications
-5. ✅ Set up automatic backups
-6. 🔄 Deploy to production server
-7. 🔄 Configure domain name & SSL
-8. 🔄 Set up bank connections
-
-## 💡 Pro Tips
-
-- Always install **French Localization** before ISEB modules
-- Use **incognito mode** to test portal as different users
-- Check logs frequently: `docker compose logs -f odoo`
-- Update apps list after code changes
-- Test with real PDF invoices for OCR
-
----
-
-**All set! Your ISEB Platform is ready to use locally! 🚀**
+- `frontend/README.md` - Guide complet frontend
+- `IMPLEMENTATION_PLAN.md` - Plan détaillé 34 jours
+- `WEBSITE_ARCHITECTURE.md` - Options d'architecture

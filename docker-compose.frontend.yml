@@ -1,0 +1,218 @@
+# ===================================================================
+# ISEB Platform - Docker Compose avec Frontend Next.js
+# ===================================================================
+#
+# Services:
+#   - frontend: Next.js application
+#   - odoo: Application Odoo principale
+#   - db: PostgreSQL 15
+#   - redis: Redis (cache + Celery broker)
+#
+# Usage:
+#   docker-compose -f docker-compose.frontend.yml up -d
+#   docker-compose -f docker-compose.frontend.yml logs -f frontend
+#   docker-compose -f docker-compose.frontend.yml down
+#
+# ===================================================================
+
+services:
+  # =================================================================
+  # POSTGRESQL DATABASE
+  # =================================================================
+  db:
+    image: postgres:15-alpine
+    container_name: iseb_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: iseb_prod
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iseb-network
+
+  # =================================================================
+  # REDIS (Cache + Celery Broker)
+  # =================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: iseb_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iseb-network
+
+  # =================================================================
+  # ODOO APPLICATION (Backend API)
+  # =================================================================
+  odoo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: iseb-platform:17.0
+    container_name: iseb_odoo
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-odoo}
+
+      # Odoo Configuration
+      ADMIN_PASSWD: ${ADMIN_PASSWORD:-admin}
+      DB_MAXCONN: 64
+      DB_TEMPLATE: template0
+
+      # Workers
+      WORKERS: ${WORKERS:-4}
+      MAX_CRON_THREADS: 2
+
+      # Limits
+      LIMIT_MEMORY_SOFT: 2147483648
+      LIMIT_MEMORY_HARD: 2684354560
+      LIMIT_TIME_CPU: 600
+      LIMIT_TIME_REAL: 1200
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOGFILE: /var/log/odoo/odoo.log
+
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - odoo-logs:/var/log/odoo
+      - ./addons:/mnt/extra-addons:ro
+      - ./config:/etc/odoo:ro
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+      - "${LONGPOLLING_PORT:-8072}:8072"
+    networks:
+      - iseb-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # =================================================================
+  # NEXT.JS FRONTEND
+  # =================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: runner
+    image: iseb-frontend:latest
+    container_name: iseb_frontend
+    restart: unless-stopped
+    depends_on:
+      odoo:
+        condition: service_healthy
+    environment:
+      # Odoo Backend
+      ODOO_URL: http://odoo:8069
+      ODOO_DB: iseb_prod
+      NEXT_PUBLIC_ODOO_URL: http://localhost:8069
+
+      # Next.js
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change_this_in_production}
+      NEXTAUTH_URL: http://localhost:3000
+
+      # Production
+      NODE_ENV: production
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    networks:
+      - iseb-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+# ===================================================================
+# VOLUMES
+# ===================================================================
+volumes:
+  postgres-data:
+    name: iseb_postgres_data
+  redis-data:
+    name: iseb_redis_data
+  odoo-data:
+    name: iseb_odoo_data
+  odoo-logs:
+    name: iseb_odoo_logs
+
+# ===================================================================
+# NETWORKS
+# ===================================================================
+networks:
+  iseb-network:
+    name: iseb_network
+    driver: bridge
+
+# ===================================================================
+# CONFIGURATION
+# ===================================================================
+#
+# Créez un fichier .env à la racine pour personnaliser:
+#
+# DB_PASSWORD=votre_mot_de_passe_db
+# ADMIN_PASSWORD=votre_mot_de_passe_admin
+# NEXTAUTH_SECRET=votre_secret_nextauth
+# WORKERS=4
+# LOG_LEVEL=info
+# ODOO_PORT=8069
+# FRONTEND_PORT=3000
+#
+# ===================================================================
+#
+# COMMANDES UTILES:
+#
+# Démarrer la stack complète:
+#   docker-compose -f docker-compose.frontend.yml up -d
+#
+# Voir les logs:
+#   docker-compose -f docker-compose.frontend.yml logs -f
+#   docker-compose -f docker-compose.frontend.yml logs -f frontend
+#   docker-compose -f docker-compose.frontend.yml logs -f odoo
+#
+# Redémarrer un service:
+#   docker-compose -f docker-compose.frontend.yml restart frontend
+#
+# Arrêter la stack:
+#   docker-compose -f docker-compose.frontend.yml down
+#
+# Rebuild et redémarrer:
+#   docker-compose -f docker-compose.frontend.yml up -d --build
+#
+# ===================================================================
