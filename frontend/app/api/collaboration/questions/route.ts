@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type');
     const assignedToMe = searchParams.get('assignedToMe') === 'true';
     const myQuestions = searchParams.get('myQuestions') === 'true';
+    const documentId = searchParams.get('document_id');
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
@@ -40,6 +41,10 @@ export async function GET(request: NextRequest) {
     if (myQuestions) {
       const uid = odoo.uid;
       domain.push(['user_id', '=', uid]);
+    }
+
+    if (documentId) {
+      domain.push(['document_id', '=', parseInt(documentId)]);
     }
 
     // Récupération des questions

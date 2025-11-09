@@ -13,6 +13,8 @@ import {
   Filter,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import QuestionWidget from "@/components/collaboration/QuestionWidget";
+import QuestionForm, { QuestionFormData } from "@/components/collaboration/QuestionForm";
 
 export default function DocumentsPage() {
   const { data: documents, isLoading } = useDocuments();
@@ -22,6 +24,8 @@ export default function DocumentsPage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [showQuestionForm, setShowQuestionForm] = useState(false);
+  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -119,6 +123,35 @@ export default function DocumentsPage() {
     return matchesSearch && matchesType;
   });
 
+  const handleAskQuestion = (documentId: number) => {
+    setSelectedDocumentId(documentId);
+    setShowQuestionForm(true);
+  };
+
+  const handleCreateQuestion = async (data: QuestionFormData) => {
+    try {
+      const response = await fetch("/api/collaboration/questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          document_id: selectedDocumentId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la création de la question");
+      }
+
+      // Close form
+      setShowQuestionForm(false);
+      setSelectedDocumentId(null);
+    } catch (error) {
+      console.error("Error creating question:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -210,33 +243,36 @@ export default function DocumentsPage() {
         ) : filteredDocuments && filteredDocuments.length > 0 ? (
           <div className="divide-y divide-gray-200">
             {filteredDocuments.map((doc) => (
-              <div
-                key={doc.id}
-                className="flex items-center justify-between p-4 hover:bg-gray-50"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
-                    <FileText className="h-6 w-6 text-purple-600" />
+              <div key={doc.id}>
+                <div className="flex items-center justify-between p-4 hover:bg-gray-50">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
+                      <FileText className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{doc.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {doc.document_type} • {formatDate(doc.upload_date)}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{doc.name}</p>
-                    <p className="text-sm text-gray-500">
-                      {doc.document_type} • {formatDate(doc.upload_date)}
-                    </p>
-                  </div>
-                </div>
 
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="sm">
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Download className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button variant="ghost" size="sm">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Trash2 className="h-4 w-4 text-red-600" />
+                    </Button>
+                  </div>
                 </div>
+                <QuestionWidget
+                  documentId={doc.id}
+                  onAskQuestion={() => handleAskQuestion(doc.id)}
+                />
               </div>
             ))}
           </div>
@@ -252,6 +288,18 @@ export default function DocumentsPage() {
           </div>
         )}
       </div>
+
+      {/* Question form modal */}
+      {showQuestionForm && (
+        <QuestionForm
+          onClose={() => {
+            setShowQuestionForm(false);
+            setSelectedDocumentId(null);
+          }}
+          onSubmit={handleCreateQuestion}
+          contextData={{ documentId: selectedDocumentId || undefined }}
+        />
+      )}
     </div>
   );
 }
