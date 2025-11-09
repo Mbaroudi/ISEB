@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ocr_config_manager,invoice_ocr_config.manager,base.model_ir_config_parameter,account.group_account_manager,1,1,1,1
+access_ocr_config_user,invoice_ocr_config.user,base.model_ir_config_parameter,account.group_account_user,1,0,0,0

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension des paramètres de comptabilité -->
+    <record id="res_config_settings_view_form_invoice_ocr" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.invoice.ocr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data_key="invoice_ocr_config" string="Invoice OCR Configuration">
+                    <h2>Configuration OCR Factures</h2>
+
+                    <!-- Fournisseur OCR -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="ocr_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_enabled"/>
+                                <div class="text-muted">
+                                    Activer l'extraction automatique des données de facture par OCR/IA
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('ocr_enabled', '=', False)]}">
+                            <div class="o_setting_left_pane"></div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_provider" string="Fournisseur OCR"/>
+                                <field name="ocr_provider" class="o_light_label" widget="radio"/>
+                                <div class="text-muted">
+                                    Choisissez le service d'OCR à utiliser
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API Configuration -->
+                    <div class="row mt16 o_settings_container" attrs="{'invisible': [('ocr_enabled', '=', False)]}">
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('ocr_provider', 'not in', ['google_vision', 'aws_textract', 'azure_vision'])]}">
+                            <div class="o_setting_left_pane"></div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_api_key" string="Clé API"/>
+                                <field name="ocr_api_key" password="True" placeholder="Votre clé API..."/>
+                                <div class="text-muted">
+                                    <span attrs="{'invisible': [('ocr_provider', '!=', 'google_vision')]}">
+                                        Obtenir sur: https://cloud.google.com/vision
+                                    </span>
+                                    <span attrs="{'invisible': [('ocr_provider', '!=', 'aws_textract')]}">
+                                        Obtenir sur: https://aws.amazon.com/textract/
+                                    </span>
+                                    <span attrs="{'invisible': [('ocr_provider', '!=', 'azure_vision')]}">
+                                        Obtenir sur: https://azure.microsoft.com/services/cognitive-services/
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('ocr_provider', '!=', 'aws_textract')]}">
+                            <div class="o_setting_left_pane"></div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_aws_secret_key" string="AWS Secret Key"/>
+                                <field name="ocr_aws_secret_key" password="True" placeholder="Clé secrète AWS..."/>
+                                <label for="ocr_aws_region" string="Région AWS"/>
+                                <field name="ocr_aws_region" placeholder="eu-west-1"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paramètres avancés -->
+                    <div class="row mt16 o_settings_container" attrs="{'invisible': [('ocr_enabled', '=', False)]}">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"></div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_confidence_threshold" string="Seuil de confiance (%)"/>
+                                <field name="ocr_confidence_threshold" widget="integer"/>
+                                <div class="text-muted">
+                                    Seuil minimum de confiance pour accepter les données OCR (recommandé: 85%)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="ocr_auto_validate"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_auto_validate"/>
+                                <div class="text-muted">
+                                    Valider automatiquement les factures avec confiance > 98%
+                                </div>
+                                <div class="content-group" attrs="{'invisible': [('ocr_auto_validate', '=', False)]}">
+                                    <div class="mt8">
+                                        <label for="ocr_auto_validate_threshold" string="Seuil validation auto (%)"/>
+                                        <field name="ocr_auto_validate_threshold" widget="integer"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Email Configuration -->
+                    <div class="row mt16 o_settings_container" attrs="{'invisible': [('ocr_enabled', '=', False)]}">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="ocr_email_processing"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_email_processing"/>
+                                <div class="text-muted">
+                                    Traiter automatiquement les factures reçues par email
+                                </div>
+                                <div class="content-group" attrs="{'invisible': [('ocr_email_processing', '=', False)]}">
+                                    <div class="mt8">
+                                        <label for="ocr_email_alias" string="Alias email"/>
+                                        <field name="ocr_email_alias" placeholder="factures@votre-domaine.com"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="ocr_batch_processing"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ocr_batch_processing"/>
+                                <div class="text-muted">
+                                    Activer le traitement par lots de factures
+                                </div>
+                                <div class="content-group" attrs="{'invisible': [('ocr_batch_processing', '=', False)]}">
+                                    <div class="mt8">
+                                        <label for="ocr_batch_size" string="Taille du lot"/>
+                                        <field name="ocr_batch_size" widget="integer"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test OCR -->
+                    <div class="row mt16 o_settings_container" attrs="{'invisible': [('ocr_enabled', '=', False)]}">
+                        <div class="col-12">
+                            <button name="action_test_ocr" type="object" string="Tester la configuration OCR" class="btn-primary" icon="fa-check-circle"/>
+                            <button name="action_view_ocr_logs" type="object" string="Voir les logs OCR" class="btn-secondary ml8" icon="fa-list"/>
+                        </div>
+                    </div>
+
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

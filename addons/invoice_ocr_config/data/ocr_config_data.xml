@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paramètres système par défaut pour OCR -->
+    <data noupdate="1">
+
+        <!-- Fournisseur OCR par défaut -->
+        <record id="param_ocr_provider" model="ir.config_parameter">
+            <field name="key">ocr.provider</field>
+            <field name="value">google_vision</field>
+        </record>
+
+        <!-- Seuil de confiance minimum (85%) -->
+        <record id="param_ocr_confidence" model="ir.config_parameter">
+            <field name="key">ocr.confidence_threshold</field>
+            <field name="value">0.85</field>
+        </record>
+
+        <!-- Langue par défaut -->
+        <record id="param_ocr_language" model="ir.config_parameter">
+            <field name="key">ocr.language</field>
+            <field name="value">fr</field>
+        </record>
+
+        <!-- Format de date par défaut (EU) -->
+        <record id="param_ocr_date_format" model="ir.config_parameter">
+            <field name="key">ocr.date_format</field>
+            <field name="value">EU</field>
+        </record>
+
+        <!-- Validation automatique si confiance > 98% -->
+        <record id="param_ocr_auto_validate" model="ir.config_parameter">
+            <field name="key">ocr.auto_validate_threshold</field>
+            <field name="value">0.98</field>
+        </record>
+
+        <!-- Traitement par lots activé -->
+        <record id="param_ocr_batch_processing" model="ir.config_parameter">
+            <field name="key">ocr.batch_processing</field>
+            <field name="value">True</field>
+        </record>
+
+        <!-- Taille maximale lot -->
+        <record id="param_ocr_batch_size" model="ir.config_parameter">
+            <field name="key">ocr.batch_size</field>
+            <field name="value">50</field>
+        </record>
+
+        <!-- Délai d'expiration (secondes) -->
+        <record id="param_ocr_timeout" model="ir.config_parameter">
+            <field name="key">ocr.timeout</field>
+            <field name="value">30</field>
+        </record>
+
+        <!-- Retry automatique en cas d'erreur -->
+        <record id="param_ocr_retry_count" model="ir.config_parameter">
+            <field name="key">ocr.retry_count</field>
+            <field name="value">3</field>
+        </record>
+
+        <!-- Région AWS (si AWS Textract) -->
+        <record id="param_aws_region" model="ir.config_parameter">
+            <field name="key">ocr.aws_region</field>
+            <field name="value">eu-west-1</field>
+        </record>
+
+    </data>
+
+    <!-- Comptes comptables par défaut pour fournisseurs communs -->
+    <data noupdate="1">
+
+        <!-- Note: Ces enregistrements ne créent pas les comptes,
+             ils servent de référence pour la configuration -->
+
+        <!-- Mapping type de dépense → compte charge suggéré -->
+        <!--
+        Électricité/Gaz (EDF, Engie) → 606000
+        Télécom (Orange, SFR) → 626000
+        Achats marchandises → 607000
+        Fournitures bureau → 606400
+        Loyer → 613000
+        Assurances → 616000
+        Services bancaires → 627000
+        Honoraires → 622600
+        -->
+
+    </data>
+
+    <!-- Templates de mapping champs OCR -->
+    <data noupdate="1">
+
+        <!-- Mapping standard facture française -->
+        <!--
+        Champs OCR → Champs Odoo:
+        - Invoice Number → reference
+        - Invoice Date → invoice_date
+        - Due Date → invoice_date_due
+        - Vendor Name → partner_id
+        - Vendor VAT → partner_id.vat
+        - Total Amount → amount_total
+        - Tax Amount → amount_tax
+        - Subtotal → amount_untaxed
+        - Line Description → invoice_line_ids.name
+        - Line Quantity → invoice_line_ids.quantity
+        - Line Unit Price → invoice_line_ids.price_unit
+        - Line Tax Rate → invoice_line_ids.tax_ids
+        -->
+
+    </data>
+
+</odoo>
