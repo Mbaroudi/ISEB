@@ -13,6 +13,12 @@ import {
   MapPin,
   Save,
   AlertCircle,
+  Upload,
+  Download,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,9 +27,21 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("profile");
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Import/Export states
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importFormat, setImportFormat] = useState("auto");
+  const [importLoading, setImportLoading] = useState(false);
+  const [importResult, setImportResult] = useState<any>(null);
+
+  const [exportFormat, setExportFormat] = useState("fec");
+  const [exportDateFrom, setExportDateFrom] = useState("");
+  const [exportDateTo, setExportDateTo] = useState("");
+  const [exportLoading, setExportLoading] = useState(false);
+
   const tabs = [
     { id: "profile", label: "Profil", icon: User },
     { id: "company", label: "Entreprise", icon: Building2 },
+    { id: "import-export", label: "Import/Export", icon: FileText },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "security", label: "Sécurité", icon: Lock },
     { id: "billing", label: "Facturation", icon: CreditCard },
@@ -32,6 +50,122 @@ export default function SettingsPage() {
   const handleSave = () => {
     setSaveSuccess(true);
     setTimeout(() => setSaveSuccess(false), 3000);
+  };
+
+  // Handle Import
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImportFile(e.target.files[0]);
+      setImportResult(null);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) {
+      alert("Veuillez sélectionner un fichier");
+      return;
+    }
+
+    setImportLoading(true);
+    setImportResult(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", importFile);
+      formData.append("format", importFormat);
+      formData.append("validateBeforeImport", "true");
+      formData.append("autoCreateAccounts", "false");
+      formData.append("autoCreatePartners", "true");
+
+      const response = await fetch("/api/accounting/import", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      setImportResult(result);
+
+      if (result.success) {
+        alert(`Import réussi! ${result.successCount} écritures importées.`);
+      }
+    } catch (error: any) {
+      setImportResult({
+        success: false,
+        message: error.message,
+      });
+    } finally {
+      setImportLoading(false);
+    }
+  };
+
+  // Handle Export
+  const handleExport = async () => {
+    if (!exportDateFrom || !exportDateTo) {
+      alert("Veuillez sélectionner une période");
+      return;
+    }
+
+    setExportLoading(true);
+
+    try {
+      const response = await fetch("/api/accounting/export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dateFrom: exportDateFrom,
+          dateTo: exportDateTo,
+          format: exportFormat,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Download FEC file if available
+        if (result.fec) {
+          const blob = base64ToBlob(result.fec.content, "text/plain");
+          downloadBlob(blob, result.fec.filename);
+        }
+
+        // Download XIMPORT file if available
+        if (result.ximport) {
+          const blob = base64ToBlob(result.ximport.content, "text/plain");
+          downloadBlob(blob, result.ximport.filename);
+        }
+
+        alert("Export réussi! Le(s) fichier(s) ont été téléchargé(s).");
+      } else {
+        alert("Erreur lors de l'export");
+      }
+    } catch (error: any) {
+      alert("Erreur: " + error.message);
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
+  // Helper functions
+  const base64ToBlob = (base64: string, mimeType: string) => {
+    const byteCharacters = atob(base64);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  };
+
+  const downloadBlob = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -272,6 +406,226 @@ export default function SettingsPage() {
                     <Save className="mr-2 h-4 w-4" />
                     Enregistrer
                   </Button>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "import-export" && (
+              <div className="space-y-8">
+                {/* Import Section */}
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Upload className="h-5 w-5" />
+                      Importer des données comptables
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Importez vos données depuis EBP, Sage, Ciel ou tout autre logiciel comptable
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Format du fichier
+                      </label>
+                      <select
+                        value={importFormat}
+                        onChange={(e) => setImportFormat(e.target.value)}
+                        className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="auto">Détection automatique</option>
+                        <option value="fec">🇫🇷 FEC (Fichier des Écritures Comptables)</option>
+                        <option value="ximport">📊 XIMPORT (Ciel/EBP/Sage)</option>
+                        <option value="csv">📄 CSV</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Sélectionner un fichier
+                      </label>
+                      <input
+                        type="file"
+                        accept=".txt,.csv"
+                        onChange={handleFileChange}
+                        className="block w-full text-sm text-gray-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-lg file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-purple-50 file:text-purple-700
+                          hover:file:bg-purple-100
+                          cursor-pointer"
+                      />
+                      {importFile && (
+                        <p className="mt-2 text-sm text-gray-600">
+                          Fichier sélectionné: <strong>{importFile.name}</strong> ({(importFile.size / 1024).toFixed(2)} Ko)
+                        </p>
+                      )}
+                    </div>
+
+                    <Button
+                      onClick={handleImport}
+                      disabled={!importFile || importLoading}
+                      className="w-full"
+                    >
+                      {importLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Import en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="mr-2 h-4 w-4" />
+                          Importer
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Import Result */}
+                  {importResult && (
+                    <div className={`rounded-lg p-4 ${
+                      importResult.success
+                        ? "bg-green-50 border border-green-200"
+                        : "bg-red-50 border border-red-200"
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        {importResult.success ? (
+                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                        ) : (
+                          <XCircle className="h-5 w-5 text-red-600 mt-0.5" />
+                        )}
+                        <div className="flex-1">
+                          <h3 className={`font-semibold ${
+                            importResult.success ? "text-green-900" : "text-red-900"
+                          }`}>
+                            {importResult.success ? "Import réussi!" : "Erreur d'import"}
+                          </h3>
+                          {importResult.successCount !== undefined && (
+                            <p className="mt-1 text-sm text-gray-700">
+                              <strong>{importResult.successCount}</strong> écritures importées
+                              {importResult.errorCount > 0 && (
+                                <span className="text-red-600">
+                                  {" "}({importResult.errorCount} erreurs)
+                                </span>
+                              )}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Import Help */}
+                  <div className="rounded-lg bg-blue-50 border border-blue-200 p-4">
+                    <h4 className="font-semibold text-blue-900 mb-2">
+                      💡 Formats supportés
+                    </h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• <strong>FEC</strong> : Format officiel France (obligatoire pour contrôles fiscaux)</li>
+                      <li>• <strong>XIMPORT</strong> : Format universel Ciel, EBP, Sage</li>
+                      <li>• <strong>CSV</strong> : Format tableur standard</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <hr className="border-gray-200" />
+
+                {/* Export Section */}
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <Download className="h-5 w-5" />
+                      Exporter des données comptables
+                    </h2>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Exportez vos données pour migration, sauvegarde ou contrôle fiscal
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Format d'export
+                      </label>
+                      <select
+                        value={exportFormat}
+                        onChange={(e) => setExportFormat(e.target.value)}
+                        className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      >
+                        <option value="fec">🇫🇷 FEC (SIRENFECAAAAMMJJ.txt)</option>
+                        <option value="ximport">📊 XIMPORT (XIMPORT.TXT)</option>
+                        <option value="both">📦 Les deux formats</option>
+                      </select>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Date de début
+                        </label>
+                        <input
+                          type="date"
+                          value={exportDateFrom}
+                          onChange={(e) => setExportDateFrom(e.target.value)}
+                          className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Date de fin
+                        </label>
+                        <input
+                          type="date"
+                          value={exportDateTo}
+                          onChange={(e) => setExportDateTo(e.target.value)}
+                          className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleExport}
+                      disabled={!exportDateFrom || !exportDateTo || exportLoading}
+                      className="w-full"
+                    >
+                      {exportLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Export en cours...
+                        </>
+                      ) : (
+                        <>
+                          <Download className="mr-2 h-4 w-4" />
+                          Exporter
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* Export Help */}
+                  <div className="rounded-lg bg-purple-50 border border-purple-200 p-4">
+                    <h4 className="font-semibold text-purple-900 mb-2">
+                      ℹ️ À propos de l'export FEC
+                    </h4>
+                    <ul className="text-sm text-purple-800 space-y-1">
+                      <li>• Obligatoire en France depuis 2014 pour les contrôles fiscaux</li>
+                      <li>• Format : SIRENFECAAAAMMJJ.txt (ex: 123456789FEC20241231.txt)</li>
+                      <li>• Inclut toutes les écritures validées de la période</li>
+                      <li>• Vérifiable avec l'outil "Test Compta Demat" de la DGFIP</li>
+                    </ul>
+                  </div>
+
+                  <div className="rounded-lg bg-orange-50 border border-orange-200 p-4">
+                    <h4 className="font-semibold text-orange-900 mb-2">
+                      🔄 Migration vers/depuis d'autres logiciels
+                    </h4>
+                    <p className="text-sm text-orange-800">
+                      Le format <strong>XIMPORT</strong> est compatible avec Ciel, EBP, Sage et la plupart
+                      des logiciels comptables français. Utilisez-le pour migrer vos données vers ou depuis ISEB.
+                    </p>
+                  </div>
                 </div>
               </div>
             )}

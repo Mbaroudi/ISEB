@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principal Import/Export dans Comptabilité -->
+    <menuitem
+        id="menu_account_import_export_root"
+        name="Import / Export"
+        parent="account.menu_finance_configuration"
+        sequence="100"/>
+
+    <!-- Menu Import -->
+    <menuitem
+        id="menu_account_import"
+        name="Importer des données"
+        parent="menu_account_import_export_root"
+        action="action_account_import_wizard"
+        sequence="10"/>
+
+    <!-- Menu Export -->
+    <menuitem
+        id="menu_account_export"
+        name="Exporter des données"
+        parent="menu_account_import_export_root"
+        action="action_account_export_wizard"
+        sequence="20"/>
+</odoo>
