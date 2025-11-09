@@ -1,6 +1,10 @@
 "use client";
 
 import { useAuth } from "@/lib/auth/context";
+import { useDashboardStats } from "@/lib/odoo/hooks";
+import { RevenueChart } from "@/components/dashboard/revenue-chart";
+import { ExpensesChart } from "@/components/dashboard/expenses-chart";
+import { formatCurrency } from "@/lib/utils";
 import {
   ArrowDown,
   ArrowUp,
@@ -12,34 +16,35 @@ import {
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { data: stats, isLoading } = useDashboardStats();
 
-  const stats = [
+  const statsCards = [
     {
       name: "Trésorerie",
-      value: "12 450 €",
+      value: stats ? formatCurrency(stats.balance) : "...",
       change: "+4.5%",
-      changeType: "positive",
+      changeType: "positive" as const,
       icon: DollarSign,
     },
     {
       name: "CA du mois",
-      value: "8 230 €",
+      value: stats ? formatCurrency(stats.revenue_month) : "...",
       change: "+12.3%",
-      changeType: "positive",
+      changeType: "positive" as const,
       icon: TrendingUp,
     },
     {
       name: "Charges",
-      value: "3 120 €",
+      value: stats ? formatCurrency(stats.expenses_month) : "...",
       change: "-2.1%",
-      changeType: "negative",
+      changeType: "negative" as const,
       icon: CreditCard,
     },
     {
       name: "Clients actifs",
-      value: "24",
+      value: stats ? stats.pending_invoices.toString() : "...",
       change: "+3",
-      changeType: "positive",
+      changeType: "positive" as const,
       icon: Users,
     },
   ];
@@ -58,7 +63,7 @@ export default function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {statsCards.map((stat) => (
           <div
             key={stat.name}
             className="overflow-hidden rounded-lg bg-white p-6 shadow transition-shadow hover:shadow-md"
@@ -92,17 +97,15 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Charts placeholder */}
+      {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Revenue chart */}
         <div className="rounded-lg bg-white p-6 shadow">
           <h3 className="text-lg font-medium text-gray-900">
             Évolution du chiffre d'affaires
           </h3>
-          <div className="mt-6 flex h-64 items-center justify-center rounded-lg bg-gray-50">
-            <p className="text-gray-500">
-              Graphique à implémenter (Recharts)
-            </p>
+          <div className="mt-6">
+            <RevenueChart />
           </div>
         </div>
 
@@ -111,10 +114,8 @@ export default function DashboardPage() {
           <h3 className="text-lg font-medium text-gray-900">
             Répartition des charges
           </h3>
-          <div className="mt-6 flex h-64 items-center justify-center rounded-lg bg-gray-50">
-            <p className="text-gray-500">
-              Graphique à implémenter (Recharts)
-            </p>
+          <div className="mt-6">
+            <ExpensesChart />
           </div>
         </div>
       </div>
