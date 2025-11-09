@@ -9,7 +9,7 @@ import time
 import sys
 
 ODOO_URL = 'http://localhost:8069'
-DB_NAME = 'iseb_db'
+DB_NAME = 'iseb_prod'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 

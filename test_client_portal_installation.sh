@@ -37,7 +37,7 @@ echo "→ Utilisation du manifest minimal..."
 cp "$MANIFEST_MINIMAL" "$MANIFEST"
 
 echo "→ Mise à jour de la liste des modules Odoo..."
-docker compose exec -T odoo odoo-bin -d iseb_db -u base --stop-after-init 2>&1 | tail -5 || true
+docker compose exec -T odoo odoo-bin -d iseb_prod -u base --stop-after-init 2>&1 | tail -5 || true
 
 echo "→ Tentative d'installation..."
 python3 test_client_portal_minimal.py

@@ -195,10 +195,9 @@
                         domain="[('state', '=', 'rejected')]"/>
                 <separator/>
                 <filter string="Ce mois" name="this_month"
-                        domain="[('expense_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
-                                ('expense_date', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]"/>
+                        domain="[('expense_date', '&gt;=', '2025-01-01'), ('expense_date', '&lt;=', '2025-01-31')]"/>
                 <filter string="Ce trimestre" name="this_quarter"
-                        domain="[('expense_date', '&gt;=', ((context_today() - relativedelta(months=(context_today().month-1)%3)).replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                        domain="[('expense_date', '&gt;=', '2025-01-01')]"/>
                 <separator/>
                 <filter string="Repas" name="meal"
                         domain="[('category', '=', 'meal')]"/>

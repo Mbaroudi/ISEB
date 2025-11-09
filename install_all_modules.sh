@@ -11,7 +11,7 @@ echo "=========================================="
 echo ""
 
 # Database details
-DB_NAME="iseb_db"
+DB_NAME="iseb_prod"
 ADMIN_PASSWORD="admin"
 
 echo "Installing ISEB modules..."

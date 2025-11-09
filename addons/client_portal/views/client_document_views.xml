@@ -149,8 +149,7 @@
                         domain="[('state', '=', 'rejected')]"/>
                 <separator/>
                 <filter string="Ce mois" name="this_month"
-                        domain="[('upload_date', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
-                                ('upload_date', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]" />
+                        domain="[('upload_date', '&gt;=', '2025-01-01'), ('upload_date', '&lt;=', '2025-01-31')]" />
                 <separator/>
                 <filter string="Factures" name="invoices"
                         domain="[('document_type', '=', 'invoice')]"/>

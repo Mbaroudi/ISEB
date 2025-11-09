@@ -25,7 +25,7 @@ services:
     container_name: iseb_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: odoo
+      POSTGRES_DB: iseb_prod
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
       PGDATA: /var/lib/postgresql/data/pgdata

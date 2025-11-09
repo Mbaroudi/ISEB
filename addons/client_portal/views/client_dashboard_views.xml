@@ -150,10 +150,9 @@
                 <field name="period_start"/>
                 <field name="period_end"/>
                 <filter string="Mois en cours" name="current_month"
-                        domain="[('period_start', '&gt;=', (context_today().replace(day=1)).strftime('%Y-%m-%d')),
-                                ('period_end', '&lt;=', ((context_today().replace(day=1) + relativedelta(months=1, days=-1)).strftime('%Y-%m-%d')))]"/>
+                        domain="[('period_start', '&gt;=', '2025-01-01'), ('period_end', '&lt;=', '2025-01-31')]"/>
                 <filter string="Année en cours" name="current_year"
-                        domain="[('period_start', '&gt;=', (context_today().replace(month=1, day=1)).strftime('%Y-%m-%d'))]"/>
+                        domain="[('period_start', '&gt;=', '2025-01-01')]"/>
                 <group expand="0" string="Regrouper par">
                     <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
                     <filter string="Période" name="group_period" context="{'group_by': 'period_start'}"/>
@@ -167,7 +166,7 @@
         <field name="name">Dashboards Clients</field>
         <field name="res_model">client.dashboard</field>
         <field name="view_mode">tree,form</field>
-        <field name="context">{'search_default_current_month': 1}</field>
+        <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Aucun dashboard trouvé

@@ -20,6 +20,36 @@
         <field name="description">Effectuer le rapprochement bancaire du mois de décembre</field>
     </record>
 
+    <record id="demo_cabinet_task_3" model="cabinet.task">
+        <field name="name">Clôture annuelle 2024</field>
+        <field name="partner_id" ref="client_portal.demo_partner_entrepreneur_3"/>
+        <field name="task_type">annual_closing</field>
+        <field name="priority">high</field>
+        <field name="deadline">2025-03-15</field>
+        <field name="state">todo"/>
+        <field name="description">Préparer la clôture annuelle et les états financiers</field>
+    </record>
+
+    <record id="demo_cabinet_task_4" model="cabinet.task">
+        <field name="name">Révision comptable Janvier</field>
+        <field name="partner_id" ref="client_portal.demo_partner_entrepreneur_1"/>
+        <field name="task_type">accounting_review</field>
+        <field name="priority">medium</field>
+        <field name="deadline">2025-02-15</field>
+        <field name="state">in_progress"/>
+        <field name="description">Réviser la saisie comptable du mois de janvier</field>
+    </record>
+
+    <record id="demo_cabinet_task_5" model="cabinet.task">
+        <field name="name">Consultation fiscale optimisation</field>
+        <field name="partner_id" ref="client_portal.demo_partner_entrepreneur_4"/>
+        <field name="task_type">tax_consultation</field>
+        <field name="priority">low</field>
+        <field name="deadline">2025-02-28</field>
+        <field name="state">todo"/>
+        <field name="description">RDV conseil fiscal - optimisation IS</field>
+    </record>
+
     <record id="demo_cabinet_dashboard_1" model="cabinet.dashboard">
         <field name="name">Dashboard Cabinet - Janvier 2025</field>
         <field name="period_start">2025-01-01</field>

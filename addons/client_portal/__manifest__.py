@@ -78,12 +78,14 @@ AGPL-3
         # Portal Templates
         'views/portal_templates.xml',
         'views/portal_templates_enhanced.xml',
-        # Assets
-        'views/assets.xml',  # CSS/JS pour backend (frontend désactivé dans le fichier)
+        # Assets - temporarily disabled due to web.assets_backend lookup error
+        # 'views/assets.xml',
         # Data
         # 'data/email_templates.xml',  # TODO: Fix RNG validation issue
     ],
-    'demo': [],
+    'demo': [
+        'demo/demo_data.xml',
+    ],
     'installable': True,
     'application': True,
     'auto_install': False,

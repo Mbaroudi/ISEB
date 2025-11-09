@@ -12,7 +12,7 @@ import sys
 
 # Configuration
 ODOO_URL = 'http://localhost:8069'
-DB_NAME = 'iseb_db'
+DB_NAME = 'iseb_prod'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 
@@ -71,7 +71,7 @@ def connect_to_odoo():
         print(f"✗ Connection failed: {e}")
         print("\nMake sure:")
         print("  - Odoo is running: docker-compose ps")
-        print("  - Database exists: iseb_db")
+        print("  - Database exists: iseb_prod")
         print("  - Credentials are correct")
         sys.exit(1)
 
