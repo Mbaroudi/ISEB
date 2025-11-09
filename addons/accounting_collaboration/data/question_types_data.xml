@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Données de démonstration / Types de questions standards -->
+
+        <!-- Note: Les types de questions sont définis dans le modèle via Selection
+        Ce fichier pourrait contenir des templates de questions ou configurations -->
+
+        <!-- Templates de questions fréquentes (optionnel) -->
+        <!-- Pourrait être étendu avec des questions templates -->
+
+    </data>
+</odoo>

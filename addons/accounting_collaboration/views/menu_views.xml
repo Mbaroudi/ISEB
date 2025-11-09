@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principal Collaboration dans Comptabilité -->
+    <menuitem
+        id="menu_accounting_collaboration_root"
+        name="Collaboration"
+        parent="account.menu_finance"
+        sequence="50"/>
+
+    <!-- Sous-menu Questions -->
+    <menuitem
+        id="menu_accounting_questions"
+        name="Questions"
+        parent="menu_accounting_collaboration_root"
+        action="action_accounting_question"
+        sequence="10"/>
+
+    <!-- Menu Dashboard Questions -->
+    <menuitem
+        id="menu_accounting_questions_dashboard"
+        name="Tableau de bord"
+        parent="menu_accounting_collaboration_root"
+        sequence="5"/>
+</odoo>
