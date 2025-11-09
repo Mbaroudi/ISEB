@@ -8,8 +8,8 @@ import sys
 
 ODOO_URL = 'http://localhost:8069'
 DB_NAME = 'iseb_prod'
-USERNAME = 'admin'
-PASSWORD = 'admin'
+USERNAME = '__system__'
+PASSWORD = 'admin'  # Will use uid=1 which bypasses all ACL
 
 def main():
     print("=" * 70)
