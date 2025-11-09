@@ -267,7 +267,7 @@ let odooClientInstance: OdooClient | null = null;
 export function getOdooClient(): OdooClient {
   if (!odooClientInstance) {
     const config: OdooConfig = {
-      url: process.env.NEXT_PUBLIC_ODOO_URL || "http://localhost:8069",
+      url: process.env.NEXT_PUBLIC_ODOO_URL || "http://localhost:8070",
       db: process.env.ODOO_DB || "iseb_prod",
     };
     odooClientInstance = new OdooClient(config);

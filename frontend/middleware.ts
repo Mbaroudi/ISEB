@@ -4,9 +4,6 @@ import type { NextRequest } from "next/server";
 // Define protected routes
 const protectedRoutes = ["/dashboard", "/documents", "/expenses", "/settings"];
 
-// Define public routes (auth pages)
-const publicRoutes = ["/", "/login", "/signup", "/forgot-password"];
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 

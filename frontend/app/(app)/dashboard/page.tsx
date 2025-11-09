@@ -16,7 +16,7 @@ import {
 
 export default function DashboardPage() {
   const { user } = useAuth();
-  const { data: stats, isLoading } = useDashboardStats();
+  const { data: stats } = useDashboardStats();
 
   const statsCards = [
     {

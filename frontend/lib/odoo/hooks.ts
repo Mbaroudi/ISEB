@@ -14,7 +14,7 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: ["dashboard", "stats"],
     queryFn: async (): Promise<DashboardStats> => {
-      const odoo = getOdooClient();
+      // const odoo = getOdooClient();
 
       // For demo, return mock data
       // TODO: Replace with real Odoo queries
