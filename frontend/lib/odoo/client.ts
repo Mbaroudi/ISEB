@@ -88,7 +88,7 @@ export class OdooClient {
       const user = userInfo[0];
 
       return {
-        uid: this.uid,
+        uid: this.uid!,
         username: user.login,
         company_id: user.company_id[0],
         partner_id: user.partner_id[0],
