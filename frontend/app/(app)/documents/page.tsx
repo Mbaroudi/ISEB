@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDocuments, useUploadDocument } from "@/lib/odoo/hooks";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ export default function DocumentsPage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -38,49 +39,68 @@ export default function DocumentsPage() {
 
     const files = Array.from(e.dataTransfer.files);
     for (const file of files) {
+      if (file.type === "application/pdf" || file.type.startsWith("image/")) {
+        await handleFileUpload(file);
+      }
+    }
+  };
+
+  const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    for (const file of files) {
       await handleFileUpload(file);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
   const handleFileUpload = async (file: File) => {
+    console.log("=== START UPLOAD ===");
+    console.log("File:", file.name, file.size, "bytes", file.type);
     setUploading(true);
+    
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        try {
-          const base64 = reader.result;
-          if (!base64 || typeof base64 !== 'string') {
-            throw new Error("Failed to read file");
-          }
-          
-          const base64Data = base64.split(",")[1];
-          if (!base64Data) {
-            throw new Error("Invalid file data");
-          }
-
-          await uploadDocument.mutateAsync({
-            name: file.name,
-            document_type: getDocumentType(file.name),
-            file_data: base64Data,
-            description: `Uploaded ${new Date().toLocaleString()}`,
-          });
-        } catch (error) {
-          console.error("Upload error:", error);
-          alert("Erreur lors de l'upload: " + (error instanceof Error ? error.message : "Unknown error"));
-        } finally {
-          setUploading(false);
-        }
+      console.log("Reading file as ArrayBuffer...");
+      const arrayBuffer = await file.arrayBuffer();
+      console.log("ArrayBuffer created, size:", arrayBuffer.byteLength);
+      
+      console.log("Converting to base64...");
+      const bytes = new Uint8Array(arrayBuffer);
+      const chunkSize = 0x8000;
+      let binary = '';
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, i + chunkSize);
+        binary += String.fromCharCode.apply(null, Array.from(chunk));
+      }
+      const base64Data = btoa(binary);
+      console.log("Base64 conversion complete, length:", base64Data.length);
+      
+      console.log("Document type:", getDocumentType(file.name));
+      
+      const uploadData = {
+        name: file.name,
+        document_type: getDocumentType(file.name),
+        file_data: base64Data,
+        description: `Uploaded ${new Date().toLocaleString()}`,
       };
-      reader.onerror = () => {
-        console.error("FileReader error");
-        alert("Erreur lors de la lecture du fichier");
-        setUploading(false);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
+      
+      console.log("Calling upload API...");
+      const result = await uploadDocument.mutateAsync(uploadData);
+      console.log("Upload successful! Result:", result);
+      alert("Document uploadé avec succès!");
+    } catch (error: any) {
+      console.error("=== UPLOAD ERROR ===");
+      console.error("Error:", error);
+      
+      if (error instanceof Error) {
+        console.error("Message:", error.message);
+      }
+      
+      alert("Erreur: " + (error instanceof Error ? error.message : String(error)));
+    } finally {
       setUploading(false);
-      console.error("Upload error:", error);
-      alert("Erreur: " + (error instanceof Error ? error.message : "Unknown error"));
+      console.log("=== END UPLOAD ===");
     }
   };
 
@@ -113,21 +133,19 @@ export default function DocumentsPage() {
           variant="gradient" 
           size="lg"
           disabled={uploading}
-          onClick={() => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.multiple = true;
-            input.accept = '.pdf,.jpg,.jpeg,.png';
-            input.onchange = (e: Event) => {
-              const files = Array.from((e.target as HTMLInputElement).files || []);
-              files.forEach(handleFileUpload);
-            };
-            input.click();
-          }}
+          onClick={() => fileInputRef.current?.click()}
         >
           <Upload className="mr-2 h-5 w-5" />
           {uploading ? "Importation..." : "Importer"}
         </Button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/*"
+          onChange={handleFileInputChange}
+          className="hidden"
+        />
       </div>
 
       {/* Upload Zone */}
@@ -135,17 +153,7 @@ export default function DocumentsPage() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={() => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.multiple = true;
-          input.accept = '.pdf,.jpg,.jpeg,.png';
-          input.onchange = (e: Event) => {
-            const files = Array.from((e.target as HTMLInputElement).files || []);
-            files.forEach(handleFileUpload);
-          };
-          input.click();
-        }}
+        onClick={() => fileInputRef.current?.click()}
         className={`cursor-pointer rounded-lg border-2 border-dashed p-12 text-center transition-colors ${
           isDragging
             ? "border-purple-500 bg-purple-50"
