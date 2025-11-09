@@ -1,0 +1,6 @@
+# Ignore configuration files containing API keys
+ocr_config.conf
+*.conf
+
+# Keep this file
+!.gitignore

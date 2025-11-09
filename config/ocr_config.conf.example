@@ -1,0 +1,52 @@
+# Configuration OCR ISEB - Exemple
+# Copier ce fichier vers ocr_config.conf et remplir vos valeurs
+
+[ocr]
+enabled = True
+provider = google_vision  # Options: google_vision, aws_textract, azure_vision
+api_key = VOTRE_CLE_API_ICI
+confidence_threshold = 0.85
+auto_validate_threshold = 0.98
+batch_processing = True
+batch_size = 50
+timeout = 30
+retry_count = 3
+language = fr
+
+[google_vision]
+# Pour Google Cloud Vision API
+# Obtenir clé sur: https://console.cloud.google.com
+language = fr
+date_format = EU
+
+[aws_textract]
+# Pour AWS Textract
+# Obtenir clés sur: https://aws.amazon.com/textract/
+access_key = VOTRE_AWS_ACCESS_KEY
+secret_key = VOTRE_AWS_SECRET_KEY
+region = eu-west-1
+
+[azure_vision]
+# Pour Azure Computer Vision
+# Obtenir sur: https://azure.microsoft.com/cognitive-services/
+api_key = VOTRE_AZURE_KEY
+endpoint = https://votre-endpoint.cognitiveservices.azure.com/
+
+[email]
+enabled = False
+alias = factures@votre-domaine.com
+auto_process = True
+
+[logging]
+level = INFO
+file = logs/ocr.log
+max_size_mb = 100
+backup_count = 5
+
+[advanced]
+# Paramètres avancés (ne modifier que si nécessaire)
+multi_page_support = True
+table_extraction = True
+handwriting_recognition = False
+duplicate_detection = True
+fraud_detection = False
