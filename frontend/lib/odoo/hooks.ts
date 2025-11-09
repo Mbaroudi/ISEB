@@ -55,24 +55,13 @@ export function useDocuments() {
   return useQuery({
     queryKey: ["documents"],
     queryFn: async (): Promise<Document[]> => {
-      const odoo = getOdooClient();
+      const response = await fetch("/api/documents/list");
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch documents");
+      }
 
-      // Search for documents
-      const documents = await odoo.searchRead({
-        model: "client.document",
-        domain: [],
-        fields: [
-          "id",
-          "name",
-          "document_type",
-          "upload_date",
-          "partner_id",
-          "description",
-        ],
-        limit: 50,
-        order: "upload_date desc",
-      });
-
+      const documents = await response.json();
       return documents;
     },
   });
@@ -91,17 +80,22 @@ export function useUploadDocument() {
       file_data: string;
       description?: string;
     }) => {
-      const odoo = getOdooClient();
-
-      const documentId = await odoo.create({
-        model: "client.document",
-        values: data,
+      const response = await fetch("/api/documents/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
-      return documentId;
+      if (!response.ok) {
+        throw new Error("Failed to upload document");
+      }
+
+      const result = await response.json();
+      return result.id;
     },
     onSuccess: () => {
-      // Invalidate and refetch documents
       queryClient.invalidateQueries({ queryKey: ["documents"] });
     },
   });

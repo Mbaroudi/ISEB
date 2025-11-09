@@ -17,6 +17,34 @@ export async function GET(request: NextRequest) {
     const user = JSON.parse(userData.value);
 
     const odooUrl = process.env.ODOO_URL || "http://nginx:8070";
+    const odooDb = process.env.ODOO_DB || "iseb_prod";
+
+    // S'authentifier d'abord
+    const authResponse = await axios.post(
+      `${odooUrl}/web/session/authenticate`,
+      {
+        jsonrpc: "2.0",
+        method: "call",
+        params: {
+          db: odooDb,
+          login: auth.username,
+          password: auth.password,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      }
+    );
+
+    if (!authResponse.data?.result?.uid) {
+      throw new Error("Authentication failed");
+    }
+
+    const cookies = authResponse.headers['set-cookie'];
+    const sessionCookie = cookies ? cookies.join('; ') : '';
 
     const response = await axios.post(
       `${odooUrl}/web/dataset/call_kw`,
@@ -55,7 +83,7 @@ export async function GET(request: NextRequest) {
       {
         headers: {
           "Content-Type": "application/json",
-          Cookie: `session_id=${auth.username}:${auth.password}`,
+          "Cookie": sessionCookie,
         },
         withCredentials: true,
       }

@@ -69,6 +69,34 @@ const recentReports = [
 
 export default function ReportsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("2024");
+  const [generating, setGenerating] = useState<string | null>(null);
+
+  const handleGenerate = async (reportType: string) => {
+    setGenerating(reportType);
+    try {
+      const response = await fetch("/api/reports/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reportType,
+          period: selectedPeriod,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Échec de la génération du rapport");
+      }
+
+      const data = await response.json();
+      alert(data.message || "Rapport généré avec succès!");
+    } catch (error: any) {
+      alert("Erreur: " + error.message);
+    } finally {
+      setGenerating(null);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -125,9 +153,15 @@ export default function ReportsPage() {
               </div>
 
               <div className="mt-6 flex gap-2">
-                <Button variant="default" size="sm" className="flex-1">
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  className="flex-1"
+                  disabled={generating === report.id}
+                  onClick={() => handleGenerate(report.id)}
+                >
                   <FileText className="mr-2 h-4 w-4" />
-                  Générer
+                  {generating === report.id ? "Génération..." : "Générer"}
                 </Button>
                 <Button variant="outline" size="sm">
                   <Download className="h-4 w-4" />

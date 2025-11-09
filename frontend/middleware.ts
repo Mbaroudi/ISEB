@@ -6,6 +6,12 @@ const AUTH_ROUTES = ["/login", "/signup"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Ne pas appliquer le middleware aux routes API
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+  
   const authSession = request.cookies.get("auth_session");
   const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
   const isAuthRoute = AUTH_ROUTES.includes(pathname);

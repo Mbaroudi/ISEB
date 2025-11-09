@@ -21,6 +21,7 @@ export default function DocumentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [isDragging, setIsDragging] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -42,19 +43,45 @@ export default function DocumentsPage() {
   };
 
   const handleFileUpload = async (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64 = reader.result as string;
-      const base64Data = base64.split(",")[1];
+    setUploading(true);
+    try {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        try {
+          const base64 = reader.result;
+          if (!base64 || typeof base64 !== 'string') {
+            throw new Error("Failed to read file");
+          }
+          
+          const base64Data = base64.split(",")[1];
+          if (!base64Data) {
+            throw new Error("Invalid file data");
+          }
 
-      await uploadDocument.mutateAsync({
-        name: file.name,
-        document_type: getDocumentType(file.name),
-        file_data: base64Data,
-        description: `Uploaded ${new Date().toLocaleString()}`,
-      });
-    };
-    reader.readAsDataURL(file);
+          await uploadDocument.mutateAsync({
+            name: file.name,
+            document_type: getDocumentType(file.name),
+            file_data: base64Data,
+            description: `Uploaded ${new Date().toLocaleString()}`,
+          });
+        } catch (error) {
+          console.error("Upload error:", error);
+          alert("Erreur lors de l'upload: " + (error instanceof Error ? error.message : "Unknown error"));
+        } finally {
+          setUploading(false);
+        }
+      };
+      reader.onerror = () => {
+        console.error("FileReader error");
+        alert("Erreur lors de la lecture du fichier");
+        setUploading(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (error) {
+      setUploading(false);
+      console.error("Upload error:", error);
+      alert("Erreur: " + (error instanceof Error ? error.message : "Unknown error"));
+    }
   };
 
   const getDocumentType = (filename: string): string => {
@@ -82,9 +109,24 @@ export default function DocumentsPage() {
             Gérez vos factures, reçus et autres documents
           </p>
         </div>
-        <Button variant="gradient" size="lg">
+        <Button 
+          variant="gradient" 
+          size="lg"
+          disabled={uploading}
+          onClick={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = '.pdf,.jpg,.jpeg,.png';
+            input.onchange = (e: Event) => {
+              const files = Array.from((e.target as HTMLInputElement).files || []);
+              files.forEach(handleFileUpload);
+            };
+            input.click();
+          }}
+        >
           <Upload className="mr-2 h-5 w-5" />
-          Importer
+          {uploading ? "Importation..." : "Importer"}
         </Button>
       </div>
 
@@ -93,7 +135,18 @@ export default function DocumentsPage() {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`rounded-lg border-2 border-dashed p-12 text-center transition-colors ${
+        onClick={() => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.multiple = true;
+          input.accept = '.pdf,.jpg,.jpeg,.png';
+          input.onchange = (e: Event) => {
+            const files = Array.from((e.target as HTMLInputElement).files || []);
+            files.forEach(handleFileUpload);
+          };
+          input.click();
+        }}
+        className={`cursor-pointer rounded-lg border-2 border-dashed p-12 text-center transition-colors ${
           isDragging
             ? "border-purple-500 bg-purple-50"
             : "border-gray-300 bg-gray-50 hover:border-gray-400"
@@ -109,15 +162,6 @@ export default function DocumentsPage() {
         <p className="mt-1 text-xs text-gray-400">
           PDF, JPG, PNG jusqu'à 10MB
         </p>
-        <input
-          type="file"
-          multiple
-          className="hidden"
-          onChange={(e) => {
-            const files = Array.from(e.target.files || []);
-            files.forEach(handleFileUpload);
-          }}
-        />
       </div>
 
       {/* Filters */}
