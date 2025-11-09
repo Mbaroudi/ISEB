@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire Question -->
+    <record id="view_accounting_question_form" model="ir.ui.view">
+        <field name="name">accounting.question.form</field>
+        <field name="model">accounting.question</field>
+        <field name="arch" type="xml">
+            <form string="Question Comptable">
+                <header>
+                    <button name="action_submit" string="Soumettre" type="object"
+                            states="draft" class="oe_highlight"/>
+                    <button name="action_mark_answered" string="Marquer Répondu" type="object"
+                            states="pending" class="oe_highlight"/>
+                    <button name="action_resolve" string="Résoudre" type="object"
+                            states="pending,answered" class="oe_highlight"/>
+                    <button name="action_close" string="Fermer" type="object"
+                            states="resolved"/>
+                    <button name="action_reopen" string="Rouvrir" type="object"
+                            states="resolved,closed"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,answered,resolved,closed"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_questions" icon="fa-comments">
+                            <field string="Messages" name="message_count" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Titre de la question..."/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="question_type"/>
+                            <field name="priority" widget="priority"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="assigned_to_id"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="resolved_date" readonly="1"
+                                   attrs="{'invisible': [('state', 'not in', ['resolved', 'closed'])]}"/>
+                            <field name="response_time_hours" readonly="1"
+                                   attrs="{'invisible': [('message_count', '=', 0)]}"/>
+                        </group>
+                    </group>
+
+                    <group string="Documents liés">
+                        <field name="move_id"/>
+                        <field name="document_id"/>
+                        <field name="expense_note_id"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" widget="html"/>
+                        </page>
+
+                        <page string="Discussion" name="messages">
+                            <field name="message_ids" mode="tree">
+                                <tree create="false" edit="false" delete="false">
+                                    <field name="create_date"/>
+                                    <field name="author_name"/>
+                                    <field name="content" widget="html"/>
+                                    <field name="is_solution"/>
+                                    <button name="action_mark_as_solution" type="object"
+                                            string="Marquer comme solution"
+                                            icon="fa-check-circle"
+                                            attrs="{'invisible': [('is_solution', '=', True)]}"/>
+                                </tree>
+                            </field>
+
+                            <!-- Formulaire pour ajouter un message -->
+                            <group string="Nouveau message">
+                                <field name="company_id" invisible="1"/>
+                            </group>
+                        </page>
+
+                        <page string="Historique" name="history">
+                            <field name="message_follower_ids" widget="mail_followers"/>
+                            <field name="activity_ids" widget="mail_activity"/>
+                            <field name="message_ids" widget="mail_thread"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste Questions -->
+    <record id="view_accounting_question_tree" model="ir.ui.view">
+        <field name="name">accounting.question.tree</field>
+        <field name="model">accounting.question</field>
+        <field name="arch" type="xml">
+            <tree string="Questions Comptables"
+                  decoration-danger="priority == '3'"
+                  decoration-warning="priority == '2'"
+                  decoration-success="state == 'resolved'"
+                  decoration-muted="state == 'closed'">
+                <field name="name"/>
+                <field name="question_type"/>
+                <field name="priority" widget="priority"/>
+                <field name="user_id"/>
+                <field name="assigned_to_id"/>
+                <field name="partner_id"/>
+                <field name="message_count"/>
+                <field name="state"
+                       decoration-info="state == 'pending'"
+                       decoration-success="state in ['answered', 'resolved']"
+                       decoration-muted="state == 'closed'"
+                       widget="badge"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vue kanban Questions -->
+    <record id="view_accounting_question_kanban" model="ir.ui.view">
+        <field name="name">accounting.question.kanban</field>
+        <field name="model">accounting.question</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="priority"/>
+                <field name="user_id"/>
+                <field name="assigned_to_id"/>
+                <field name="message_count"/>
+                <field name="state"/>
+                <field name="question_type"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><field name="name"/></strong>
+                                    </div>
+                                    <span class="o_priority_star" title="Priority" role="img" aria-label="Priority">
+                                        <field name="priority" widget="priority"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="question_type"/>
+                                    <div class="text-muted">
+                                        <i class="fa fa-user"/> <field name="assigned_to_id"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="activity_ids" widget="kanban_activity"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span><i class="fa fa-comments"/> <field name="message_count"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Vue recherche Questions -->
+    <record id="view_accounting_question_search" model="ir.ui.view">
+        <field name="name">accounting.question.search</field>
+        <field name="model">accounting.question</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Questions">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="assigned_to_id"/>
+                <field name="partner_id"/>
+
+                <filter string="Mes Questions" name="my_questions"
+                        domain="[('user_id', '=', uid)]"/>
+                <filter string="Assignées à moi" name="assigned_to_me"
+                        domain="[('assigned_to_id', '=', uid)]"/>
+
+                <separator/>
+
+                <filter string="En attente" name="pending"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter string="Répondu" name="answered"
+                        domain="[('state', '=', 'answered')]"/>
+                <filter string="Résolu" name="resolved"
+                        domain="[('state', '=', 'resolved')]"/>
+
+                <separator/>
+
+                <filter string="Urgentes" name="urgent"
+                        domain="[('priority', '=', '3')]"/>
+                <filter string="Haute priorité" name="high"
+                        domain="[('priority', '=', '2')]"/>
+
+                <group expand="0" string="Grouper par">
+                    <filter string="Statut" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'question_type'}"/>
+                    <filter string="Assigné à" name="group_assigned" context="{'group_by': 'assigned_to_id'}"/>
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action Questions -->
+    <record id="action_accounting_question" model="ir.actions.act_window">
+        <field name="name">Questions Comptables</field>
+        <field name="res_model">accounting.question</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{
+            'search_default_pending': 1,
+            'search_default_assigned_to_me': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle question comptable
+            </p>
+            <p>
+                Posez des questions sur des écritures, documents ou relevés bancaires.
+                Le système de collaboration permet un échange structuré entre clients et comptables.
+            </p>
+        </field>
+    </record>
+</odoo>
