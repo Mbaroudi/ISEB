@@ -65,35 +65,37 @@ export class OdooClient {
    */
   async authenticate(username: string, password: string): Promise<OdooAuthResponse> {
     try {
-      const response = await this.client.post("/xmlrpc/2/common", {
-        service: "common",
-        method: "authenticate",
-        args: [this.config.db, username, password, {}],
+      const response = await this.client.post("/web/session/authenticate", {
+        jsonrpc: "2.0",
+        method: "call",
+        params: {
+          db: this.config.db,
+          login: username,
+          password: password,
+        },
       });
 
-      if (!response.data || !response.data.result) {
+      console.log('Auth response:', JSON.stringify(response.data, null, 2));
+
+      if (!response.data || !response.data.result || !response.data.result.uid) {
+        console.error('Invalid auth response structure:', response.data);
         throw new Error("Authentication failed: Invalid credentials");
       }
 
-      this.uid = response.data.result;
+      this.uid = response.data.result.uid;
       this.password = password;
 
-      // Get user info
-      const userInfo = await this.call({
-        model: "res.users",
-        method: "read",
-        args: [[this.uid], ["name", "login", "company_id", "partner_id"]],
-      });
-
-      const user = userInfo[0];
+      const result = response.data.result;
+      console.log('User info:', { uid: this.uid, username: result.username, partner_id: result.partner_id });
 
       return {
         uid: this.uid!,
-        username: user.login,
-        company_id: user.company_id[0],
-        partner_id: user.partner_id[0],
+        username: result.username || username,
+        company_id: result.user_companies?.current_company || 1,
+        partner_id: result.partner_id || 1,
       };
     } catch (error: any) {
+      console.error('Auth error:', error);
       throw new Error(`Odoo authentication failed: ${error.message}`);
     }
   }

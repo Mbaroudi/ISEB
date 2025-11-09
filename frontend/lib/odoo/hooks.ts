@@ -14,15 +14,19 @@ export function useDashboardStats() {
   return useQuery({
     queryKey: ["dashboard", "stats"],
     queryFn: async (): Promise<DashboardStats> => {
-      // const odoo = getOdooClient();
+      const response = await fetch("/api/dashboard/stats");
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch dashboard stats");
+      }
 
-      // For demo, return mock data
-      // TODO: Replace with real Odoo queries
+      const data = await response.json();
+
       return {
-        balance: 12450,
-        revenue_month: 8230,
-        expenses_month: 3120,
-        pending_invoices: 5,
+        balance: data.cashBalance || 0,
+        revenue_month: data.revenue?.current || 0,
+        expenses_month: data.expenses?.current || 0,
+        pending_invoices: data.invoices?.pending || 0,
         revenue_chart_data: [
           { date: "Jan", amount: 6500 },
           { date: "Fev", amount: 7200 },

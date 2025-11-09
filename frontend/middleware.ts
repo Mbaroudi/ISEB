@@ -1,30 +1,22 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Define protected routes
-const protectedRoutes = ["/dashboard", "/documents", "/expenses", "/settings"];
+const PUBLIC_ROUTES = ["/", "/login", "/signup", "/forgot-password"];
+const AUTH_ROUTES = ["/login", "/signup"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const authSession = request.cookies.get("auth_session");
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  const isAuthRoute = AUTH_ROUTES.includes(pathname);
 
-  // Check if the route is protected
-  const isProtectedRoute = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
-
-  // Get auth status from localStorage (in production, use httpOnly cookies)
-  // For now, we'll check if there's a user in the cookie
-  const authCookie = request.cookies.get("auth");
-
-  if (isProtectedRoute && !authCookie) {
-    // Redirect to login if trying to access protected route without auth
+  if (!authSession && !isPublicRoute) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // If logged in and trying to access auth pages, redirect to dashboard
-  if (authCookie && (pathname === "/login" || pathname === "/signup")) {
+  if (authSession && isAuthRoute) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

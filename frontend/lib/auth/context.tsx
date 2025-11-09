@@ -1,7 +1,6 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getOdooClient } from "@/lib/odoo/client";
 import type { User } from "@/lib/odoo/types";
 
 interface AuthContextType {
@@ -27,9 +26,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const savedUser = localStorage.getItem("user");
-      if (savedUser) {
-        setUser(JSON.parse(savedUser));
+      const response = await fetch("/api/auth/me");
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
       }
     } catch (error) {
       console.error("Error checking auth:", error);
@@ -43,37 +43,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      const odoo = getOdooClient();
-      const authResponse = await odoo.authenticate(username, password);
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-      // Get user details
-      const userDetails = await odoo.read("res.users", [authResponse.uid], [
-        "id",
-        "login",
-        "name",
-        "email",
-        "company_id",
-        "partner_id",
-      ]);
-
-      if (userDetails.length === 0) {
-        throw new Error("User not found");
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Login failed");
       }
 
-      const userData: User = {
-        id: userDetails[0].id,
-        login: userDetails[0].login,
-        name: userDetails[0].name,
-        email: userDetails[0].email,
-        company_id: userDetails[0].company_id,
-        partner_id: userDetails[0].partner_id,
-      };
-
-      setUser(userData);
-
-      // Save to localStorage (in production, use httpOnly cookies)
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("auth", JSON.stringify({ username, password }));
+      const data = await response.json();
+      setUser(data.user);
     } catch (err: any) {
       const errorMessage = err.message || "Login failed";
       setError(errorMessage);
@@ -87,12 +71,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsLoading(true);
 
-      // Clear user data
-      setUser(null);
-      localStorage.removeItem("user");
-      localStorage.removeItem("auth");
+      await fetch("/api/auth/logout", {
+        method: "POST",
+      });
 
-      // Redirect to home
+      setUser(null);
       window.location.href = "/";
     } catch (err) {
       console.error("Logout error:", err);
