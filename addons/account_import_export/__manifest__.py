@@ -34,6 +34,30 @@ Conformité :
 * Validation avec Test Compta Demat (DGFIP)
 * 18 champs obligatoires du FEC respectés
 * Encodage UTF-8 / ISO-8859-15
+
+Installation :
+--------------
+⚠️ PRÉREQUIS OBLIGATOIRES :
+1. Module 'account' (Comptabilité Odoo) doit être installé AVANT
+2. Configurer le SIREN de la société (9 chiffres) dans Paramètres → Sociétés
+3. Plan comptable français (PCG) recommandé
+
+Installation automatique :
+  cd /path/to/ISEB
+  ./install_import_export.sh
+
+Installation manuelle :
+  Apps → Rechercher "ISEB Import/Export" → Installer
+
+Vérification :
+  python3 check_dependencies.py
+
+Accès après installation :
+  Comptabilité → Configuration → Import / Export
+  ou
+  http://localhost:3000/settings → Import/Export
+
+📚 Documentation : INSTALLATION_IMPORT_EXPORT.md
     """,
     'author': 'ISEB',
     'website': 'https://iseb.fr',
