@@ -70,6 +70,7 @@ const recentReports = [
 export default function ReportsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("2024");
   const [generating, setGenerating] = useState<string | null>(null);
+  const [generatedReports, setGeneratedReports] = useState<Record<string, any>>({});
 
   const handleGenerate = async (reportType: string) => {
     setGenerating(reportType);
@@ -90,11 +91,58 @@ export default function ReportsPage() {
       }
 
       const data = await response.json();
+
+      // Store generated report info
+      setGeneratedReports(prev => ({
+        ...prev,
+        [reportType]: {
+          ...data,
+          period: selectedPeriod
+        }
+      }));
+
       alert(data.message || "Rapport généré avec succès!");
     } catch (error: any) {
       alert("Erreur: " + error.message);
     } finally {
       setGenerating(null);
+    }
+  };
+
+  const handleDownload = async (reportType: string) => {
+    const report = generatedReports[reportType];
+    if (!report) {
+      alert("Veuillez d'abord générer le rapport");
+      return;
+    }
+
+    try {
+      const response = await fetch(report.downloadUrl);
+
+      if (!response.ok) {
+        throw new Error("Échec du téléchargement");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Determine filename based on report type
+      let filename = `rapport_${reportType}_${selectedPeriod}`;
+      if (reportType === 'fec') {
+        filename = `FEC_${selectedPeriod}.txt`;
+      } else {
+        filename = `${reportType}_${selectedPeriod}.pdf`;
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error: any) {
+      alert("Erreur lors du téléchargement: " + error.message);
     }
   };
 
@@ -153,9 +201,9 @@ export default function ReportsPage() {
               </div>
 
               <div className="mt-6 flex gap-2">
-                <Button 
-                  variant="default" 
-                  size="sm" 
+                <Button
+                  variant="default"
+                  size="sm"
                   className="flex-1"
                   disabled={generating === report.id}
                   onClick={() => handleGenerate(report.id)}
@@ -163,7 +211,13 @@ export default function ReportsPage() {
                   <FileText className="mr-2 h-4 w-4" />
                   {generating === report.id ? "Génération..." : "Générer"}
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDownload(report.id)}
+                  disabled={!generatedReports[report.id]}
+                  title={generatedReports[report.id] ? "Télécharger le rapport" : "Générer d'abord le rapport"}
+                >
                   <Download className="h-4 w-4" />
                 </Button>
               </div>
@@ -201,7 +255,12 @@ export default function ReportsPage() {
                   </div>
                   <p className="text-sm text-gray-500">{report.size}</p>
                 </div>
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  disabled
+                  title="Rapport archivé"
+                >
                   <Download className="h-4 w-4" />
                 </Button>
               </div>

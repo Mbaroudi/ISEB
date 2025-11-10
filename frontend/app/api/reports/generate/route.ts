@@ -118,10 +118,135 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Bilan comptable (Balance Sheet)
+    if (reportType === "balance") {
+      const year = parseInt(period);
+      const dateFrom = `${year}-01-01`;
+      const dateTo = `${year}-12-31`;
+
+      // Utiliser le rapport financier Odoo
+      const response = await axios.post(
+        `${odooUrl}/web/dataset/call_kw`,
+        {
+          jsonrpc: "2.0",
+          method: "call",
+          params: {
+            model: "account.report",
+            method: "search_read",
+            args: [
+              [["name", "ilike", "Bilan"]],
+              ["id", "name"]
+            ],
+            kwargs: { limit: 1 },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": sessionCookie,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data?.result && response.data.result.length > 0) {
+        const reportId = response.data.result[0].id;
+        return NextResponse.json({
+          id: reportId,
+          success: true,
+          message: "Bilan comptable généré",
+          downloadUrl: `/api/reports/download?type=balance&period=${period}&reportId=${reportId}`
+        });
+      }
+    }
+
+    // Compte de résultat (Income Statement / Profit & Loss)
+    if (reportType === "profit") {
+      const year = parseInt(period);
+      const dateFrom = `${year}-01-01`;
+      const dateTo = `${year}-12-31`;
+
+      const response = await axios.post(
+        `${odooUrl}/web/dataset/call_kw`,
+        {
+          jsonrpc: "2.0",
+          method: "call",
+          params: {
+            model: "account.report",
+            method: "search_read",
+            args: [
+              [["name", "ilike", "Résultat"]],
+              ["id", "name"]
+            ],
+            kwargs: { limit: 1 },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": sessionCookie,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data?.result && response.data.result.length > 0) {
+        const reportId = response.data.result[0].id;
+        return NextResponse.json({
+          id: reportId,
+          success: true,
+          message: "Compte de résultat généré",
+          downloadUrl: `/api/reports/download?type=profit&period=${period}&reportId=${reportId}`
+        });
+      }
+    }
+
+    // Déclaration de TVA
+    if (reportType === "vat") {
+      const year = parseInt(period);
+      const dateFrom = `${year}-01-01`;
+      const dateTo = `${year}-12-31`;
+
+      const response = await axios.post(
+        `${odooUrl}/web/dataset/call_kw`,
+        {
+          jsonrpc: "2.0",
+          method: "call",
+          params: {
+            model: "account.report",
+            method: "search_read",
+            args: [
+              [["name", "ilike", "TVA"]],
+              ["id", "name"]
+            ],
+            kwargs: { limit: 1 },
+          },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Cookie": sessionCookie,
+          },
+          withCredentials: true,
+        }
+      );
+
+      if (response.data?.result && response.data.result.length > 0) {
+        const reportId = response.data.result[0].id;
+        return NextResponse.json({
+          id: reportId,
+          success: true,
+          message: "Déclaration de TVA générée",
+          downloadUrl: `/api/reports/download?type=vat&period=${period}&reportId=${reportId}`
+        });
+      }
+    }
+
     // Pour les autres types de rapports
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: `Rapport ${reportType} en cours de génération`
+      message: `Rapport ${reportType} en cours de génération`,
+      downloadUrl: `/api/reports/download?type=${reportType}&period=${period}`
     });
 
   } catch (error: any) {
