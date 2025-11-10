@@ -18,7 +18,7 @@ class DocumentShare(models.Model):
     name = fields.Char(
         string='Nom',
         compute='_compute_name',
-        store=True
+        store=False
     )
 
     document_id = fields.Many2one(
@@ -40,6 +40,7 @@ class DocumentShare(models.Model):
     share_url = fields.Char(
         string='URL de partage',
         compute='_compute_share_url',
+        store=False,
         readonly=True
     )
 
@@ -53,7 +54,7 @@ class DocumentShare(models.Model):
     is_expired = fields.Boolean(
         string='Expiré',
         compute='_compute_is_expired',
-        store=True
+        store=False
     )
 
     access_count = fields.Integer(
@@ -71,7 +72,7 @@ class DocumentShare(models.Model):
     is_access_limited = fields.Boolean(
         string='Limite d\'accès atteinte',
         compute='_compute_is_access_limited',
-        store=True
+        store=False
     )
 
     # Protection
@@ -82,7 +83,8 @@ class DocumentShare(models.Model):
 
     has_password = fields.Boolean(
         string='Protégé par mot de passe',
-        compute='_compute_has_password'
+        compute='_compute_has_password',
+        store=False
     )
 
     # Permissions
@@ -355,12 +357,14 @@ class ClientDocumentShare(models.Model):
 
     share_count = fields.Integer(
         string='Nombre de partages',
-        compute='_compute_share_count'
+        compute='_compute_share_count',
+        store=False
     )
 
     active_share_count = fields.Integer(
         string='Partages actifs',
-        compute='_compute_active_share_count'
+        compute='_compute_active_share_count',
+        store=False
     )
 
     @api.depends('share_ids')

@@ -137,19 +137,19 @@ class ClientDocumentOCR(models.Model):
         'client.document.ocr',
         string='Dernier résultat OCR',
         compute='_compute_ocr_result_id',
-        store=True
+        store=False
     )
 
     has_ocr_data = fields.Boolean(
         string='Données OCR disponibles',
         compute='_compute_has_ocr_data',
-        store=True
+        store=False
     )
 
     ocr_state = fields.Selection(
         related='ocr_result_id.state',
         string='État OCR',
-        store=True
+        store=False
     )
 
     @api.depends('ocr_result_ids')

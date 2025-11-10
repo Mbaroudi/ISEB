@@ -63,7 +63,7 @@ class ClientDocumentExtended(models.Model):
     is_expired = fields.Boolean(
         string='Expiré',
         compute='_compute_is_expired',
-        store=True
+        store=False
     )
 
     # Liens avec autres modèles Odoo
