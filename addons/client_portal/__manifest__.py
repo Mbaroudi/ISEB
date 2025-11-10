@@ -69,6 +69,7 @@ AGPL-3
             'reportlab',
             'pytesseract',
             'PIL',
+            'pdf2image',
             'boto3',
         ],
     },
