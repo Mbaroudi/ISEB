@@ -80,23 +80,32 @@ class CabinetClient(models.Model):
                 continue
             
             # Documents en attente
-            partner.documents_pending_count = self.env['client.document'].search_count([
-                ('partner_id', '=', partner.id),
-                ('state', 'in', ['pending', 'submitted']),
-            ])
+            try:
+                partner.documents_pending_count = self.env['client.document'].search_count([
+                    ('partner_id', '=', partner.id),
+                    ('state', 'in', ['pending', 'submitted']),
+                ])
+            except Exception:
+                partner.documents_pending_count = 0
             
             # Notes de frais en attente
-            partner.expenses_pending_count = self.env['expense.note'].search_count([
-                ('partner_id', '=', partner.id),
-                ('state', '=', 'submitted'),
-            ])
+            try:
+                partner.expenses_pending_count = self.env['expense.note'].search_count([
+                    ('partner_id', '=', partner.id),
+                    ('state', '=', 'submitted'),
+                ])
+            except Exception:
+                partner.expenses_pending_count = 0
             
             # Tâches en retard
-            partner.tasks_overdue_count = self.env['cabinet.task'].search_count([
-                ('partner_id', '=', partner.id),
-                ('state', '!=', 'done'),
-                ('deadline', '<', fields.Date.today()),
-            ])
+            try:
+                partner.tasks_overdue_count = self.env['cabinet.task'].search_count([
+                    ('partner_id', '=', partner.id),
+                    ('state', '!=', 'done'),
+                    ('deadline', '<', fields.Date.today()),
+                ])
+            except Exception:
+                partner.tasks_overdue_count = 0
     
     @api.depends('dashboard_ids', 'is_iseb_client')
     def _compute_statistics(self):
