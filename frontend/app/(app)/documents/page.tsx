@@ -48,6 +48,8 @@ import {
   ChevronDown,
   Image as ImageIcon,
   FileCheck,
+  Scan,
+  Loader2,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -124,6 +126,9 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState<number | null>(null);
+  const [showOcrResult, setShowOcrResult] = useState(false);
+  const [ocrResult, setOcrResult] = useState<any>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const uploadDocument = useUploadDocument();
@@ -349,6 +354,50 @@ export default function DocumentsPage() {
     } catch (error) {
       console.error("Error updating tags:", error);
       toast.error("Erreur lors de la mise à jour des tags");
+    }
+  };
+
+  const handleExtractOCR = async (docId: number) => {
+    setOcrLoading(docId);
+    try {
+      const response = await fetch(`/api/documents/${docId}/ocr`, {
+        method: "POST",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'extraction OCR");
+      }
+
+      const data = await response.json();
+      setOcrResult(data);
+      setShowOcrResult(true);
+      toast.success(`OCR extrait avec ${data.confidence_score}% de confiance`);
+    } catch (error: any) {
+      console.error("Error extracting OCR:", error);
+      toast.error("Erreur lors de l'extraction OCR: " + error.message);
+    } finally {
+      setOcrLoading(null);
+    }
+  };
+
+  const handleApplyOCR = async (docId: number) => {
+    try {
+      const response = await fetch(`/api/documents/${docId}/apply-ocr`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ocrResult),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de l'application des données OCR");
+      }
+
+      toast.success("Données OCR appliquées au document");
+      setShowOcrResult(false);
+      searchDocuments(); // Refresh
+    } catch (error: any) {
+      console.error("Error applying OCR:", error);
+      toast.error("Erreur: " + error.message);
     }
   };
 
@@ -732,6 +781,8 @@ export default function DocumentsPage() {
               onDelete={() => handleDeleteDocument(doc.id, doc.name)}
               onArchive={() => handleArchiveDocument(doc.id, !doc.active)}
               onUpdateTags={(tagIds) => handleUpdateTags(doc.id, tagIds)}
+              onExtractOCR={() => handleExtractOCR(doc.id)}
+              ocrLoading={ocrLoading === doc.id}
             />
           ))}
         </div>
@@ -802,6 +853,77 @@ export default function DocumentsPage() {
           previewDocument && handleDownloadDocument(previewDocument)
         }
       />
+
+      {/* OCR Result Modal */}
+      <Dialog open={showOcrResult} onOpenChange={setShowOcrResult}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Résultats OCR</DialogTitle>
+            <DialogDescription>
+              Données extraites du document avec {ocrResult?.confidence_score}% de confiance
+            </DialogDescription>
+          </DialogHeader>
+          {ocrResult && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium">N° Facture</label>
+                  <Input value={ocrResult.invoice_number || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Date</label>
+                  <Input value={ocrResult.invoice_date || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Fournisseur</label>
+                  <Input value={ocrResult.supplier_name || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">SIRET</label>
+                  <Input value={ocrResult.supplier_vat || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Montant HT</label>
+                  <Input value={ocrResult.amount_untaxed || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">TVA</label>
+                  <Input value={ocrResult.amount_tax || ""} readOnly />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Total TTC</label>
+                  <Input value={ocrResult.amount_total || ""} readOnly className="font-bold" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Confiance</label>
+                  <Input value={`${ocrResult.confidence_score}%`} readOnly />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Adresse Fournisseur</label>
+                <textarea
+                  className="w-full p-2 border rounded-md"
+                  value={ocrResult.supplier_address || ""}
+                  readOnly
+                  rows={2}
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setShowOcrResult(false)}>
+                  Annuler
+                </Button>
+                <Button
+                  onClick={() => ocrResult.document_id && handleApplyOCR(ocrResult.document_id)}
+                  className="bg-purple-600 hover:bg-purple-700"
+                  data-testid="apply-ocr-button"
+                >
+                  Appliquer au document
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -817,6 +939,8 @@ function DocumentCard({
   onDelete,
   onArchive,
   onUpdateTags,
+  onExtractOCR,
+  ocrLoading,
 }: {
   document: Document;
   tags: Tag[];
@@ -827,6 +951,8 @@ function DocumentCard({
   onDelete: () => void;
   onArchive: () => void;
   onUpdateTags: (tagIds: number[]) => void;
+  onExtractOCR: () => void;
+  ocrLoading: boolean;
 }) {
   const documentTags = doc.tag_ids && doc.tag_ids[0] ? doc.tag_ids[0] : [];
   const docTagObjects = tags.filter((tag) => documentTags.includes(tag.id));
@@ -929,6 +1055,23 @@ function DocumentCard({
           >
             <Download className="h-3.5 w-3.5" />
           </Button>
+          {(isPdf || isImage) && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+              onClick={onExtractOCR}
+              disabled={ocrLoading}
+              title="Extraire OCR"
+              data-testid={`ocr-button-${doc.id}`}
+            >
+              {ocrLoading ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Scan className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"

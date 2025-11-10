@@ -17,8 +17,8 @@ from datetime import datetime
 # CONFIGURATION
 # ===================================================================
 
-BASE_URL = os.getenv('TEST_BASE_URL', 'http://localhost:8069')
-HEADLESS = os.getenv('HEADLESS', 'true').lower() == 'true'
+BASE_URL = os.getenv('TEST_BASE_URL', 'http://localhost:3000')
+HEADLESS = os.getenv('HEADLESS', 'false').lower() == 'true'
 SCREENSHOTS_DIR = 'tests/selenium/screenshots'
 IMPLICIT_WAIT = 10  # secondes
 
