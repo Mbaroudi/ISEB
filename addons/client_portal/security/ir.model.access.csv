@@ -4,4 +4,5 @@ access_client_document_user,client.document.user,model_client_document,base.grou
 access_client_document_tag_user,client.document.tag.user,model_client_document_tag,base.group_user,1,1,1,1
 access_client_document_category_user,client.document.category.user,model_client_document_category,base.group_user,1,1,1,1
 access_client_document_ocr_user,client.document.ocr.user,model_client_document_ocr,base.group_user,1,1,1,1
+access_client_document_workflow_transition_user,client.document.workflow.transition.user,model_client_document_workflow_transition,base.group_user,1,1,1,1
 access_expense_note_user,expense.note.user,model_expense_note,base.group_user,1,1,1,1
