@@ -152,6 +152,95 @@ export default function DocumentsPage() {
     }
   };
 
+  const handleViewDocument = async (documentId: number) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}`);
+
+      if (!response.ok) {
+        throw new Error("Erreur lors du chargement du document");
+      }
+
+      const doc = await response.json();
+
+      if (doc.file_data) {
+        // Convert base64 to blob and open in new tab
+        const byteCharacters = atob(doc.file_data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+
+        let mimeType = 'application/octet-stream';
+        const filename = doc.filename || doc.name || '';
+
+        if (filename.toLowerCase().endsWith('.pdf')) {
+          mimeType = 'application/pdf';
+        } else if (filename.toLowerCase().match(/\.(jpg|jpeg)$/)) {
+          mimeType = 'image/jpeg';
+        } else if (filename.toLowerCase().endsWith('.png')) {
+          mimeType = 'image/png';
+        }
+
+        const blob = new Blob([byteArray], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      } else {
+        alert("Aucun fichier disponible pour ce document");
+      }
+    } catch (error: any) {
+      console.error("View document error:", error);
+      alert("Erreur lors de l'ouverture du document: " + error.message);
+    }
+  };
+
+  const handleDownloadDocument = async (documentId: number, filename: string) => {
+    try {
+      const response = await fetch(`/api/documents/${documentId}/download`);
+
+      if (!response.ok) {
+        throw new Error("Erreur lors du téléchargement");
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || `document-${documentId}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error("Download error:", error);
+      alert("Erreur lors du téléchargement: " + error.message);
+    }
+  };
+
+  const handleDeleteDocument = async (documentId: number, documentName: string) => {
+    if (!confirm(`Êtes-vous sûr de vouloir supprimer le document "${documentName}" ?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/documents/${documentId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Erreur lors de la suppression");
+      }
+
+      alert("Document supprimé avec succès");
+
+      // Refresh the documents list
+      window.location.reload();
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      alert("Erreur lors de la suppression: " + error.message);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -258,13 +347,28 @@ export default function DocumentsPage() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleViewDocument(doc.id)}
+                      title="Voir le document"
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDownloadDocument(doc.id, doc.name)}
+                      title="Télécharger le document"
+                    >
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteDocument(doc.id, doc.name)}
+                      title="Supprimer le document"
+                    >
                       <Trash2 className="h-4 w-4 text-red-600" />
                     </Button>
                   </div>

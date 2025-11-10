@@ -28,6 +28,15 @@ export default function ExpensesPage() {
     category: "",
     description: "",
   });
+  const [receipt, setReceipt] = useState<{
+    file: File | null;
+    preview: string | null;
+    base64: string | null;
+  }>({
+    file: null,
+    preview: null,
+    base64: null,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +47,8 @@ export default function ExpensesPage() {
       amount: parseFloat(formData.amount),
       category: formData.category,
       description: formData.description,
+      receipt_data: receipt.base64 || undefined,
+      receipt_filename: receipt.file?.name || undefined,
     });
 
     setFormData({
@@ -47,6 +58,17 @@ export default function ExpensesPage() {
       category: "",
       description: "",
     });
+
+    // Clean up receipt
+    if (receipt.preview) {
+      URL.revokeObjectURL(receipt.preview);
+    }
+    setReceipt({
+      file: null,
+      preview: null,
+      base64: null,
+    });
+
     setShowForm(false);
   };
 
@@ -76,6 +98,59 @@ export default function ExpensesPage() {
       default:
         return <Clock className="h-4 w-4" />;
     }
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Veuillez sélectionner une image");
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("L'image ne doit pas dépasser 10MB");
+      return;
+    }
+
+    try {
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+
+      // Convert to base64
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+      const chunkSize = 0x8000;
+      let binary = "";
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, i + chunkSize);
+        binary += String.fromCharCode.apply(null, Array.from(chunk));
+      }
+      const base64Data = btoa(binary);
+
+      setReceipt({
+        file,
+        preview: previewUrl,
+        base64: base64Data,
+      });
+    } catch (error: any) {
+      console.error("Photo upload error:", error);
+      alert("Erreur lors du chargement de la photo: " + error.message);
+    }
+  };
+
+  const handleRemoveReceipt = () => {
+    if (receipt.preview) {
+      URL.revokeObjectURL(receipt.preview);
+    }
+    setReceipt({
+      file: null,
+      preview: null,
+      base64: null,
+    });
   };
 
   return (
@@ -209,11 +284,40 @@ export default function ExpensesPage() {
               <label className="block text-sm font-medium text-gray-700">
                 Justificatif
               </label>
-              <div className="mt-1">
-                <Button type="button" variant="outline">
+              <div className="mt-1 space-y-2">
+                <input
+                  type="file"
+                  id="receipt-upload"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById("receipt-upload")?.click()}
+                >
                   <Camera className="mr-2 h-5 w-5" />
-                  Prendre en photo
+                  {receipt.file ? "Changer la photo" : "Prendre en photo"}
                 </Button>
+
+                {receipt.preview && (
+                  <div className="relative inline-block">
+                    <img
+                      src={receipt.preview}
+                      alt="Reçu"
+                      className="h-32 w-32 rounded-lg object-cover border-2 border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveReceipt}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    >
+                      <XCircle className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
