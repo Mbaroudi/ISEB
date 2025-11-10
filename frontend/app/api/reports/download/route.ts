@@ -74,8 +74,8 @@ export async function GET(request: NextRequest) {
             model: "fec.export",
             method: "search_read",
             args: [
-              [["company_id", "=", user.company_id[0]]],
-              ["id", "name", "fec_file", "filename"]
+              [["company_id", "=", user.company_id[0]], ["state", "=", "done"]],
+              ["id", "name", "file_data", "file_name"]
             ],
             kwargs: {
               order: "create_date desc",
@@ -95,11 +95,11 @@ export async function GET(request: NextRequest) {
       if (
         fecResponse.data?.result &&
         fecResponse.data.result.length > 0 &&
-        fecResponse.data.result[0].fec_file
+        fecResponse.data.result[0].file_data
       ) {
         const fecData = fecResponse.data.result[0];
-        const buffer = Buffer.from(fecData.fec_file, "base64");
-        const filename = fecData.filename || `FEC_${year}.txt`;
+        const buffer = Buffer.from(fecData.file_data, "base64");
+        const filename = fecData.file_name || `FEC_${year}.txt`;
 
         return new NextResponse(buffer, {
           headers: {
