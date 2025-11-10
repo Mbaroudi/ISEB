@@ -15,7 +15,7 @@ class PartnerFiscalRisk(models.Model):
     fiscal_risk_score = fields.Integer(
         string='Score de risque fiscal',
         compute='_compute_fiscal_risk_score',
-        store=True,
+        store=False,
         help="Score de 0 (risque élevé) à 100 (conforme)"
     )
 
@@ -24,7 +24,7 @@ class PartnerFiscalRisk(models.Model):
         ('medium', 'Moyen'),
         ('high', 'Élevé'),
         ('critical', 'Critique'),
-    ], string='Niveau de risque', compute='_compute_fiscal_risk_level', store=True)
+    ], string='Niveau de risque', compute='_compute_fiscal_risk_level', store=False)
 
     fiscal_risk_color = fields.Integer(
         string='Couleur risque',
