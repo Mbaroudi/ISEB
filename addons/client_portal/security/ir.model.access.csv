@@ -5,4 +5,6 @@ access_client_document_tag_user,client.document.tag.user,model_client_document_t
 access_client_document_category_user,client.document.category.user,model_client_document_category,base.group_user,1,1,1,1
 access_client_document_ocr_user,client.document.ocr.user,model_client_document_ocr,base.group_user,1,1,1,1
 access_client_document_workflow_transition_user,client.document.workflow.transition.user,model_client_document_workflow_transition,base.group_user,1,1,1,1
+access_client_document_share_user,client.document.share.user,model_client_document_share,base.group_user,1,1,1,1
+access_client_document_share_public,client.document.share.public,model_client_document_share,base.group_public,1,0,0,0
 access_expense_note_user,expense.note.user,model_expense_note,base.group_user,1,1,1,1
