@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Client Portal - ISEB',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.3',
     'category': 'Accounting/Accounting',
     'summary': 'Portail client pour suivi comptable en temps r�el',
     'description': """

@@ -39,7 +39,6 @@ Usage:
     'depends': [
         'base',
         'account',
-        'documents',
     ],
     'data': [
         'security/ir.model.access.csv',
