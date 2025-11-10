@@ -21,7 +21,7 @@ export async function GET(
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Récupération des messages de la question
     const messages = await odoo.searchRead({
@@ -75,7 +75,7 @@ export async function POST(
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Création du message
     const values: any = {

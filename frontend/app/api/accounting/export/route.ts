@@ -26,8 +26,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Récupère le client Odoo depuis les cookies
-    const odoo = await getOdooClient(request);
+    // Récupère le client Odoo
+    const odoo = getOdooClient();
 
     // Crée le wizard d'export
     const wizardId = await odoo.create({

@@ -28,8 +28,8 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     const fileData = buffer.toString('base64');
 
-    // Récupère le client Odoo depuis les cookies
-    const odoo = await getOdooClient(request);
+    // Récupère le client Odoo
+    const odoo = getOdooClient();
 
     // Crée le wizard d'import
     const wizardId = await odoo.create({

@@ -6,9 +6,9 @@ import { getOdooClient } from '@/lib/odoo/client';
  * GET /api/collaboration/dashboard - Statistiques et activité récente
  */
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
     const uid = odoo.uid;
 
     // Statistiques globales

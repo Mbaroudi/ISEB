@@ -59,7 +59,7 @@ export async function GET(
           method: "read",
           args: [[parseInt(id)]],
           kwargs: {
-            fields: ["filename", "file_data", "document_type"],
+            fields: ["filename", "file", "document_type"],
           },
         },
       },
@@ -81,7 +81,9 @@ export async function GET(
 
     const document = response.data.result[0];
 
-    if (!document.file_data) {
+    const fileData = document.file || document.file_data;
+    
+    if (!fileData) {
       return NextResponse.json(
         { error: "No file data available" },
         { status: 404 }
@@ -89,7 +91,7 @@ export async function GET(
     }
 
     // Convert base64 to buffer
-    const buffer = Buffer.from(document.file_data, 'base64');
+    const buffer = Buffer.from(fileData, 'base64');
 
     // Determine content type based on file extension
     const filename = document.filename || `document-${id}`;

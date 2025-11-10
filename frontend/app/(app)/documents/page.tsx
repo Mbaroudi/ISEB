@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDocuments, useUploadDocument } from "@/lib/odoo/hooks";
+import { useUploadDocument } from "@/lib/odoo/hooks";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -37,21 +38,17 @@ import {
   Filter,
   Grid3x3,
   List,
-  Tag as TagIcon,
   Archive,
   FolderOpen,
   Calendar,
   DollarSign,
   X,
-  Check,
-  Plus,
   ChevronDown,
   Image as ImageIcon,
   FileCheck,
   Scan,
   Loader2,
 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
 
 interface Document {
   id: number;
@@ -59,7 +56,7 @@ interface Document {
   reference: string;
   document_type: string;
   category_id: [number, string] | false;
-  tag_ids: [[number[]], string[]];
+  tag_ids: [number[], string[]];
   document_date: string;
   amount_total: number;
   currency_id: [number, string];
@@ -340,20 +337,6 @@ export default function DocumentsPage() {
     } catch (error) {
       console.error("Error archiving:", error);
       toast.error("Erreur lors de l'archivage");
-    }
-  };
-
-  const handleUpdateTags = async (docId: number, tagIds: number[]) => {
-    try {
-      await fetch(`/api/documents/${docId}/tags`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag_ids: tagIds }),
-      });
-      searchDocuments(); // Refresh
-    } catch (error) {
-      console.error("Error updating tags:", error);
-      toast.error("Erreur lors de la mise à jour des tags");
     }
   };
 
@@ -780,7 +763,6 @@ export default function DocumentsPage() {
               onDownload={() => handleDownloadDocument(doc)}
               onDelete={() => handleDeleteDocument(doc.id, doc.name)}
               onArchive={() => handleArchiveDocument(doc.id, !doc.active)}
-              onUpdateTags={(tagIds) => handleUpdateTags(doc.id, tagIds)}
               onExtractOCR={() => handleExtractOCR(doc.id)}
               ocrLoading={ocrLoading === doc.id}
             />
@@ -938,7 +920,6 @@ function DocumentCard({
   onDownload,
   onDelete,
   onArchive,
-  onUpdateTags,
   onExtractOCR,
   ocrLoading,
 }: {
@@ -950,7 +931,6 @@ function DocumentCard({
   onDownload: () => void;
   onDelete: () => void;
   onArchive: () => void;
-  onUpdateTags: (tagIds: number[]) => void;
   onExtractOCR: () => void;
   ocrLoading: boolean;
 }) {

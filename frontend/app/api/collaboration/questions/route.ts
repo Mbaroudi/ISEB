@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Construction du domaine de recherche
     const domain: any[] = [];
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Création de la question
     const questionId = await odoo.create({

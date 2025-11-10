@@ -7,18 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import {
   Calendar,
   AlertTriangle,
-  CheckCircle2,
   Clock,
-  TrendingUp,
-  TrendingDown,
   FileText,
   CreditCard,
   Shield,
-  Bell,
-  Filter,
+  ArrowRight,
   Plus,
   Eye,
-  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 

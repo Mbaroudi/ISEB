@@ -48,8 +48,7 @@ export default function ExpensesPage() {
       amount: parseFloat(formData.amount),
       category: formData.category,
       description: formData.description,
-      receipt_data: receipt.base64 || undefined,
-      receipt_filename: receipt.file?.name || undefined,
+      receipt_image: receipt.base64 || undefined,
     });
 
     setFormData({

@@ -22,7 +22,7 @@ export async function GET(
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Récupération de la question
     const questions = await odoo.read('accounting.question', [questionId], [
@@ -101,7 +101,7 @@ export async function PATCH(
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     // Si c'est une action (resolve, close, reopen)
     if (action) {
@@ -187,7 +187,7 @@ export async function DELETE(
       );
     }
 
-    const odoo = await getOdooClient(request);
+    const odoo = getOdooClient();
 
     await odoo.unlink('accounting.question', [questionId]);
 
