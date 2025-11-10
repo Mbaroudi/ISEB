@@ -78,7 +78,6 @@ Notifications :
         'account',
         'base',
         'mail',
-        'client_portal',
     ],
     'data': [
         'security/ir.model.access.csv',

@@ -7,9 +7,9 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='ref']" position="after">
-                <field name="imported_from" readonly="1" attrs="{'invisible': [('imported_from', '=', False)]}"/>
-                <field name="import_date" readonly="1" attrs="{'invisible': [('import_date', '=', False)]}"/>
-                <field name="import_format" readonly="1" attrs="{'invisible': [('import_format', '=', False)]}"/>
+                <field name="imported_from" readonly="1" invisible="imported_from == False"/>
+                <field name="import_date" readonly="1" invisible="import_date == False"/>
+                <field name="import_format" readonly="1" invisible="import_format == False"/>
             </xpath>
         </field>
     </record>

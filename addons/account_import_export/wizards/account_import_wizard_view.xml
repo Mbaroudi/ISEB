@@ -12,7 +12,7 @@
                         </h1>
                     </div>
 
-                    <group name="file_selection" attrs="{'invisible': [('state', 'in', ['imported', 'error'])]}">
+                    <group name="file_selection" invisible="state in ['imported', 'error']">
                         <group>
                             <field name="file_data" filename="file_name" required="1"/>
                             <field name="file_name" invisible="1"/>
@@ -25,7 +25,7 @@
                         </group>
                     </group>
 
-                    <group name="help" attrs="{'invisible': [('state', '!=', 'draft')]}">
+                    <group name="help" invisible="state != 'draft'">
                         <div class="alert alert-info" role="alert">
                             <h4>Formats supportés :</h4>
                             <ul>
@@ -37,9 +37,9 @@
                         </div>
                     </group>
 
-                    <group name="result" attrs="{'invisible': [('result_message', '=', False)]}">
+                    <group name="result" invisible="not result_message">
                         <field name="result_message" nolabel="1" colspan="2"/>
-                        <group attrs="{'invisible': [('state', 'not in', ['validated', 'imported'])]}">
+                        <group invisible="state not in ['validated', 'imported']">
                             <field name="success_count" readonly="1"/>
                             <field name="error_count" readonly="1"/>
                         </group>
@@ -51,12 +51,12 @@
                             string="Valider"
                             type="object"
                             class="btn-primary"
-                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                            invisible="state != 'draft'"/>
                     <button name="action_import"
                             string="Importer"
                             type="object"
                             class="btn-primary"
-                            attrs="{'invisible': [('state', 'in', ['imported', 'error'])]}"/>
+                            invisible="state in ['imported', 'error']"/>
                     <button name="action_close"
                             string="Fermer"
                             type="object"
