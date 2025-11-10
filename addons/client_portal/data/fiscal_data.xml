@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Séquence pour les obligations fiscales -->
+    <record id="seq_fiscal_obligation" model="ir.sequence">
+        <field name="name">Obligation Fiscale</field>
+        <field name="code">fiscal.obligation</field>
+        <field name="prefix">OBL</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Types d'obligations fiscales -->
+    <record id="fiscal_type_tva" model="fiscal.obligation.type">
+        <field name="name">TVA</field>
+        <field name="code">tva</field>
+    </record>
+
+    <record id="fiscal_type_urssaf" model="fiscal.obligation.type">
+        <field name="name">URSSAF</field>
+        <field name="code">urssaf</field>
+    </record>
+
+    <record id="fiscal_type_is" model="fiscal.obligation.type">
+        <field name="name">Impôt sur les Sociétés</field>
+        <field name="code">is</field>
+    </record>
+
+    <record id="fiscal_type_ir" model="fiscal.obligation.type">
+        <field name="name">Impôt sur le Revenu</field>
+        <field name="code">ir</field>
+    </record>
+
+    <record id="fiscal_type_dsn" model="fiscal.obligation.type">
+        <field name="name">DSN</field>
+        <field name="code">dsn</field>
+    </record>
+
+    <record id="fiscal_type_cfe" model="fiscal.obligation.type">
+        <field name="name">CFE</field>
+        <field name="code">cfe</field>
+    </record>
+
+    <record id="fiscal_type_cvae" model="fiscal.obligation.type">
+        <field name="name">CVAE</field>
+        <field name="code">cvae</field>
+    </record>
+
+    <record id="fiscal_type_taxe_apprentissage" model="fiscal.obligation.type">
+        <field name="name">Taxe d'apprentissage</field>
+        <field name="code">taxe_apprentissage</field>
+    </record>
+
+    <record id="fiscal_type_formation_pro" model="fiscal.obligation.type">
+        <field name="name">Formation professionnelle</field>
+        <field name="code">formation_pro</field>
+    </record>
+
+    <!-- Cron jobs -->
+    <!-- Envoi des alertes quotidiennes -->
+    <record id="ir_cron_fiscal_send_alerts" model="ir.cron">
+        <field name="name">Fiscal: Envoyer alertes échéances</field>
+        <field name="model_id" ref="model_fiscal_obligation"/>
+        <field name="state">code</field>
+        <field name="code">model.send_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Calcul des montants estimés -->
+    <record id="ir_cron_fiscal_compute_amounts" model="ir.cron">
+        <field name="name">Fiscal: Calculer montants estimés</field>
+        <field name="model_id" ref="model_fiscal_obligation"/>
+        <field name="state">code</field>
+        <field name="code">model.compute_estimated_amounts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Vérification délégations expirées -->
+    <record id="ir_cron_fiscal_check_delegations" model="ir.cron">
+        <field name="name">Fiscal: Vérifier délégations expirées</field>
+        <field name="model_id" ref="model_fiscal_payment_delegation"/>
+        <field name="state">code</field>
+        <field name="code">model.check_expired_delegations()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- Mise à jour scores de risque (hebdomadaire) -->
+    <record id="ir_cron_fiscal_update_risk_scores" model="ir.cron">
+        <field name="name">Fiscal: Mettre à jour scores de risque</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model.update_all_fiscal_risk_scores()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="numbercall">-1</field>
+        <field name="active" eval="True"/>
+    </record>
+</odoo>

@@ -79,6 +79,7 @@ AGPL-3
         'security/ir.model.access.csv',
         # Data
         'data/document_data.xml',
+        'data/fiscal_data.xml',
         # Views
         'views/client_dashboard_views.xml',
         'views/client_document_views.xml',

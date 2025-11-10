@@ -7,4 +7,8 @@ access_client_document_ocr_user,client.document.ocr.user,model_client_document_o
 access_client_document_workflow_transition_user,client.document.workflow.transition.user,model_client_document_workflow_transition,base.group_user,1,1,1,1
 access_client_document_share_user,client.document.share.user,model_client_document_share,base.group_user,1,1,1,1
 access_client_document_share_public,client.document.share.public,model_client_document_share,base.group_public,1,0,0,0
+access_fiscal_obligation_user,fiscal.obligation.user,model_fiscal_obligation,base.group_user,1,1,1,1
+access_fiscal_obligation_type_user,fiscal.obligation.type.user,model_fiscal_obligation_type,base.group_user,1,1,1,0
+access_fiscal_payment_delegation_user,fiscal.payment.delegation.user,model_fiscal_payment_delegation,base.group_user,1,1,1,1
+access_fiscal_risk_history_user,fiscal.risk.history.user,model_fiscal_risk_history,base.group_user,1,0,0,0
 access_expense_note_user,expense.note.user,model_expense_note,base.group_user,1,1,1,1
