@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useDocuments, useUploadDocument } from "@/lib/odoo/hooks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -255,11 +255,11 @@ export default function DocumentsPage() {
       };
 
       await uploadDocument.mutateAsync(uploadData);
-      alert("Document uploadé avec succès!");
+      toast.success("Document uploadé avec succès!");
       searchDocuments(); // Refresh list
     } catch (error: any) {
       console.error("Upload error:", error);
-      alert("Erreur lors de l'upload: " + error.message);
+      toast.error("Erreur lors de l'upload: " + error.message);
     } finally {
       setUploading(false);
     }
@@ -304,7 +304,7 @@ export default function DocumentsPage() {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error downloading:", error);
-      alert("Erreur lors du téléchargement");
+      toast.error("Erreur lors du téléchargement");
     }
   };
 
@@ -320,7 +320,7 @@ export default function DocumentsPage() {
       searchDocuments(); // Refresh
     } catch (error) {
       console.error("Error deleting:", error);
-      alert("Erreur lors de la suppression");
+      toast.error("Erreur lors de la suppression");
     }
   };
 
@@ -334,7 +334,7 @@ export default function DocumentsPage() {
       searchDocuments(); // Refresh
     } catch (error) {
       console.error("Error archiving:", error);
-      alert("Erreur lors de l'archivage");
+      toast.error("Erreur lors de l'archivage");
     }
   };
 
@@ -348,7 +348,7 @@ export default function DocumentsPage() {
       searchDocuments(); // Refresh
     } catch (error) {
       console.error("Error updating tags:", error);
-      alert("Erreur lors de la mise à jour des tags");
+      toast.error("Erreur lors de la mise à jour des tags");
     }
   };
 
@@ -1152,7 +1152,7 @@ function PreviewModal({
       }
     } catch (error) {
       console.error("Error loading preview:", error);
-      alert("Erreur lors du chargement de la prévisualisation");
+      toast.error("Erreur lors du chargement de la prévisualisation");
     } finally {
       setIsLoading(false);
     }

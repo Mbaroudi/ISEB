@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useExpenses, useCreateExpense } from "@/lib/odoo/hooks";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Receipt,
   Plus,
@@ -106,13 +107,13 @@ export default function ExpensesPage() {
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      alert("Veuillez sélectionner une image");
+      toast.error("Veuillez sélectionner une image");
       return;
     }
 
     // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert("L'image ne doit pas dépasser 10MB");
+      toast.error("L'image ne doit pas dépasser 10MB");
       return;
     }
 
@@ -138,7 +139,7 @@ export default function ExpensesPage() {
       });
     } catch (error: any) {
       console.error("Photo upload error:", error);
-      alert("Erreur lors du chargement de la photo: " + error.message);
+      toast.error("Erreur lors du chargement de la photo: " + error.message);
     }
   };
 

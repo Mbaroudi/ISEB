@@ -103,7 +103,7 @@ export default function ReportsPage() {
 
       alert(data.message || "Rapport généré avec succès!");
     } catch (error: any) {
-      alert("Erreur: " + error.message);
+      toast.error("Erreur: " + error.message);
     } finally {
       setGenerating(null);
     }
@@ -112,7 +112,7 @@ export default function ReportsPage() {
   const handleDownload = async (reportType: string) => {
     const report = generatedReports[reportType];
     if (!report) {
-      alert("Veuillez d'abord générer le rapport");
+      toast.warning("Veuillez d'abord générer le rapport");
       return;
     }
 
@@ -142,7 +142,7 @@ export default function ReportsPage() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (error: any) {
-      alert("Erreur lors du téléchargement: " + error.message);
+      toast.error("Erreur lors du téléchargement: " + error.message);
     }
   };
 

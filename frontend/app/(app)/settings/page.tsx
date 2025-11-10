@@ -62,7 +62,7 @@ export default function SettingsPage() {
 
   const handleImport = async () => {
     if (!importFile) {
-      alert("Veuillez sélectionner un fichier");
+      toast.error("Veuillez sélectionner un fichier");
       return;
     }
 
@@ -86,7 +86,7 @@ export default function SettingsPage() {
       setImportResult(result);
 
       if (result.success) {
-        alert(`Import réussi! ${result.successCount} écritures importées.`);
+        toast.success(`Import réussi! ${result.successCount} écritures importées.`);
       }
     } catch (error: any) {
       setImportResult({
@@ -101,7 +101,7 @@ export default function SettingsPage() {
   // Handle Export
   const handleExport = async () => {
     if (!exportDateFrom || !exportDateTo) {
-      alert("Veuillez sélectionner une période");
+      toast.error("Veuillez sélectionner une période");
       return;
     }
 
@@ -135,12 +135,12 @@ export default function SettingsPage() {
           downloadBlob(blob, result.ximport.filename);
         }
 
-        alert("Export réussi! Le(s) fichier(s) ont été téléchargé(s).");
+        toast.success("Export réussi! Le(s) fichier(s) ont été téléchargé(s).");
       } else {
-        alert("Erreur lors de l'export");
+        toast.error("Erreur lors de l'export");
       }
     } catch (error: any) {
-      alert("Erreur: " + error.message);
+      toast.error("Erreur: " + error.message);
     } finally {
       setExportLoading(false);
     }

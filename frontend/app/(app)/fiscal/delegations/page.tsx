@@ -91,11 +91,11 @@ export default function DelegationsPage() {
       if (response.ok) {
         await loadDelegations();
       } else {
-        alert("Erreur lors de la suspension");
+        toast.error("Erreur lors de la suspension");
       }
     } catch (error) {
       console.error("Error suspending delegation:", error);
-      alert("Erreur lors de la suspension");
+      toast.error("Erreur lors de la suspension");
     } finally {
       setActionLoading(null);
     }
@@ -119,11 +119,11 @@ export default function DelegationsPage() {
       if (response.ok) {
         await loadDelegations();
       } else {
-        alert("Erreur lors de la révocation");
+        toast.error("Erreur lors de la révocation");
       }
     } catch (error) {
       console.error("Error revoking delegation:", error);
-      alert("Erreur lors de la révocation");
+      toast.error("Erreur lors de la révocation");
     } finally {
       setActionLoading(null);
     }

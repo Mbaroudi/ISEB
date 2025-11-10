@@ -64,8 +64,9 @@ export async function POST(request: NextRequest) {
     const sessionCookie = cookies ? cookies.join('; ') : '';
 
     // Build search domain
+    const partnerIdValue = partner_id || (Array.isArray(user.partner_id) ? user.partner_id[0] : user.partner_id);
     const domain: any[] = [
-      ['partner_id', '=', partner_id || user.partner_id]
+      ['partner_id', '=', partnerIdValue]
     ];
 
     // Add search term if provided

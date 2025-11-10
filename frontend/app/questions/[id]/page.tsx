@@ -204,7 +204,7 @@ export default function QuestionDetailPage({
       setShowActions(false);
     } catch (error) {
       console.error("Error performing action:", error);
-      alert("Une erreur est survenue");
+      toast.error("Une erreur est survenue");
     }
   };
 
@@ -228,7 +228,7 @@ export default function QuestionDetailPage({
       router.push("/questions");
     } catch (error) {
       console.error("Error deleting question:", error);
-      alert("Une erreur est survenue lors de la suppression");
+      toast.error("Une erreur est survenue lors de la suppression");
     }
   };
 
