@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_client_dashboard_user,client.dashboard.user,model_client_dashboard,base.group_user,1,1,1,1
 access_client_document_user,client.document.user,model_client_document,base.group_user,1,1,1,1
+access_client_document_tag_user,client.document.tag.user,model_client_document_tag,base.group_user,1,1,1,1
+access_client_document_category_user,client.document.category.user,model_client_document_category,base.group_user,1,1,1,1
 access_expense_note_user,expense.note.user,model_expense_note,base.group_user,1,1,1,1

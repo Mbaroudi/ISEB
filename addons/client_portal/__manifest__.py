@@ -58,22 +58,31 @@ AGPL-3
         'web',
         'website',  # Required for frontend assets (website.assets_frontend)
     ],
+    # Intégration optionnelle avec le module Documents (Enterprise) ou DMS (Community)
+    'auto_install_depends': [
+        'documents',  # Odoo Enterprise GED
+        'dms',  # Document Management System (Community alternative)
+    ],
     'external_dependencies': {
         'python': [
             'xlsxwriter',
             'reportlab',
             'pytesseract',
             'PIL',
+            'boto3',
         ],
     },
     'data': [
         # Security
         'security/security.xml',
         'security/ir.model.access.csv',
+        # Data
+        'data/document_data.xml',
         # Views
         'views/client_dashboard_views.xml',
         'views/client_document_views.xml',
         'views/expense_note_views.xml',
+        'views/res_config_settings_views.xml',
         'views/menu_views.xml',
         # Portal Templates
         'views/portal_templates.xml',
