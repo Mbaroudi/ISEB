@@ -190,9 +190,10 @@ export default function DocumentsPage() {
         }),
       });
       const data = await response.json();
-      setDocuments(data);
+      setDocuments(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Error searching documents:", error);
+      setDocuments([]);
     } finally {
       setIsLoadingDocuments(false);
     }
