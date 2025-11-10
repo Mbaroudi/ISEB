@@ -10,7 +10,7 @@ from . import document_workflow
 from . import document_share
 from . import fiscal_obligation
 from . import fiscal_payment_delegation
-from . import fiscal_risk_score
+# from . import fiscal_risk_score
 # from . import ir_attachment_storage
 from . import expense_note
 from . import res_partner
