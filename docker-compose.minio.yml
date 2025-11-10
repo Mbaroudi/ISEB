@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # MinIO - S3 Compatible Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: iseb_minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      # Optional: Enable virtual host style
+      MINIO_DOMAIN: ${MINIO_DOMAIN:-localhost}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - iseb_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    restart: unless-stopped
+
+  # MinIO Client (mc) - For initial setup
+  minio-client:
+    image: minio/mc:latest
+    container_name: iseb_minio_client
+    depends_on:
+      - minio
+    networks:
+      - iseb_network
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10;
+      /usr/bin/mc alias set myminio http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin};
+      /usr/bin/mc mb myminio/iseb-documents --ignore-existing;
+      /usr/bin/mc anonymous set download myminio/iseb-documents;
+      /usr/bin/mc ilm add --expiry-days 90 --prefix 'temp/' myminio/iseb-documents;
+      echo 'MinIO buckets initialized successfully';
+      exit 0;
+      "
+
+volumes:
+  minio_data:
+    driver: local
+
+networks:
+  iseb_network:
+    external: true
+    # Si le réseau n'existe pas encore, décommenter:
+    # driver: bridge
