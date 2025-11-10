@@ -3,3 +3,5 @@ access_account_import_wizard_user,account.import.wizard.user,model_account_impor
 access_account_import_wizard_manager,account.import.wizard.manager,model_account_import_wizard,account.group_account_manager,1,1,1,1
 access_account_export_wizard_user,account.export.wizard.user,model_account_export_wizard,account.group_account_user,1,1,1,1
 access_account_export_wizard_manager,account.export.wizard.manager,model_account_export_wizard,account.group_account_manager,1,1,1,1
+access_account_import_wizard_portal,account.import.wizard.portal,model_account_import_wizard,base.group_portal,1,0,0,0
+access_account_export_wizard_portal,account.export.wizard.portal,model_account_export_wizard,base.group_portal,1,1,1,0

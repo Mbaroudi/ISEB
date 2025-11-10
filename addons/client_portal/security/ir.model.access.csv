@@ -12,3 +12,15 @@ access_fiscal_obligation_type_user,fiscal.obligation.type.user,model_fiscal_obli
 access_fiscal_payment_delegation_user,fiscal.payment.delegation.user,model_fiscal_payment_delegation,base.group_user,1,1,1,1
 access_fiscal_risk_history_user,fiscal.risk.history.user,model_fiscal_risk_history,base.group_user,1,0,0,0
 access_expense_note_user,expense.note.user,model_expense_note,base.group_user,1,1,1,1
+access_res_users_portal,res.users.portal,base.model_res_users,base.group_portal,1,0,0,0
+access_res_partner_portal,res.partner.portal,base.model_res_partner,base.group_portal,1,0,0,0
+access_client_dashboard_portal,client.dashboard.portal,model_client_dashboard,base.group_portal,1,0,0,0
+access_client_document_portal,client.document.portal,model_client_document,base.group_portal,1,1,1,0
+access_client_document_tag_portal,client.document.tag.portal,model_client_document_tag,base.group_portal,1,0,0,0
+access_client_document_category_portal,client.document.category.portal,model_client_document_category,base.group_portal,1,0,0,0
+access_client_document_ocr_portal,client.document.ocr.portal,model_client_document_ocr,base.group_portal,1,0,0,0
+access_client_document_workflow_transition_portal,client.document.workflow.transition.portal,model_client_document_workflow_transition,base.group_portal,1,0,0,0
+access_fiscal_obligation_portal,fiscal.obligation.portal,model_fiscal_obligation,base.group_portal,1,0,0,0
+access_fiscal_obligation_type_portal,fiscal.obligation.type.portal,model_fiscal_obligation_type,base.group_portal,1,0,0,0
+access_fiscal_payment_delegation_portal,fiscal.payment.delegation.portal,model_fiscal_payment_delegation,base.group_portal,1,1,1,0
+access_expense_note_portal,expense.note.portal,model_expense_note,base.group_portal,1,1,1,0

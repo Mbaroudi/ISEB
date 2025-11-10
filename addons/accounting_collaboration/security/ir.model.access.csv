@@ -5,3 +5,5 @@ access_accounting_question_manager,accounting.question.manager,model_accounting_
 access_accounting_message_user,accounting.message.user,model_accounting_message,base.group_user,1,1,1,0
 access_accounting_message_portal,accounting.message.portal,model_accounting_message,base.group_portal,1,1,1,0
 access_accounting_message_manager,accounting.message.manager,model_accounting_message,account.group_account_manager,1,1,1,1
+access_account_move_portal,account.move.portal,account.model_account_move,base.group_portal,1,0,0,0
+access_account_move_line_portal,account.move.line.portal,account.model_account_move_line,base.group_portal,1,0,0,0
