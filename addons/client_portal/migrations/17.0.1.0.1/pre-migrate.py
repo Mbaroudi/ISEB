@@ -9,31 +9,16 @@ def migrate(cr, version):
     
     # Add active field
     cr.execute("""
-        DO $$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
-                WHERE table_name='client_document' AND column_name='active'
-            ) THEN
-                ALTER TABLE client_document ADD COLUMN active BOOLEAN DEFAULT TRUE;
-                UPDATE client_document SET active = TRUE WHERE active IS NULL;
-                _logger.info('Added active column to client_document');
-            END IF;
-        END $$;
+        ALTER TABLE client_document ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE
+    """)
+    
+    cr.execute("""
+        UPDATE client_document SET active = TRUE WHERE active IS NULL
     """)
     
     # Add archived_date field
     cr.execute("""
-        DO $$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
-                WHERE table_name='client_document' AND column_name='archived_date'
-            ) THEN
-                ALTER TABLE client_document ADD COLUMN archived_date DATE;
-                _logger.info('Added archived_date column to client_document');
-            END IF;
-        END $$;
+        ALTER TABLE client_document ADD COLUMN IF NOT EXISTS archived_date DATE
     """)
     
     _logger.info('Client portal migration completed')

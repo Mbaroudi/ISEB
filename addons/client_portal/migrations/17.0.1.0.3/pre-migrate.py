@@ -9,17 +9,11 @@ def migrate(cr, version):
     
     # Add storage_backend field
     cr.execute("""
-        DO $$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
-                WHERE table_name='ir_attachment' AND column_name='storage_backend'
-            ) THEN
-                ALTER TABLE ir_attachment ADD COLUMN storage_backend VARCHAR DEFAULT 'db';
-                UPDATE ir_attachment SET storage_backend = 'db' WHERE storage_backend IS NULL;
-                _logger.info('Added storage_backend column to ir_attachment');
-            END IF;
-        END $$;
+        ALTER TABLE ir_attachment ADD COLUMN IF NOT EXISTS storage_backend VARCHAR DEFAULT 'db'
+    """)
+    
+    cr.execute("""
+        UPDATE ir_attachment SET storage_backend = 'db' WHERE storage_backend IS NULL
     """)
     
     _logger.info('S3 storage migration completed')
