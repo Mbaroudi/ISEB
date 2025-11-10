@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getOdooClient } from '@/lib/odoo/client';
 
 /**
@@ -9,7 +9,7 @@ import { getOdooClient } from '@/lib/odoo/client';
 export async function GET() {
   try {
     const odoo = getOdooClient();
-    const uid = odoo.uid;
+    const uid = odoo.getUserId();
 
     // Statistiques globales
     const [
