@@ -25,7 +25,7 @@ docker-compose stop odoo
 echo "2. Installing modules..."
 docker-compose run --rm odoo odoo \
     -d $DB_NAME \
-    -i french_accounting,website,client_portal,cabinet_portal,bank_sync,e_invoicing,reporting \
+    -i french_accounting,website,web_cors,client_portal,cabinet_portal,invoice_ocr_config,accounting_collaboration,account_import_export,bank_sync,e_invoicing,reporting,integrations \
     --stop-after-init \
     --without-demo=all
 
@@ -47,9 +47,14 @@ echo ""
 echo "Installed modules:"
 echo "  - french_accounting (French Accounting)"
 echo "  - website (Website - required for client_portal frontend)"
-echo "  - client_portal (Client Portal)"
+echo "  - web_cors (CORS Configuration for Next.js frontend)"
+echo "  - client_portal (Client Portal with OCR, Documents, Fiscal)"
 echo "  - cabinet_portal (Cabinet Portal)"
+echo "  - invoice_ocr_config (OCR Configuration - Google Vision, AWS Textract, Azure)"
+echo "  - accounting_collaboration (Questions & Messaging)"
+echo "  - account_import_export (FEC/XIMPORT Import & Export)"
 echo "  - bank_sync (Bank Synchronization)"
-echo "  - e_invoicing (E-Invoicing)"
+echo "  - e_invoicing (E-Invoicing - Chorus Pro, Factur-X)"
 echo "  - reporting (Custom Reporting)"
+echo "  - integrations (Third-party Integrations)"
 echo ""
