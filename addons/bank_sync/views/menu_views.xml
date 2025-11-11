@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu principal -->
+    <menuitem id="menu_bank_sync_root"
+              name="Synchronisation Bancaire"
+              sequence="50"
+              web_icon="bank_sync,static/description/icon.png"/>
+
+    <!-- Comptes bancaires -->
+    <menuitem id="menu_bank_accounts"
+              name="Comptes Bancaires"
+              parent="menu_bank_sync_root"
+              action="action_bank_account"
+              sequence="10"/>
+
+    <!-- Transactions -->
+    <menuitem id="menu_bank_transactions"
+              name="Transactions"
+              parent="menu_bank_sync_root"
+              action="action_bank_transaction"
+              sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_bank_config"
+              name="Configuration"
+              parent="menu_bank_sync_root"
+              sequence="90"/>
+
+    <menuitem id="menu_bank_providers"
+              name="Banques"
+              parent="menu_bank_config"
+              action="action_bank_provider"
+              sequence="10"/>
+
+    <menuitem id="menu_reconciliation_rules"
+              name="Règles de Rapprochement"
+              parent="menu_bank_config"
+              action="action_reconciliation_rule"
+              sequence="20"/>
+</odoo>

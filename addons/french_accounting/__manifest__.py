@@ -62,6 +62,9 @@ AGPL-3
         'views/tva_declaration_views.xml',
         'views/menu_views.xml',
     ],
+    'demo': [
+        'demo/demo_data.xml',
+    ],
     'images': [
         'static/description/icon.png',
         'static/description/banner.png',

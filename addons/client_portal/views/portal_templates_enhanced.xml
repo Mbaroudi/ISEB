@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_dashboard_enhanced" name="Enhanced Dashboard" inherit_id="client_portal.portal_my_dashboard">
+        <xpath expr="//div[@class='row mt32'][last()]" position="after">
+            <!-- Section Graphiques -->
+            <div class="row mt-5 o_client_dashboard">
+                <div class="col-12">
+                    <h2>Graphiques et Analyses</h2>
+                </div>
+                
+                <!-- Graphique évolution CA -->
+                <div class="col-lg-8 mb-4">
+                    <div class="chart-card">
+                        <h3><i class="fa fa-line-chart"/> Évolution du Chiffre d'Affaires (12 mois)</h3>
+                        <div class="chart-container">
+                            <canvas id="revenueChart" t-att-data-chart-data="dashboard.chart_data_revenue"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graphique répartition dépenses -->
+                <div class="col-lg-4 mb-4">
+                    <div class="chart-card">
+                        <h3><i class="fa fa-pie-chart"/> Répartition Dépenses</h3>
+                        <div class="chart-container">
+                            <canvas id="expensesChart" t-att-data-chart-data="dashboard.chart_data_expenses"/>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graphique CA vs Charges -->
+                <div class="col-12 mb-4">
+                    <div class="chart-card">
+                        <h3><i class="fa fa-bar-chart"/> Comparaison CA vs Charges</h3>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart" t-att-data-chart-data="dashboard.chart_data_comparison"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Boutons d'export -->
+            <div class="row mt-3 o_data_export">
+                <div class="col-12">
+                    <div class="export-buttons">
+                        <button class="btn btn-danger btn-export-pdf" t-att-data-url="'/my/dashboard/export'">
+                            <i class="fa fa-file-pdf-o"/> Exporter en PDF
+                        </button>
+                        <button class="btn btn-success btn-export-excel" t-att-data-url="'/my/dashboard/export'">
+                            <i class="fa fa-file-excel-o"/> Exporter en Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Template Upload avec Drag & Drop -->
+    <template id="portal_document_upload" name="Document Upload">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <h1>Déposer un Document</h1>
+                            <p class="lead">Glissez-déposez vos documents ou cliquez pour sélectionner</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="o_document_upload">
+                                <div class="upload-zone">
+                                    <i class="fa fa-cloud-upload"/>
+                                    <p><strong>Glissez-déposez vos fichiers ici</strong></p>
+                                    <p>ou cliquez pour sélectionner</p>
+                                    <p><small>PDF, JPG, PNG (Max 10 MB par fichier)</small></p>
+                                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple="multiple"/>
+                                </div>
+                                
+                                <div class="upload-preview"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <a href="/my/documents" class="btn btn-secondary">
+                                <i class="fa fa-arrow-left"/> Retour aux documents
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Template Capture Photo (Notes de frais) -->
+    <template id="portal_expense_photo_capture" name="Expense Photo Capture">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <h1>Nouvelle Note de Frais</h1>
+                            <p class="lead">Prenez en photo votre justificatif</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-lg-6">
+                            <div class="o_photo_capture">
+                                <div class="photo-capture-zone">
+                                    <i class="fa fa-camera fa-3x"/>
+                                    <p><strong>Capturez votre justificatif</strong></p>
+                                    <button class="btn btn-primary btn-capture-photo">
+                                        <i class="fa fa-camera"/> Prendre une Photo
+                                    </button>
+                                    <input type="file" accept="image/*" capture="camera" style="display:none;"/>
+                                </div>
+                                
+                                <div class="photo-preview">
+                                    <img alt="Preview"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4>Informations</h4>
+                                    <form method="post" action="/my/expense/create">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <input type="text" name="name" class="form-control" required="required" placeholder="Ex: Repas client"/>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>Catégorie</label>
+                                            <select name="category" class="form-control" required="required">
+                                                <option value="meal">Repas</option>
+                                                <option value="transport">Transport</option>
+                                                <option value="accommodation">Hébergement</option>
+                                                <option value="fuel">Carburant</option>
+                                                <option value="parking">Stationnement</option>
+                                                <option value="other">Autre</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="date" name="expense_date" class="form-control" required="required"/>
+                                        </div>
+                                        
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>Montant HT</label>
+                                                    <input type="number" step="0.01" name="amount" class="form-control" required="required" placeholder="0.00"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>TVA</label>
+                                                    <input type="number" step="0.01" name="tva_amount" class="form-control" required="required" placeholder="0.00"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label>Notes</label>
+                                            <textarea name="notes" class="form-control" rows="3" placeholder="Notes complémentaires..."/>
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                <i class="fa fa-check"/> Enregistrer
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

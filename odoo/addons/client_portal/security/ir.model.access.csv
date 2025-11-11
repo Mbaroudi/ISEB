@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_users_client,res.users client read,base.model_res_users,group_client_user,1,0,0,0
+access_client_dashboard_user,client.dashboard user,model_client_dashboard,group_client_user,1,0,0,0
+access_client_document_user,client.document user,model_client_document,group_client_user,1,1,1,0
+access_fec_export_user,fec.export user,french_accounting.model_fec_export,group_client_user,1,1,1,0

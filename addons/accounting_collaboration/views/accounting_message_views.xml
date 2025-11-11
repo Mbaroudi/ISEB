@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire Message (pour création rapide) -->
+    <record id="view_accounting_message_form" model="ir.ui.view">
+        <field name="name">accounting.message.form</field>
+        <field name="model">accounting.message</field>
+        <field name="arch" type="xml">
+            <form string="Message">
+                <sheet>
+                    <group>
+                        <field name="question_id" readonly="1"/>
+                        <field name="user_id" readonly="1"/>
+                        <field name="is_internal"/>
+                    </group>
+                    <group string="Message">
+                        <field name="content" widget="html" nolabel="1"/>
+                    </group>
+                    <group string="Pièces jointes">
+                        <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Envoyer" type="object" name="create" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

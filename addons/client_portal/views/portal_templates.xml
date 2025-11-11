@@ -1,0 +1,535 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_layout_iseb" name="Portal Layout ISEB" inherit_id="portal.portal_breadcrumbs" priority="40">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <t t-if="request.env.user.partner_id.is_iseb_client">
+                <li t-if="page_name == 'dashboard'" class="breadcrumb-item active">
+                    <span>Tableau de Bord</span>
+                </li>
+                <li t-if="page_name == 'documents' or page_name == 'document'" class="breadcrumb-item">
+                    <a t-if="page_name != 'documents'" href="/my/documents">Documents</a>
+                    <span t-if="page_name == 'documents'" class="active">Documents</span>
+                </li>
+                <li t-if="page_name == 'expenses' or page_name == 'expense'" class="breadcrumb-item">
+                    <a t-if="page_name != 'expenses'" href="/my/expenses">Notes de Frais</a>
+                    <span t-if="page_name == 'expenses'" class="active">Notes de Frais</span>
+                </li>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Page erreur: pas un client ISEB -->
+    <template id="not_client_error" name="Not ISEB Client">
+        <t t-call="portal.portal_layout">
+            <div class="container mt32">
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Accès non autorisé</h4>
+                    <p>Vous n'êtes pas un client ISEB. Ce portail est réservé aux clients ISEB.</p>
+                    <hr/>
+                    <p class="mb-0">Contactez votre cabinet comptable pour plus d'informations.</p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page Dashboard Client -->
+    <template id="portal_my_dashboard" name="My Dashboard">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1>Tableau de Bord</h1>
+                                <p class="lead">Votre situation financière en temps réel</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-if="dashboard">
+                        <!-- Indicateurs principaux -->
+                        <div class="row mt32">
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Trésorerie</h5>
+                                        <h2 class="text-primary">
+                                            <t t-esc="dashboard.cash_balance" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h5 class="card-title">CA du mois</h5>
+                                        <h2 class="text-success">
+                                            <t t-esc="dashboard.revenue_mtd" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/>
+                                        </h2>
+                                        <small class="text-muted">
+                                            <t t-if="dashboard.revenue_growth_mtd &gt;= 0" class="text-success">
+                                                <i class="fa fa-arrow-up"/> <t t-esc="dashboard.revenue_growth_mtd"/>%
+                                            </t>
+                                            <t t-else="" class="text-danger">
+                                                <i class="fa fa-arrow-down"/> <t t-esc="dashboard.revenue_growth_mtd"/>%
+                                            </t>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="card border-warning">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Charges du mois</h5>
+                                        <h2 class="text-warning">
+                                            <t t-esc="dashboard.expenses_mtd" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/>
+                                        </h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-4">
+                                <div class="card border-info">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Résultat net</h5>
+                                        <h2 t-attf-class="text-{{dashboard.net_income_mtd &gt;= 0 and 'success' or 'danger'}}">
+                                            <t t-esc="dashboard.net_income_mtd" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/>
+                                        </h2>
+                                        <small class="text-muted">
+                                            Marge: <t t-esc="dashboard.margin_rate"/>%
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TVA -->
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>TVA</h3>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-muted">TVA Collectée</h6>
+                                        <h4><t t-esc="dashboard.tva_collectee" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-muted">TVA Déductible</h6>
+                                        <h4><t t-esc="dashboard.tva_deductible" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <div class="card border-danger">
+                                    <div class="card-body">
+                                        <h6 class="card-subtitle mb-2 text-danger">TVA à Payer</h6>
+                                        <h4 class="text-danger"><t t-esc="dashboard.tva_due" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Créances et Dettes -->
+                        <div class="row mt16">
+                            <div class="col-12">
+                                <h3>Créances et Dettes</h3>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Créances Clients</h5>
+                                        <p>Total: <strong><t t-esc="dashboard.receivable_amount" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></strong></p>
+                                        <p t-if="dashboard.overdue_receivable &gt; 0" class="text-danger">
+                                            Échues: <strong><t t-esc="dashboard.overdue_receivable" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Dettes Fournisseurs</h5>
+                                        <p>Total: <strong><t t-esc="dashboard.payable_amount" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></strong></p>
+                                        <p t-if="dashboard.overdue_payable &gt; 0" class="text-warning">
+                                            Échues: <strong><t t-esc="dashboard.overdue_payable" t-options="{'widget': 'monetary', 'display_currency': dashboard.currency_id}"/></strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions rapides -->
+                        <div class="row mt32">
+                            <div class="col-12">
+                                <h3>Actions rapides</h3>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <a href="/my/documents" class="btn btn-primary btn-lg btn-block">
+                                    <i class="fa fa-file-text-o"/> Mes Documents
+                                </a>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-4">
+                                <a href="/my/expenses" class="btn btn-success btn-lg btn-block">
+                                    <i class="fa fa-credit-card"/> Notes de Frais
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="alert alert-info" role="alert">
+                            <p>Aucune donnée disponible pour le moment.</p>
+                            <p>Votre dashboard sera généré automatiquement dès que des données comptables seront disponibles.</p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page Liste Documents -->
+    <template id="portal_my_documents" name="My Documents">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1>Mes Documents</h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barre de recherche et filtres -->
+                    <div class="row mt16">
+                        <div class="col-md-6">
+                            <form method="get" class="form-inline">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Rechercher..." t-att-value="search"/>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"/> Rechercher
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="btn-group" role="group">
+                                <t t-foreach="searchbar_filters" t-as="filter_key">
+                                    <a t-att-href="'%s?filterby=%s' % (default_url, filter_key)" 
+                                       t-attf-class="btn btn-sm {{filterby == filter_key and 'btn-primary' or 'btn-secondary'}}">
+                                        <t t-esc="searchbar_filters[filter_key]['label']"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liste des documents -->
+                    <div class="row mt32">
+                        <div class="col-12">
+                            <t t-if="documents">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>État</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="documents" t-as="doc">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/my/document/#{doc.id}">
+                                                        <strong><t t-esc="doc.name"/></strong>
+                                                    </a>
+                                                </td>
+                                                <td><span class="badge badge-info"><t t-esc="dict(doc._fields['document_type'].selection).get(doc.document_type)"/></span></td>
+                                                <td><t t-esc="doc.upload_date" t-options="{'widget': 'date'}"/></td>
+                                                <td>
+                                                    <span t-attf-class="badge badge-{{doc.state == 'validated' and 'success' or doc.state == 'rejected' and 'danger' or doc.state == 'pending' and 'warning' or 'secondary'}}">
+                                                        <t t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a t-attf-href="/my/document/#{doc.id}" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-eye"/> Voir
+                                                    </a>
+                                                    <a t-if="doc.file" t-attf-href="/my/document/#{doc.id}/download" class="btn btn-sm btn-secondary">
+                                                        <i class="fa fa-download"/> Télécharger
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Pagination -->
+                                <div t-if="pager" class="mt16">
+                                    <t t-call="portal.pager"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="alert alert-info" role="alert">
+                                    <p>Aucun document trouvé.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page Détail Document -->
+    <template id="portal_my_document" name="My Document">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1><t t-esc="document.name"/></h1>
+                                <p class="lead">
+                                    <span t-attf-class="badge badge-lg badge-{{document.state == 'validated' and 'success' or document.state == 'rejected' and 'danger' or 'warning'}}">
+                                        <t t-esc="dict(document._fields['state'].selection).get(document.state)"/>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt32">
+                        <div class="col-md-8">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Informations</h5>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Type</dt>
+                                        <dd class="col-sm-8"><t t-esc="dict(document._fields['document_type'].selection).get(document.document_type)"/></dd>
+                                        
+                                        <dt class="col-sm-4">Date</dt>
+                                        <dd class="col-sm-8"><t t-esc="document.upload_date" t-options="{'widget': 'date'}"/></dd>
+                                        
+                                        <dt class="col-sm-4">Fichier</dt>
+                                        <dd class="col-sm-8">
+                                            <t t-if="document.file">
+                                                <a t-attf-href="/my/document/#{document.id}/download" class="btn btn-sm btn-primary">
+                                                    <i class="fa fa-download"/> <t t-esc="document.filename"/>
+                                                </a>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">Aucun fichier</span>
+                                            </t>
+                                        </dd>
+                                        
+                                        <dt class="col-sm-4" t-if="document.notes">Notes</dt>
+                                        <dd class="col-sm-8" t-if="document.notes"><t t-esc="document.notes"/></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Actions</h5>
+                                    <a href="/my/documents" class="btn btn-secondary btn-block mb-2">
+                                        <i class="fa fa-arrow-left"/> Retour à la liste
+                                    </a>
+                                    <t t-if="document.file">
+                                        <a t-attf-href="/my/document/#{document.id}/download" class="btn btn-primary btn-block">
+                                            <i class="fa fa-download"/> Télécharger
+                                        </a>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page Liste Notes de Frais -->
+    <template id="portal_my_expenses" name="My Expenses">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1>Mes Notes de Frais</h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Barre de recherche et filtres -->
+                    <div class="row mt16">
+                        <div class="col-md-6">
+                            <form method="get" class="form-inline">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Rechercher..." t-att-value="search"/>
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa fa-search"/> Rechercher
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <div class="btn-group" role="group">
+                                <t t-foreach="searchbar_filters" t-as="filter_key">
+                                    <a t-att-href="'%s?filterby=%s' % (default_url, filter_key)" 
+                                       t-attf-class="btn btn-sm {{filterby == filter_key and 'btn-primary' or 'btn-secondary'}}">
+                                        <t t-esc="searchbar_filters[filter_key]['label']"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Liste des notes de frais -->
+                    <div class="row mt32">
+                        <div class="col-12">
+                            <t t-if="expenses">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Catégorie</th>
+                                            <th>Date</th>
+                                            <th>Montant TTC</th>
+                                            <th>État</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="expenses" t-as="expense">
+                                            <tr>
+                                                <td>
+                                                    <a t-attf-href="/my/expense/#{expense.id}">
+                                                        <strong><t t-esc="expense.name"/></strong>
+                                                    </a>
+                                                </td>
+                                                <td><span class="badge badge-info"><t t-esc="dict(expense._fields['category'].selection).get(expense.category)"/></span></td>
+                                                <td><t t-esc="expense.expense_date" t-options="{'widget': 'date'}"/></td>
+                                                <td><strong><t t-esc="expense.amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></td>
+                                                <td>
+                                                    <span t-attf-class="badge badge-{{expense.state == 'paid' and 'success' or expense.state == 'approved' and 'info' or expense.state == 'rejected' and 'danger' or 'secondary'}}">
+                                                        <t t-esc="dict(expense._fields['state'].selection).get(expense.state)"/>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a t-attf-href="/my/expense/#{expense.id}" class="btn btn-sm btn-primary">
+                                                        <i class="fa fa-eye"/> Voir
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-right"><strong>Total:</strong></td>
+                                            <td><strong><t t-esc="sum(expenses.mapped('amount'))" t-options="{'widget': 'float', 'precision': 2}"/> €</strong></td>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                
+                                <!-- Pagination -->
+                                <div t-if="pager" class="mt16">
+                                    <t t-call="portal.pager"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="alert alert-info" role="alert">
+                                    <p>Aucune note de frais trouvée.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page Détail Note de Frais -->
+    <template id="portal_my_expense" name="My Expense">
+        <t t-call="portal.portal_layout">
+            <div id="wrap" class="o_portal_wrap">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-header">
+                                <h1><t t-esc="expense.name"/></h1>
+                                <p class="lead">
+                                    <span t-attf-class="badge badge-lg badge-{{expense.state == 'paid' and 'success' or expense.state == 'approved' and 'info' or expense.state == 'rejected' and 'danger' or 'warning'}}">
+                                        <t t-esc="dict(expense._fields['state'].selection).get(expense.state)"/>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt32">
+                        <div class="col-md-8">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Informations</h5>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Catégorie</dt>
+                                        <dd class="col-sm-8"><t t-esc="dict(expense._fields['category'].selection).get(expense.category)"/></dd>
+                                        
+                                        <dt class="col-sm-4">Date</dt>
+                                        <dd class="col-sm-8"><t t-esc="expense.expense_date" t-options="{'widget': 'date'}"/></dd>
+                                        
+                                        <dt class="col-sm-4">Montant HT</dt>
+                                        <dd class="col-sm-8"><t t-esc="expense.amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></dd>
+                                        
+                                        <dt class="col-sm-4">TVA</dt>
+                                        <dd class="col-sm-8"><t t-esc="expense.tva_amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></dd>
+                                        
+                                        <dt class="col-sm-4">Montant TTC</dt>
+                                        <dd class="col-sm-8"><strong><t t-esc="expense.amount" t-options="{'widget': 'monetary', 'display_currency': expense.currency_id}"/></strong></dd>
+                                        
+                                        <dt class="col-sm-4" t-if="expense.notes">Notes</dt>
+                                        <dd class="col-sm-8" t-if="expense.notes"><t t-esc="expense.notes"/></dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            
+                            <!-- Justificatif -->
+                            <div class="card" t-if="expense.receipt_image">
+                                <div class="card-body">
+                                    <h5 class="card-title">Justificatif</h5>
+                                    <img t-att-src="'data:image/png;base64,%s' % expense.receipt_image.decode('utf-8')" 
+                                         class="img-fluid" alt="Justificatif"/>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Actions</h5>
+                                    <a href="/my/expenses" class="btn btn-secondary btn-block">
+                                        <i class="fa fa-arrow-left"/> Retour à la liste
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

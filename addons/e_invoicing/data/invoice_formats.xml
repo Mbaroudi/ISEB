@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Formats de facturation électronique -->
+        <record id="format_facturx" model="einvoice.format">
+            <field name="name">Factur-X (France)</field>
+            <field name="code">facturx</field>
+            <field name="format_type">facturx</field>
+            <field name="description">Format français PDF/A-3 avec XML EN16931 embarqué</field>
+        </record>
+
+        <record id="format_chorus_pro" model="einvoice.format">
+            <field name="name">Chorus Pro (Administrations)</field>
+            <field name="code">chorus_pro</field>
+            <field name="format_type">chorus_pro</field>
+            <field name="description">Plateforme de facturation pour administrations publiques françaises</field>
+        </record>
+
+        <record id="format_peppol" model="einvoice.format">
+            <field name="name">Peppol (Europe)</field>
+            <field name="code">peppol</field>
+            <field name="format_type">peppol</field>
+            <field name="description">Réseau européen de facturation électronique B2B</field>
+        </record>
+
+        <record id="format_ubl" model="einvoice.format">
+            <field name="name">UBL 2.1 (Universal)</field>
+            <field name="code">ubl</field>
+            <field name="format_type">ubl</field>
+            <field name="description">Universal Business Language - Standard international</field>
+        </record>
+    </data>
+</odoo>

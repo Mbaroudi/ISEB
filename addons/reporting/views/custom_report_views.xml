@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_custom_report_tree" model="ir.ui.view">
+        <field name="name">custom.report.tree</field>
+        <field name="model">custom.report</field>
+        <field name="arch" type="xml">
+            <tree string="Rapports">
+                <field name="name"/>
+                <field name="report_type"/>
+                <field name="period_type"/>
+                <field name="output_format"/>
+                <field name="last_generated"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_custom_report_form" model="ir.ui.view">
+        <field name="name">custom.report.form</field>
+        <field name="model">custom.report</field>
+        <field name="arch" type="xml">
+            <form string="Rapport">
+                <header>
+                    <button name="action_generate" string="Générer" type="object" class="oe_highlight" icon="fa-play"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="report_type"/>
+                            <field name="template_id" domain="[('report_type', '=', report_type)]"/>
+                        </group>
+                        <group>
+                            <field name="period_type"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="output_format"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lignes" name="lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="computation_type"/>
+                                    <field name="account_ids" widget="many2many_tags"/>
+                                    <field name="level"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Options" name="options">
+                            <group>
+                                <field name="comparison_enabled"/>
+                                <field name="budget_comparison"/>
+                            </group>
+                        </page>
+                        <page string="Planification" name="schedule">
+                            <group>
+                                <field name="auto_send"/>
+                                <field name="schedule_frequency" invisible="not auto_send"/>
+                                <field name="recipient_ids" widget="many2many_tags" invisible="not auto_send"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_custom_report" model="ir.actions.act_window">
+        <field name="name">Rapports</field>
+        <field name="res_model">custom.report</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_reporting_root" name="Rapports" sequence="60"/>
+    <menuitem id="menu_custom_reports" name="Rapports Personnalisés" parent="menu_reporting_root" action="action_custom_report" sequence="10"/>
+</odoo>

@@ -2,7 +2,7 @@
 <odoo>
     <!-- Menu principal -->
     <menuitem id="menu_french_accounting_root"
-              name="Comptabilité FR"
+              name="ComptabilitÃ© FR"
               sequence="10"
               web_icon="french_accounting,static/description/icon.png"/>
 
@@ -13,9 +13,9 @@
               action="action_fec_export"
               sequence="10"/>
 
-    <!-- Déclarations TVA -->
+    <!-- DÃ©clarations TVA -->
     <menuitem id="menu_tva_declaration"
-              name="Déclarations TVA"
+              name="DÃ©clarations TVA"
               parent="menu_french_accounting_root"
               action="action_tva_declaration"
               sequence="20"/>

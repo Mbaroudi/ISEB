@@ -9,9 +9,9 @@ class AccountJournal(models.Model):
 
     @api.constrains('code')
     def _check_code_length(self):
-        """Vérifie que le code journal respecte les normes françaises"""
+        """VÃ©rifie que le code journal respecte les normes franÃ§aises"""
         for journal in self:
             if journal.code and len(journal.code) > 3:
                 raise ValidationError(_(
-                    "Le code du journal ne doit pas dépasser 3 caractères (norme FEC française)."
+                    "Le code du journal ne doit pas dÃ©passer 3 caractÃ¨res (norme FEC franÃ§aise)."
                 ))

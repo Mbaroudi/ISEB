@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="email_document_validated" model="mail.template">
+        <field name="name">Document Validé - Client Portal</field>
+        <field name="model_id" ref="model_client_document"/>
+        <field name="subject">✓ Votre document "${object.name}" a été validé</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #28a745; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .info-box { background: white; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ Document Validé</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Nous avons le plaisir de vous informer que votre document a été validé avec succès.</p>
+
+            <div class="info-box">
+                <p><strong>Document :</strong> ${object.name}</p>
+                <p><strong>Type :</strong> ${object.document_type}</p>
+                <p><strong>Date de validation :</strong> ${format_date(object.validation_date)}</p>
+            </div>
+
+            <p>Vous pouvez consulter votre document à tout moment depuis votre espace client.</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Accéder à mon espace</a>
+            </p>
+
+            <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <record id="email_document_rejected" model="mail.template">
+        <field name="name">Document Rejeté - Client Portal</field>
+        <field name="model_id" ref="model_client_document"/>
+        <field name="subject">⚠ Votre document "${object.name}" a été rejeté</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .warning-box { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠ Document Rejeté</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Nous vous informons que votre document a été rejeté.</p>
+
+            <div class="warning-box">
+                <p><strong>Document :</strong> ${object.name}</p>
+                <p><strong>Type :</strong> ${object.document_type}</p>
+                <p><strong>Raison du rejet :</strong></p>
+                <p>${object.rejection_reason or 'Non spécifiée'}</p>
+            </div>
+
+            <p>Merci de corriger les informations et de soumettre à nouveau votre document.</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Accéder à mon espace</a>
+            </p>
+
+            <p>Si vous avez besoin d'assistance, n'hésitez pas à nous contacter.</p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <record id="email_expense_approved" model="mail.template">
+        <field name="name">Note de Frais Approuvée - Client Portal</field>
+        <field name="model_id" ref="model_expense_note"/>
+        <field name="subject">✓ Votre note de frais "${object.name}" a été approuvée</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #28a745; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .info-box { background: white; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; }
+        .amount { font-size: 24px; color: #28a745; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ Note de Frais Approuvée</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Bonne nouvelle ! Votre note de frais a été approuvée.</p>
+
+            <div class="info-box">
+                <p><strong>Description :</strong> ${object.name}</p>
+                <p><strong>Catégorie :</strong> ${object.category}</p>
+                <p><strong>Date :</strong> ${format_date(object.expense_date)}</p>
+                <p class="amount">Montant : ${object.total_amount} €</p>
+            </div>
+
+            <p>Le remboursement sera effectué selon les modalités habituelles.</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Voir ma note de frais</a>
+            </p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <record id="email_expense_rejected" model="mail.template">
+        <field name="name">Note de Frais Rejetée - Client Portal</field>
+        <field name="model_id" ref="model_expense_note"/>
+        <field name="subject">⚠ Votre note de frais "${object.name}" a été rejetée</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #dc3545; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .warning-box { background: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠ Note de Frais Rejetée</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Nous vous informons que votre note de frais a été rejetée.</p>
+
+            <div class="warning-box">
+                <p><strong>Description :</strong> ${object.name}</p>
+                <p><strong>Montant :</strong> ${object.total_amount} €</p>
+                <p><strong>Raison du rejet :</strong></p>
+                <p>${object.rejection_reason or 'Non spécifiée'}</p>
+            </div>
+
+            <p>Merci de corriger les informations et de soumettre à nouveau votre note de frais.</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Modifier ma note de frais</a>
+            </p>
+
+            <p>Pour toute question, n'hésitez pas à nous contacter.</p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <record id="email_expense_paid" model="mail.template">
+        <field name="name">Note de Frais Payée - Client Portal</field>
+        <field name="model_id" ref="model_expense_note"/>
+        <field name="subject">💰 Votre note de frais "${object.name}" a été payée</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #17a2b8; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .info-box { background: white; padding: 15px; border-left: 4px solid #17a2b8; margin: 15px 0; }
+        .amount { font-size: 24px; color: #17a2b8; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Remboursement Effectué</h1>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Nous vous confirmons que le remboursement de votre note de frais a été effectué.</p>
+
+            <div class="info-box">
+                <p><strong>Description :</strong> ${object.name}</p>
+                <p><strong>Date de paiement :</strong> ${format_date(object.payment_date)}</p>
+                <p class="amount">Montant remboursé : ${object.total_amount} €</p>
+            </div>
+
+            <p>Le virement devrait apparaître sur votre compte bancaire sous 2 à 3 jours ouvrés.</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Voir ma note de frais</a>
+            </p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+
+    <record id="email_dashboard_monthly" model="mail.template">
+        <field name="name">Rapport Mensuel Dashboard - Client Portal</field>
+        <field name="model_id" ref="model_client_dashboard"/>
+        <field name="subject">📊 Votre rapport mensuel - ${format_date(object.period_start, 'MMMM yyyy')}</field>
+        <field name="email_from">${(object.company_id.email or user.email)|safe}</field>
+        <field name="email_to">${object.partner_id.email|safe}</field>
+        <field name="body_html" type="html">
+<![CDATA[
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 650px; margin: 0 auto; padding: 20px; }
+        .header { background: #007bff; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { background: #f8f9fa; padding: 30px; border: 1px solid #dee2e6; }
+        .footer { background: #6c757d; color: white; padding: 15px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px; }
+        .btn { display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 15px 0; }
+        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .kpi-card { background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .kpi-label { font-size: 12px; color: #6c757d; text-transform: uppercase; margin-bottom: 10px; }
+        .kpi-value { font-size: 28px; font-weight: bold; color: #007bff; }
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+        .summary-box { background: white; padding: 20px; border-radius: 8px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Rapport Mensuel</h1>
+            <p style="font-size: 18px; margin: 0;">${format_date(object.period_start, 'MMMM yyyy')}</p>
+        </div>
+        <div class="content">
+            <p>Bonjour <strong>${object.partner_id.name}</strong>,</p>
+
+            <p>Voici votre résumé financier du mois.</p>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Trésorerie</div>
+                    <div class="kpi-value">${'%.2f'|format(object.cash_balance)} €</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">CA du Mois</div>
+                    <div class="kpi-value positive">${'%.2f'|format(object.revenue_mtd)} €</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Charges du Mois</div>
+                    <div class="kpi-value">${'%.2f'|format(object.expenses_mtd)} €</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Résultat</div>
+                    <div class="kpi-value ${'positive' if (object.revenue_mtd - object.expenses_mtd) > 0 else 'negative'}">
+                        ${'%.2f'|format(object.revenue_mtd - object.expenses_mtd)} €
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <h3>Points clés du mois</h3>
+                <ul>
+                    <li><strong>Factures émises :</strong> ${object.invoices_count} factures</li>
+                    <li><strong>Factures en attente :</strong> ${object.pending_invoices_count} factures</li>
+                    <li><strong>Documents traités :</strong> ${object.documents_count} documents</li>
+                    <li><strong>Notes de frais :</strong> ${object.expenses_count} notes</li>
+                </ul>
+            </div>
+
+            <p>Pour consulter le détail complet de votre tableau de bord avec graphiques interactifs :</p>
+
+            <p style="text-align: center;">
+                <a href="${object.get_portal_url()}" class="btn">Accéder à mon dashboard</a>
+            </p>
+
+            <p>N'hésitez pas à nous contacter pour toute question concernant votre activité.</p>
+
+            <p>Cordialement,<br/>
+            <strong>L'équipe ISEB</strong></p>
+        </div>
+        <div class="footer">
+            <p>Rapport mensuel automatique - ISEB Plateforme Comptable</p>
+            <p>${object.company_id.name} - ${object.company_id.email}</p>
+        </div>
+    </div>
+</body>
+</html>
+]]>
+        </field>
+    </record>
+</odoo>

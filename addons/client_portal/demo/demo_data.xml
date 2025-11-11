@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="demo_partner_entrepreneur_1" model="res.partner">
+        <field name="name">Sophie Martin</field>
+        <field name="email">sophie.martin@exemple.fr</field>
+        <field name="phone">+33 6 12 34 56 78</field>
+        <field name="is_iseb_client" eval="True"/>
+        <field name="company_type">company</field>
+        <field name="street">15 Avenue des Entrepreneurs</field>
+        <field name="city">Paris</field>
+        <field name="zip">75008</field>
+        <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <record id="demo_partner_entrepreneur_2" model="res.partner">
+        <field name="name">Thomas Dubois</field>
+        <field name="email">thomas.dubois@exemple.fr</field>
+        <field name="phone">+33 6 98 76 54 32</field>
+        <field name="is_iseb_client" eval="True"/>
+        <field name="company_type">company</field>
+        <field name="street">42 Rue du Commerce</field>
+        <field name="city">Lyon</field>
+        <field name="zip">69002</field>
+        <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <record id="demo_dashboard_1" model="client.dashboard">
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="period_start">2025-01-01</field>
+        <field name="period_end">2025-01-31</field>
+        <field name="cash_balance">45230.50</field>
+        <field name="revenue_mtd">12500.00</field>
+        <field name="revenue_ytd">125000.00</field>
+        <field name="expenses_mtd">8300.00</field>
+        <field name="expenses_ytd">78000.00</field>
+        <field name="margin_rate">37.6</field>
+        <field name="vat_to_pay">2450.00</field>
+    </record>
+
+    <record id="demo_dashboard_2" model="client.dashboard">
+        <field name="partner_id" ref="demo_partner_entrepreneur_2"/>
+        <field name="period_start">2025-01-01</field>
+        <field name="period_end">2025-01-31</field>
+        <field name="cash_balance">28500.75</field>
+        <field name="revenue_mtd">8200.00</field>
+        <field name="revenue_ytd">89000.00</field>
+        <field name="expenses_mtd">5100.00</field>
+        <field name="expenses_ytd">52000.00</field>
+        <field name="margin_rate">41.6</field>
+        <field name="vat_to_pay">1640.00</field>
+    </record>
+
+    <record id="demo_document_1" model="client.document">
+        <field name="name">Facture Achat Matériel Informatique</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="document_type">invoice_supplier</field>
+        <field name="state">validated</field>
+        <field name="upload_date">2025-01-10</field>
+        <field name="validation_date">2025-01-15</field>
+    </record>
+
+    <record id="demo_document_2" model="client.document">
+        <field name="name">Justificatif Déplacement Client</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="document_type">expense_report</field>
+        <field name="state">pending"/>
+        <field name="upload_date">2025-01-20</field>
+    </record>
+
+    <record id="demo_expense_1" model="expense.note">
+        <field name="name">Restaurant Client - Déjeuner d'affaires</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="expense_date">2025-01-18</field>
+        <field name="category">meal</field>
+        <field name="total_amount">85.50</field>
+        <field name="vat_amount">8.55</field>
+        <field name="state">approved"/>
+        <field name="description">Déjeuner avec prospect - Projet digital</field>
+    </record>
+
+    <record id="demo_expense_2" model="expense.note">
+        <field name="name">Essence - Déplacement Lyon-Paris</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_2"/>
+        <field name="expense_date">2025-01-22</field>
+        <field name="category">transport</field>
+        <field name="total_amount">120.00</field>
+        <field name="vat_amount">24.00</field>
+        <field name="state">submitted"/>
+        <field name="description">Déplacement professionnel rendez-vous client</field>
+    </record>
+
+    <!-- Additional demo partners -->
+    <record id="demo_partner_entrepreneur_3" model="res.partner">
+        <field name="name">Marie Lefevre</field>
+        <field name="email">marie.lefevre@exemple.fr</field>
+        <field name="phone">+33 6 45 67 89 01</field>
+        <field name="is_iseb_client" eval="True"/>
+        <field name="company_type">company</field>
+        <field name="street">8 Boulevard Haussmann</field>
+        <field name="city">Paris</field>
+        <field name="zip">75009</field>
+        <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <record id="demo_partner_entrepreneur_4" model="res.partner">
+        <field name="name">Alexandre Bernard</field>
+        <field name="email">alex.bernard@exemple.fr</field>
+        <field name="phone">+33 6 23 45 67 89</field>
+        <field name="is_iseb_client" eval="True"/>
+        <field name="company_type">company</field>
+        <field name="street">12 Rue de la République</field>
+        <field name="city">Marseille</field>
+        <field name="zip">13001</field>
+        <field name="country_id" ref="base.fr"/>
+    </record>
+
+    <!-- More dashboards -->
+    <record id="demo_dashboard_3" model="client.dashboard">
+        <field name="partner_id" ref="demo_partner_entrepreneur_3"/>
+        <field name="period_start">2025-01-01</field>
+        <field name="period_end">2025-01-31</field>
+        <field name="cash_balance">62100.25</field>
+        <field name="revenue_mtd">18900.00</field>
+        <field name="revenue_ytd">189000.00</field>
+        <field name="expenses_mtd">12400.00</field>
+        <field name="expenses_ytd">124000.00</field>
+        <field name="margin_rate">34.4</field>
+        <field name="vat_to_pay">3780.00</field>
+    </record>
+
+    <!-- More documents -->
+    <record id="demo_document_3" model="client.document">
+        <field name="name">Contrat Prestation Services</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_3"/>
+        <field name="document_type">contract</field>
+        <field name="state">validated</field>
+        <field name="upload_date">2025-01-05</field>
+        <field name="validation_date">2025-01-08</field>
+    </record>
+
+    <record id="demo_document_4" model="client.document">
+        <field name="name">Facture Client - Projet Web</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="document_type">invoice_client</field>
+        <field name="state">validated</field>
+        <field name="upload_date">2025-01-15</field>
+        <field name="validation_date">2025-01-16</field>
+    </record>
+
+    <record id="demo_document_5" model="client.document">
+        <field name="name">Relevé Bancaire Janvier</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_2"/>
+        <field name="document_type">bank_statement</field>
+        <field name="state">validated</field>
+        <field name="upload_date">2025-01-31</field>
+        <field name="validation_date">2025-02-01</field>
+    </record>
+
+    <!-- More expenses -->
+    <record id="demo_expense_3" model="expense.note">
+        <field name="name">Abonnement SaaS - Outils Marketing</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_3"/>
+        <field name="expense_date">2025-01-05</field>
+        <field name="category">software</field>
+        <field name="total_amount">149.00</field>
+        <field name="vat_amount">29.80</field>
+        <field name="state">approved"/>
+        <field name="description">Abonnement mensuel HubSpot</field>
+    </record>
+
+    <record id="demo_expense_4" model="expense.note">
+        <field name="name">Fournitures Bureau</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_1"/>
+        <field name="expense_date">2025-01-12</field>
+        <field name="category">office</field>
+        <field name="total_amount">67.50</field>
+        <field name="vat_amount">13.50</field>
+        <field name="state">approved"/>
+        <field name="description">Papeterie et consommables</field>
+    </record>
+
+    <record id="demo_expense_5" model="expense.note">
+        <field name="name">Parking Aéroport CDG</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_4"/>
+        <field name="expense_date">2025-01-20</field>
+        <field name="category">transport</field>
+        <field name="total_amount">45.00</field>
+        <field name="vat_amount">9.00</field>
+        <field name="state">pending"/>
+        <field name="description">Déplacement professionnel Bruxelles</field>
+    </record>
+
+    <record id="demo_expense_6" model="expense.note">
+        <field name="name">Hôtel Business - Nuit Lyon</field>
+        <field name="partner_id" ref="demo_partner_entrepreneur_2"/>
+        <field name="expense_date">2025-01-25</field>
+        <field name="category">accommodation</field>
+        <field name="total_amount">135.00</field>
+        <field name="vat_amount">13.50</field>
+        <field name="state">submitted"/>
+        <field name="description">Séminaire client 2 jours</field>
+    </record>
+</odoo>

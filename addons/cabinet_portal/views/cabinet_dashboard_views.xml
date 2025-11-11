@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_cabinet_dashboard_form" model="ir.ui.view">
+        <field name="name">cabinet.dashboard.form</field>
+        <field name="model">cabinet.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Dashboard Cabinet">
+                <header>
+                    <button name="action_refresh" string="Actualiser" type="object" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="compute_date"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Vue d'ensemble" name="overview">
+                            <group>
+                                <group string="Clients">
+                                    <field name="total_clients"/>
+                                    <field name="active_clients"/>
+                                    <field name="clients_excellent"/>
+                                    <field name="clients_warning"/>
+                                    <field name="clients_critical"/>
+                                </group>
+                                <group string="Chiffre d'affaires Cabinet">
+                                    <field name="cabinet_revenue_mtd" widget="monetary"/>
+                                    <field name="cabinet_revenue_ytd" widget="monetary"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <button name="action_view_clients" string="Voir tous les clients" 
+                                        type="object" class="btn-primary"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Finances Clients" name="finances">
+                            <group>
+                                <group string="Agrégation financière">
+                                    <field name="total_revenue_all" widget="monetary"/>
+                                    <field name="total_expenses_all" widget="monetary"/>
+                                    <field name="total_net_income" widget="monetary"/>
+                                    <field name="average_margin_rate" widget="percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Tâches &amp; Validations" name="tasks">
+                            <group>
+                                <group string="Tâches">
+                                    <field name="total_tasks"/>
+                                    <field name="tasks_overdue"/>
+                                    <field name="tasks_this_week"/>
+                                </group>
+                                <group string="En attente de validation">
+                                    <field name="documents_pending"/>
+                                    <field name="expenses_pending"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <button name="action_view_tasks" string="Voir toutes les tâches" 
+                                        type="object" class="btn-primary"/>
+                                <button name="action_view_pending_validations" string="Voir les validations en attente" 
+                                        type="object" class="btn-secondary"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste dashboard -->
+    <record id="view_cabinet_dashboard_tree" model="ir.ui.view">
+        <field name="name">cabinet.dashboard.tree</field>
+        <field name="model">cabinet.dashboard</field>
+        <field name="arch" type="xml">
+            <tree string="Dashboards Cabinet">
+                <field name="name"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="total_clients"/>
+                <field name="cabinet_revenue_mtd"/>
+                <field name="tasks_overdue"/>
+                <field name="documents_pending"/>
+                <field name="expenses_pending"/>
+                <field name="compute_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Action dashboard -->
+    <record id="action_cabinet_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard Cabinet</field>
+        <field name="res_model">cabinet.dashboard</field>
+        <field name="view_mode">form,tree</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun dashboard trouvé
+            </p>
+            <p>
+                Créez votre premier dashboard pour suivre votre activité cabinet.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,276 @@
+/* ISEB Portal Modern Styles */
+
+:root {
+    --iseb-primary: #4F46E5;
+    --iseb-secondary: #10B981;
+    --iseb-danger: #EF4444;
+    --iseb-warning: #F59E0B;
+    --iseb-info: #3B82F6;
+    --iseb-dark: #1F2937;
+    --iseb-light: #F9FAFB;
+}
+
+/* Global Styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--iseb-dark);
+}
+
+/* Hero Section */
+.s_cover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 600px;
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.15) !important;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--iseb-primary);
+    border-color: var(--iseb-primary);
+}
+
+.btn-primary:hover {
+    background: #4338CA;
+    border-color: #4338CA;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 1.1rem;
+}
+
+/* Dashboard KPIs */
+.kpi-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.kpi-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kpi-label {
+    font-size: 0.875rem;
+    color: #6B7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Portal Navigation */
+.o_portal_sidebar {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.o_portal_sidebar .list-group-item {
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.o_portal_sidebar .list-group-item:hover {
+    background: var(--iseb-light);
+    padding-left: 24px;
+}
+
+.o_portal_sidebar .list-group-item.active {
+    background: var(--iseb-primary);
+    color: white;
+}
+
+/* Tables */
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: var(--iseb-light);
+    color: var(--iseb-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 16px;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: var(--iseb-light);
+}
+
+/* Badges */
+.badge {
+    padding: 6px 12px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+/* Modals */
+.modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+    border-bottom: 1px solid #E5E7EB;
+    padding: 24px;
+}
+
+.modal-footer {
+    border-top: 1px solid #E5E7EB;
+    padding: 24px;
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #E5E7EB;
+    padding: 12px;
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--iseb-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Charts */
+.chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Status Indicators */
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-dot.success {
+    background: var(--iseb-secondary);
+}
+
+.status-dot.danger {
+    background: var(--iseb-danger);
+}
+
+.status-dot.warning {
+    background: var(--iseb-warning);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .btn-lg {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Portal Dashboard Specific */
+.portal-dashboard-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+}
+
+.portal-dashboard-card h1 {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.portal-dashboard-card .lead {
+    opacity: 0.9;
+}
+
+/* Document Upload Zone */
+.document-upload-zone {
+    border: 3px dashed #D1D5DB;
+    border-radius: 12px;
+    padding: 48px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.document-upload-zone:hover {
+    border-color: var(--iseb-primary);
+    background: var(--iseb-light);
+}
+
+.document-upload-zone.dragover {
+    border-color: var(--iseb-primary);
+    background: rgba(79, 70, 229, 0.05);
+}

@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cabinet_task_user,cabinet.task.user,model_cabinet_task,group_cabinet_user,1,0,0,0
+access_cabinet_task_accountant,cabinet.task.accountant,model_cabinet_task,group_cabinet_accountant,1,1,1,0
+access_cabinet_task_manager,cabinet.task.manager,model_cabinet_task,group_cabinet_manager,1,1,1,1
+access_cabinet_dashboard_user,cabinet.dashboard.user,model_cabinet_dashboard,group_cabinet_user,1,0,0,0
+access_cabinet_dashboard_accountant,cabinet.dashboard.accountant,model_cabinet_dashboard,group_cabinet_accountant,1,1,1,0
+access_cabinet_dashboard_manager,cabinet.dashboard.manager,model_cabinet_dashboard,group_cabinet_manager,1,1,1,1
+access_res_partner_cabinet_user,res.partner.cabinet.user,base.model_res_partner,group_cabinet_user,1,0,0,0
+access_res_partner_cabinet_accountant,res.partner.cabinet.accountant,base.model_res_partner,group_cabinet_accountant,1,1,1,0
+access_res_partner_cabinet_manager,res.partner.cabinet.manager,base.model_res_partner,group_cabinet_manager,1,1,1,0
+access_client_dashboard_cabinet_user,client.dashboard.cabinet.user,client_portal.model_client_dashboard,group_cabinet_user,1,0,0,0
+access_client_dashboard_cabinet_accountant,client.dashboard.cabinet.accountant,client_portal.model_client_dashboard,group_cabinet_accountant,1,1,0,0
+access_client_document_cabinet_user,client.document.cabinet.user,client_portal.model_client_document,group_cabinet_user,1,0,0,0
+access_client_document_cabinet_accountant,client.document.cabinet.accountant,client_portal.model_client_document,group_cabinet_accountant,1,1,1,0
+access_expense_note_cabinet_user,expense.note.cabinet.user,client_portal.model_expense_note,group_cabinet_user,1,0,0,0
+access_expense_note_cabinet_accountant,expense.note.cabinet.accountant,client_portal.model_expense_note,group_cabinet_accountant,1,1,1,0

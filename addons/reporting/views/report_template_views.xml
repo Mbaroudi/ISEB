@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_report_template_tree" model="ir.ui.view">
+        <field name="name">custom.report.template.tree</field>
+        <field name="model">custom.report.template</field>
+        <field name="arch" type="xml">
+            <tree string="Templates de Rapports">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="report_type"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_report_template_form" model="ir.ui.view">
+        <field name="name">custom.report.template.form</field>
+        <field name="model">custom.report.template</field>
+        <field name="arch" type="xml">
+            <form string="Template de Rapport">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom du template..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="report_type"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Lignes" name="lines">
+                            <field name="line_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="computation_type"/>
+                                    <field name="level"/>
+                                    <field name="style"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Description du template..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_report_templates" model="ir.actions.act_window">
+        <field name="name">Templates de Rapports</field>
+        <field name="res_model">custom.report.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un template de rapport
+            </p>
+            <p>
+                Les templates permettent de définir la structure de vos rapports personnalisés.
+            </p>
+        </field>
+    </record>
+</odoo>

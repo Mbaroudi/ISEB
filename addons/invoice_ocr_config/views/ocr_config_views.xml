@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Configuration OCR -->
+    <menuitem id="menu_invoice_ocr_config"
+              name="Configuration OCR"
+              parent="account.menu_finance_configuration"
+              sequence="50"
+              groups="account.group_account_manager"/>
+
+    <!-- Vue d'aide et documentation -->
+    <record id="view_invoice_ocr_help" model="ir.ui.view">
+        <field name="name">invoice.ocr.help</field>
+        <field name="model">res.config.settings</field>
+        <field name="arch" type="xml">
+            <form string="Aide Configuration OCR">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Configuration OCR pour Factures</h1>
+                    </div>
+                    <group>
+                        <group string="Étapes d'installation">
+                            <div>
+                                <p><b>1. Choisir un fournisseur OCR</b></p>
+                                <ul>
+                                    <li>Google Vision AI (recommandé)</li>
+                                    <li>AWS Textract</li>
+                                    <li>Azure Computer Vision</li>
+                                </ul>
+
+                                <p><b>2. Créer un compte API</b></p>
+                                <ul>
+                                    <li>Google: https://cloud.google.com/vision</li>
+                                    <li>AWS: https://aws.amazon.com/textract/</li>
+                                    <li>Azure: https://azure.microsoft.com/cognitive-services/</li>
+                                </ul>
+
+                                <p><b>3. Configurer dans Odoo</b></p>
+                                <ul>
+                                    <li>Aller dans Paramètres → Comptabilité</li>
+                                    <li>Section "Configuration OCR Factures"</li>
+                                    <li>Activer OCR et saisir clé API</li>
+                                </ul>
+
+                                <p><b>4. Tester</b></p>
+                                <ul>
+                                    <li>Uploader une facture test</li>
+                                    <li>Vérifier extraction des données</li>
+                                    <li>Corriger si nécessaire</li>
+                                </ul>
+                            </div>
+                        </group>
+
+                        <group string="Modules Odoo recommandés">
+                            <div>
+                                <p><b>Odoo App Store</b></p>
+                                <ul>
+                                    <li><b>AI Invoice OCR</b> - TechUltra Solutions (199€)</li>
+                                    <li><b>Gemini Invoice Capture</b> - Gemini (149€/mois)</li>
+                                    <li><b>Smart Invoice OCR</b> - Apps4Business (Gratuit/Premium)</li>
+                                </ul>
+
+                                <p>Ces modules incluent :</p>
+                                <ul>
+                                    <li>✓ OCR avancé multi-langues</li>
+                                    <li>✓ Extraction ligne par ligne</li>
+                                    <li>✓ Apprentissage automatique</li>
+                                    <li>✓ Traitement par lots</li>
+                                    <li>✓ Support emails entrants</li>
+                                </ul>
+                            </div>
+                        </group>
+
+                        <group string="Coûts estimés">
+                            <div>
+                                <p><b>Google Vision API</b></p>
+                                <ul>
+                                    <li>1000 premières pages/mois : Gratuit</li>
+                                    <li>Après : 1,50$ / 1000 pages</li>
+                                </ul>
+
+                                <p><b>AWS Textract</b></p>
+                                <ul>
+                                    <li>1000 premières pages : 1,50$</li>
+                                    <li>Tables et formulaires : +15$/1000</li>
+                                </ul>
+
+                                <p><b>Modules Odoo tiers</b></p>
+                                <ul>
+                                    <li>AI Invoice OCR : 199€ one-time</li>
+                                    <li>Gemini : 149€/mois</li>
+                                    <li>Smart OCR : Gratuit (50 factures/mois)</li>
+                                </ul>
+                            </div>
+                        </group>
+
+                        <group string="Support">
+                            <div>
+                                <p><b>Documentation complète</b></p>
+                                <p>Voir fichier : <code>/docs/OCR_INVOICE_SETUP.md</code></p>
+
+                                <p><b>Ressources</b></p>
+                                <ul>
+                                    <li>Documentation Odoo OCR</li>
+                                    <li>Forum Odoo</li>
+                                    <li>Support modules tiers</li>
+                                </ul>
+                            </div>
+                        </group>
+                    </group>
+
+                    <footer>
+                        <button string="Fermer" class="btn-primary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_invoice_ocr_help" model="ir.actions.act_window">
+        <field name="name">Aide Configuration OCR</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_invoice_ocr_help"/>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_invoice_ocr_help"
+              name="Guide Configuration"
+              parent="menu_invoice_ocr_config"
+              action="action_invoice_ocr_help"
+              sequence="1"/>
+
+</odoo>

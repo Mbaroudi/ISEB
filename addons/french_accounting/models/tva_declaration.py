@@ -10,12 +10,12 @@ _logger = logging.getLogger(__name__)
 
 class TvaDeclaration(models.Model):
     _name = 'tva.declaration'
-    _description = 'Déclaration de TVA française'
+    _description = 'DÃ©claration de TVA franÃ§aise'
     _order = 'period_end desc'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(
-        string='Numéro',
+        string='NumÃ©ro',
         required=True,
         default=lambda self: _('Nouveau'),
         copy=False,
@@ -25,7 +25,7 @@ class TvaDeclaration(models.Model):
 
     company_id = fields.Many2one(
         'res.company',
-        string='Société',
+        string='SociÃ©tÃ©',
         required=True,
         default=lambda self: self.env.company,
         readonly=True,
@@ -33,28 +33,28 @@ class TvaDeclaration(models.Model):
     )
 
     regime_tva = fields.Selection([
-        ('reel_normal', 'Réel normal (mensuel)'),
-        ('reel_simplifie', 'Réel simplifié (trimestriel/annuel)'),
+        ('reel_normal', 'RÃ©el normal (mensuel)'),
+        ('reel_simplifie', 'RÃ©el simplifiÃ© (trimestriel/annuel)'),
         ('franchise', 'Franchise en base'),
-    ], string='Régime TVA', required=True, default='reel_normal',
+    ], string='RÃ©gime TVA', required=True, default='reel_normal',
         readonly=True, states={'draft': [('readonly', False)]})
 
     declaration_type = fields.Selection([
-        ('ca3', 'CA3 (Réel normal - mensuel)'),
-        ('ca12', 'CA12 (Réel simplifié - annuel)'),
-        ('ca12e', 'CA12E (Réel simplifié - trimestriel)'),
-    ], string='Type de déclaration', required=True, default='ca3',
+        ('ca3', 'CA3 (RÃ©el normal - mensuel)'),
+        ('ca12', 'CA12 (RÃ©el simplifiÃ© - annuel)'),
+        ('ca12e', 'CA12E (RÃ©el simplifiÃ© - trimestriel)'),
+    ], string='Type de dÃ©claration', required=True, default='ca3',
         readonly=True, states={'draft': [('readonly', False)]})
 
     period_type = fields.Selection([
         ('monthly', 'Mensuelle'),
         ('quarterly', 'Trimestrielle'),
         ('annual', 'Annuelle'),
-    ], string='Période', required=True, default='monthly',
+    ], string='PÃ©riode', required=True, default='monthly',
         readonly=True, states={'draft': [('readonly', False)]})
 
     period_start = fields.Date(
-        string='Début période',
+        string='DÃ©but pÃ©riode',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -62,7 +62,7 @@ class TvaDeclaration(models.Model):
     )
 
     period_end = fields.Date(
-        string='Fin période',
+        string='Fin pÃ©riode',
         required=True,
         readonly=True,
         states={'draft': [('readonly', False)]},
@@ -70,76 +70,76 @@ class TvaDeclaration(models.Model):
     )
 
     period_label = fields.Char(
-        string='Libellé période',
+        string='LibellÃ© pÃ©riode',
         compute='_compute_period_label',
         store=True
     )
 
     state = fields.Selection([
         ('draft', 'Brouillon'),
-        ('computed', 'Calculée'),
-        ('submitted', 'Déclarée'),
-        ('paid', 'Payée'),
-        ('cancel', 'Annulée'),
-    ], string='État', default='draft', required=True, tracking=True)
+        ('computed', 'CalculÃ©e'),
+        ('submitted', 'DÃ©clarÃ©e'),
+        ('paid', 'PayÃ©e'),
+        ('cancel', 'AnnulÃ©e'),
+    ], string='Ã‰tat', default='draft', required=True, tracking=True)
 
-    # Montants TVA collectée
+    # Montants TVA collectÃ©e
     tva_collectee_20 = fields.Monetary(
-        string='TVA collectée 20%',
+        string='TVA collectÃ©e 20%',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_collectee_10 = fields.Monetary(
-        string='TVA collectée 10%',
+        string='TVA collectÃ©e 10%',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_collectee_55 = fields.Monetary(
-        string='TVA collectée 5,5%',
+        string='TVA collectÃ©e 5,5%',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_collectee_21 = fields.Monetary(
-        string='TVA collectée 2,1%',
+        string='TVA collectÃ©e 2,1%',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_collectee_total = fields.Monetary(
-        string='Total TVA collectée',
+        string='Total TVA collectÃ©e',
         compute='_compute_totals',
         store=True,
         currency_field='currency_id'
     )
 
-    # Montants TVA déductible
+    # Montants TVA dÃ©ductible
     tva_deductible_immobilisations = fields.Monetary(
-        string='TVA déductible sur immobilisations',
+        string='TVA dÃ©ductible sur immobilisations',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_deductible_biens_services = fields.Monetary(
-        string='TVA déductible sur biens et services',
+        string='TVA dÃ©ductible sur biens et services',
         currency_field='currency_id',
         readonly=True
     )
 
     tva_deductible_total = fields.Monetary(
-        string='Total TVA déductible',
+        string='Total TVA dÃ©ductible',
         compute='_compute_totals',
         store=True,
         currency_field='currency_id'
     )
 
-    # Crédit et montant à payer
+    # CrÃ©dit et montant Ã  payer
     credit_precedent = fields.Monetary(
-        string='Crédit période précédente',
+        string='CrÃ©dit pÃ©riode prÃ©cÃ©dente',
         currency_field='currency_id',
-        help="Crédit de TVA reporté de la période précédente"
+        help="CrÃ©dit de TVA reportÃ© de la pÃ©riode prÃ©cÃ©dente"
     )
 
     tva_nette = fields.Monetary(
@@ -147,23 +147,23 @@ class TvaDeclaration(models.Model):
         compute='_compute_totals',
         store=True,
         currency_field='currency_id',
-        help="TVA collectée - TVA déductible"
+        help="TVA collectÃ©e - TVA dÃ©ductible"
     )
 
     tva_a_payer = fields.Monetary(
-        string='TVA à payer',
+        string='TVA Ã  payer',
         compute='_compute_totals',
         store=True,
         currency_field='currency_id',
-        help="Montant final à payer (ou crédit)"
+        help="Montant final Ã  payer (ou crÃ©dit)"
     )
 
     credit_a_reporter = fields.Monetary(
-        string='Crédit à reporter',
+        string='CrÃ©dit Ã  reporter',
         compute='_compute_totals',
         store=True,
         currency_field='currency_id',
-        help="Crédit de TVA reportable au mois suivant"
+        help="CrÃ©dit de TVA reportable au mois suivant"
     )
 
     currency_id = fields.Many2one(
@@ -178,7 +178,7 @@ class TvaDeclaration(models.Model):
         string='Base HT 20%',
         currency_field='currency_id',
         readonly=True,
-        help="Base HT des ventes à 20%"
+        help="Base HT des ventes Ã  20%"
     )
 
     base_ht_10 = fields.Monetary(
@@ -199,10 +199,10 @@ class TvaDeclaration(models.Model):
         readonly=True
     )
 
-    # Échéance et paiement
+    # Ã‰chÃ©ance et paiement
     due_date = fields.Date(
-        string='Date d\'échéance',
-        help="Date limite de dépôt et paiement"
+        string='Date d\'Ã©chÃ©ance',
+        help="Date limite de dÃ©pÃ´t et paiement"
     )
 
     payment_date = fields.Date(
@@ -212,7 +212,7 @@ class TvaDeclaration(models.Model):
     )
 
     payment_ref = fields.Char(
-        string='Référence paiement',
+        string='RÃ©fÃ©rence paiement',
         readonly=True
     )
 
@@ -221,7 +221,7 @@ class TvaDeclaration(models.Model):
         string='Fichier EDI-TVA',
         readonly=True,
         attachment=True,
-        help="Fichier XML pour télédéclaration"
+        help="Fichier XML pour tÃ©lÃ©dÃ©claration"
     )
 
     edi_filename = fields.Char(
@@ -257,7 +257,7 @@ class TvaDeclaration(models.Model):
                  'tva_deductible_immobilisations', 'tva_deductible_biens_services', 'credit_precedent')
     def _compute_totals(self):
         for record in self:
-            # Total TVA collectée
+            # Total TVA collectÃ©e
             record.tva_collectee_total = (
                 record.tva_collectee_20 +
                 record.tva_collectee_10 +
@@ -265,7 +265,7 @@ class TvaDeclaration(models.Model):
                 record.tva_collectee_21
             )
 
-            # Total TVA déductible
+            # Total TVA dÃ©ductible
             record.tva_deductible_total = (
                 record.tva_deductible_immobilisations +
                 record.tva_deductible_biens_services
@@ -274,7 +274,7 @@ class TvaDeclaration(models.Model):
             # TVA nette
             record.tva_nette = record.tva_collectee_total - record.tva_deductible_total
 
-            # TVA à payer (en tenant compte du crédit précédent)
+            # TVA Ã  payer (en tenant compte du crÃ©dit prÃ©cÃ©dent)
             tva_brute = record.tva_nette - record.credit_precedent
 
             if tva_brute > 0:
@@ -300,13 +300,13 @@ class TvaDeclaration(models.Model):
         for record in self:
             if record.period_start and record.period_end:
                 if record.period_start > record.period_end:
-                    raise ValidationError(_("La date de début doit être antérieure à la date de fin."))
+                    raise ValidationError(_("La date de dÃ©but doit Ãªtre antÃ©rieure Ã  la date de fin."))
 
     def action_compute_tva(self):
         """Calcule automatiquement les montants de TVA"""
         self.ensure_one()
 
-        # Récupérer toutes les écritures de la période
+        # RÃ©cupÃ©rer toutes les Ã©critures de la pÃ©riode
         moves = self.env['account.move'].search([
             ('company_id', '=', self.company_id.id),
             ('date', '>=', self.period_start),
@@ -322,13 +322,13 @@ class TvaDeclaration(models.Model):
         tva_deductible_immo = 0.0
         tva_deductible_bs = 0.0
 
-        # Parcourir les lignes d'écriture
+        # Parcourir les lignes d'Ã©criture
         for move in moves:
             for line in move.line_ids:
                 if line.tax_line_id:  # Ligne de TVA
                     tax_amount = line.tax_line_id.amount
 
-                    # TVA collectée (ventes)
+                    # TVA collectÃ©e (ventes)
                     if move.move_type in ('out_invoice', 'out_refund'):
                         sign = 1 if move.move_type == 'out_invoice' else -1
                         if tax_amount == 20.0:
@@ -340,13 +340,13 @@ class TvaDeclaration(models.Model):
                         elif tax_amount == 2.1:
                             tva_collectee[2.1] += sign * abs(line.balance)
 
-                    # TVA déductible (achats)
+                    # TVA dÃ©ductible (achats)
                     elif move.move_type in ('in_invoice', 'in_refund'):
                         sign = 1 if move.move_type == 'in_invoice' else -1
                         amount = sign * abs(line.balance)
 
                         # Distinguer immobilisations vs biens et services
-                        # (basé sur le compte comptable - 2xxx = immobilisations)
+                        # (basÃ© sur le compte comptable - 2xxx = immobilisations)
                         if line.account_id.code and line.account_id.code.startswith('2'):
                             tva_deductible_immo += amount
                         else:
@@ -358,7 +358,7 @@ class TvaDeclaration(models.Model):
                         if tax.amount in [20.0, 10.0, 5.5, 2.1]:
                             base_ht[tax.amount] += abs(line.balance)
 
-        # Mettre à jour les champs
+        # Mettre Ã  jour les champs
         self.write({
             'tva_collectee_20': tva_collectee[20],
             'tva_collectee_10': tva_collectee[10],
@@ -377,30 +377,30 @@ class TvaDeclaration(models.Model):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': _('Succès'),
-                'message': _('Déclaration de TVA calculée. TVA à payer: %.2f ¬') % self.tva_a_payer,
+                'title': _('SuccÃ¨s'),
+                'message': _('DÃ©claration de TVA calculÃ©e. TVA Ã  payer: %.2f Â¬') % self.tva_a_payer,
                 'type': 'success',
             }
         }
 
     def action_submit(self):
-        """Marque la déclaration comme déclarée"""
+        """Marque la dÃ©claration comme dÃ©clarÃ©e"""
         self.ensure_one()
         if self.state != 'computed':
             raise UserError(_("Veuillez d'abord calculer la TVA."))
 
         self.write({
             'state': 'submitted',
-            'due_date': self.period_end + relativedelta(days=30),  # Échéance 30j après fin période
+            'due_date': self.period_end + relativedelta(days=30),  # Ã‰chÃ©ance 30j aprÃ¨s fin pÃ©riode
         })
 
         return True
 
     def action_mark_paid(self):
-        """Marque la déclaration comme payée"""
+        """Marque la dÃ©claration comme payÃ©e"""
         self.ensure_one()
         if self.state != 'submitted':
-            raise UserError(_("La déclaration doit être dans l'état 'Déclarée'."))
+            raise UserError(_("La dÃ©claration doit Ãªtre dans l'Ã©tat 'DÃ©clarÃ©e'."))
 
         self.write({
             'state': 'paid',
@@ -414,13 +414,13 @@ class TvaDeclaration(models.Model):
         self.write({'state': 'draft'})
 
     def action_cancel(self):
-        """Annule la déclaration"""
+        """Annule la dÃ©claration"""
         self.write({'state': 'cancel'})
 
     def action_generate_edi_file(self):
-        """Génère le fichier XML EDI-TVA pour télédéclaration"""
+        """GÃ©nÃ¨re le fichier XML EDI-TVA pour tÃ©lÃ©dÃ©claration"""
         self.ensure_one()
-        # TODO: Implémenter génération XML EDI-TVA
-        # Format spécifique DGFIP pour télédéclaration
+        # TODO: ImplÃ©menter gÃ©nÃ©ration XML EDI-TVA
+        # Format spÃ©cifique DGFIP pour tÃ©lÃ©dÃ©claration
 
-        raise UserError(_("Fonctionnalité de génération EDI-TVA en cours de développement."))
+        raise UserError(_("FonctionnalitÃ© de gÃ©nÃ©ration EDI-TVA en cours de dÃ©veloppement."))

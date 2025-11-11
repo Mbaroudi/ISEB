@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_inherit" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.client.portal</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Documents" data-key="client_portal" groups="base.group_system">
+                    <h2>Gestion des documents</h2>
+
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="document_storage_type" widget="radio" options="{'horizontal': true}"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="document_storage_type"/>
+                                <div class="text-muted">
+                                    Choisissez où stocker les documents et fichiers
+                                </div>
+                                <div class="content-group mt16" attrs="{'invisible': [('document_storage_type', 'not in', ['s3', 'minio'])]}">
+                                    <div class="row">
+                                        <label for="document_storage_endpoint" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_endpoint" placeholder="https://s3.amazonaws.com ou http://minio:9000"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="document_storage_access_key" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_access_key" password="True"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="document_storage_secret_key" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_secret_key" password="True"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="document_storage_bucket" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_bucket"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="document_storage_region" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_region"/>
+                                    </div>
+                                    <div class="row">
+                                        <label for="document_storage_use_ssl" class="col-lg-3 o_light_label"/>
+                                        <field name="document_storage_use_ssl"/>
+                                    </div>
+                                    <div class="row mt8">
+                                        <button name="action_test_storage_connection"
+                                                type="object"
+                                                string="Tester la connexion"
+                                                class="btn-link"
+                                                icon="fa-plug"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt32">Configuration MinIO (Recommandé)</h3>
+                    <div class="row mt16">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <h4 class="alert-heading">
+                                    <i class="fa fa-info-circle"/> Installation MinIO
+                                </h4>
+                                <p><strong>MinIO</strong> est un serveur de stockage objet haute performance compatible S3.</p>
+                                <p class="mb-0"><strong>Installation avec Docker:</strong></p>
+                                <pre class="mb-2">docker run -d \
+  --name minio \
+  -p 9000:9000 \
+  -p 9001:9001 \
+  -e MINIO_ROOT_USER=minioadmin \
+  -e MINIO_ROOT_PASSWORD=minioadmin \
+  -v /data/minio:/data \
+  minio/minio server /data --console-address ":9001"</pre>
+                                <p class="mb-0"><strong>Configuration recommandée:</strong></p>
+                                <ul>
+                                    <li>Endpoint URL: <code>http://minio:9000</code> (dans Docker) ou <code>http://localhost:9000</code></li>
+                                    <li>Access Key: <code>minioadmin</code></li>
+                                    <li>Secret Key: <code>minioadmin</code></li>
+                                    <li>Bucket: <code>iseb-documents</code></li>
+                                    <li>Region: <code>eu-west-1</code></li>
+                                    <li>Use SSL: <code>False</code> (en développement)</li>
+                                </ul>
+                                <p class="mb-0">Console d'administration: <a href="http://localhost:9001" target="_blank">http://localhost:9001</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt32">Configuration Amazon S3</h3>
+                    <div class="row mt16">
+                        <div class="col-12">
+                            <div class="alert alert-warning" role="alert">
+                                <h4 class="alert-heading">
+                                    <i class="fa fa-amazon"/> AWS S3
+                                </h4>
+                                <p><strong>Pour utiliser Amazon S3:</strong></p>
+                                <ol>
+                                    <li>Créez un bucket S3 dans la console AWS</li>
+                                    <li>Créez un utilisateur IAM avec permissions S3</li>
+                                    <li>Générez des clés d'accès (Access Key ID / Secret Access Key)</li>
+                                    <li>Configurez les permissions du bucket (politique IAM)</li>
+                                </ol>
+                                <p class="mb-0"><strong>Configuration:</strong></p>
+                                <ul>
+                                    <li>Endpoint URL: <code>https://s3.amazonaws.com</code> ou <code>https://s3.eu-west-1.amazonaws.com</code></li>
+                                    <li>Access Key: Votre AWS Access Key ID</li>
+                                    <li>Secret Key: Votre AWS Secret Access Key</li>
+                                    <li>Bucket: Nom de votre bucket S3</li>
+                                    <li>Region: Région de votre bucket (ex: <code>eu-west-1</code>)</li>
+                                    <li>Use SSL: <code>True</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
