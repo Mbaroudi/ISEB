@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Extension Vue Partner - Score Risque Fiscal   -->
+    <!-- ============================================== -->
+    <record id="view_partner_form_fiscal_risk" model="ir.ui.view">
+        <field name="name">res.partner.form.fiscal.risk</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Ajouter widget dans button_box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_fiscal_risk_details"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-exclamation-triangle">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="fiscal_risk_score" widget="statinfo"/>
+                        </span>
+                        <span class="o_stat_text">Score</span>
+                        <span class="o_stat_text">Risque Fiscal</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Ajouter page Risque Fiscal dans notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Risque Fiscal" name="fiscal_risk" groups="client_portal.group_client_portal_manager">
+                    <group>
+                        <group string="Score de Risque">
+                            <field name="fiscal_risk_score" widget="progressbar"/>
+                            <field name="fiscal_risk_level" widget="badge"
+                                   decoration-success="fiscal_risk_level == 'low'"
+                                   decoration-info="fiscal_risk_level == 'medium'"
+                                   decoration-warning="fiscal_risk_level == 'high'"
+                                   decoration-danger="fiscal_risk_level == 'critical'"/>
+                            <field name="fiscal_risk_color" invisible="1"/>
+                            <field name="last_risk_check_date" readonly="1"/>
+                        </group>
+                        <group string="Statistiques">
+                            <field name="late_obligations_count"/>
+                            <field name="late_obligations_amount" widget="monetary"/>
+                            <field name="total_penalties_amount" widget="monetary"/>
+                            <field name="average_payment_delay" widget="float"/>
+                            <field name="compliance_rate" widget="percentage"/>
+                        </group>
+                    </group>
+
+                    <group string="Historique du Score">
+                        <field name="fiscal_risk_history_ids" nolabel="1">
+                            <tree>
+                                <field name="check_date"/>
+                                <field name="risk_score" widget="progressbar"/>
+                                <field name="risk_level" widget="badge"/>
+                                <field name="late_count"/>
+                                <field name="penalties_amount"/>
+                                <field name="notes"/>
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste Partner - Avec Score Risque         -->
+    <!-- ============================================== -->
+    <record id="view_partner_tree_fiscal_risk" model="ir.ui.view">
+        <field name="name">res.partner.tree.fiscal.risk</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="decoration-danger">fiscal_risk_level == 'critical'</attribute>
+                <attribute name="decoration-warning">fiscal_risk_level == 'high'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="fiscal_risk_score" optional="hide" widget="progressbar"/>
+                <field name="fiscal_risk_level" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Kanban Partner - Avec Score Risque        -->
+    <!-- ============================================== -->
+    <record id="view_partner_kanban_fiscal_risk" model="ir.ui.view">
+        <field name="name">res.partner.kanban.fiscal.risk</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="fiscal_risk_score"/>
+                <field name="fiscal_risk_level"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_kanban_details')]" position="inside">
+                <div t-if="record.fiscal_risk_score.raw_value">
+                    <strong>Risque : </strong>
+                    <span t-attf-class="badge badge-#{record.fiscal_risk_level.raw_value === 'low' ? 'success' : record.fiscal_risk_level.raw_value === 'medium' ? 'info' : record.fiscal_risk_level.raw_value === 'high' ? 'warning' : 'danger'}">
+                        <t t-esc="record.fiscal_risk_score.value"/>
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Filtres Recherche Partner - Risque Fiscal     -->
+    <!-- ============================================== -->
+    <record id="view_partner_search_fiscal_risk" model="ir.ui.view">
+        <field name="name">res.partner.search.fiscal.risk</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="filter_risk_critical" string="Risque critique"
+                        domain="[('fiscal_risk_level', '=', 'critical')]"/>
+                <filter name="filter_risk_high" string="Risque élevé"
+                        domain="[('fiscal_risk_level', '=', 'high')]"/>
+                <filter name="filter_risk_medium" string="Risque moyen"
+                        domain="[('fiscal_risk_level', '=', 'medium')]"/>
+                <filter name="filter_risk_low" string="Risque faible"
+                        domain="[('fiscal_risk_level', '=', 'low')]"/>
+                <separator/>
+                <filter name="filter_has_late_obligations" string="Avec retards"
+                        domain="[('late_obligations_count', '>', 0)]"/>
+                <filter name="filter_has_penalties" string="Avec pénalités"
+                        domain="[('total_penalties_amount', '>', 0)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_risk_level" string="Niveau de risque"
+                            context="{'group_by': 'fiscal_risk_level'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Clients à Risque                     -->
+    <!-- ============================================== -->
+    <record id="action_partners_at_risk" model="ir.actions.act_window">
+        <field name="name">Clients à Risque</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="domain">[('fiscal_risk_level', 'in', ['high', 'critical'])]</field>
+        <field name="context">{
+            'search_default_filter_risk_critical': 1,
+            'search_default_filter_risk_high': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun client à risque élevé
+            </p>
+            <p>
+                Les clients avec un score de risque fiscal élevé apparaîtront ici.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Graphique - Répartition Risques           -->
+    <!-- ============================================== -->
+    <record id="view_partner_fiscal_risk_graph" model="ir.ui.view">
+        <field name="name">res.partner.fiscal.risk.graph</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <graph string="Répartition des Risques" type="pie">
+                <field name="fiscal_risk_level"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Pivot - Analyse Risques                   -->
+    <!-- ============================================== -->
+    <record id="view_partner_fiscal_risk_pivot" model="ir.ui.view">
+        <field name="name">res.partner.fiscal.risk.pivot</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse Risques">
+                <field name="fiscal_risk_level" type="row"/>
+                <field name="late_obligations_count" type="measure"/>
+                <field name="total_penalties_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Dashboard Risque Fiscal              -->
+    <!-- ============================================== -->
+    <record id="action_fiscal_risk_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard Risque Fiscal</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="domain">[('is_company', '=', True)]</field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Historique Risque            -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_risk_history_form" model="ir.ui.view">
+        <field name="name">fiscal.risk.history.form</field>
+        <field name="model">fiscal.risk.history</field>
+        <field name="arch" type="xml">
+            <form string="Historique Risque" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group string="Évaluation">
+                            <field name="partner_id"/>
+                            <field name="check_date"/>
+                            <field name="risk_score" widget="progressbar"/>
+                            <field name="risk_level" widget="badge"/>
+                        </group>
+                        <group string="Détails">
+                            <field name="late_count"/>
+                            <field name="late_amount" widget="monetary"/>
+                            <field name="penalties_amount" widget="monetary"/>
+                            <field name="avg_payment_delay"/>
+                            <field name="compliance_rate" widget="percentage"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"/>
+                    </group>
+                    <group string="Alertes Déclenchées">
+                        <field name="triggered_alerts" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Historique Risque                 -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_risk_history_tree" model="ir.ui.view">
+        <field name="name">fiscal.risk.history.tree</field>
+        <field name="model">fiscal.risk.history</field>
+        <field name="arch" type="xml">
+            <tree string="Historique Risque"
+                  decoration-success="risk_level == 'low'"
+                  decoration-info="risk_level == 'medium'"
+                  decoration-warning="risk_level == 'high'"
+                  decoration-danger="risk_level == 'critical'"
+                  create="false" edit="false" delete="false">
+                <field name="check_date"/>
+                <field name="partner_id"/>
+                <field name="risk_score" widget="progressbar"/>
+                <field name="risk_level" widget="badge"/>
+                <field name="late_count"/>
+                <field name="late_amount"/>
+                <field name="penalties_amount"/>
+                <field name="compliance_rate" widget="percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Graphique - Évolution Score               -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_risk_history_graph" model="ir.ui.view">
+        <field name="name">fiscal.risk.history.graph</field>
+        <field name="model">fiscal.risk.history</field>
+        <field name="arch" type="xml">
+            <graph string="Évolution du Score" type="line">
+                <field name="check_date" interval="day"/>
+                <field name="risk_score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Historique Risque                    -->
+    <!-- ============================================== -->
+    <record id="action_fiscal_risk_history" model="ir.actions.act_window">
+        <field name="name">Historique Risque Fiscal</field>
+        <field name="res_model">fiscal.risk.history</field>
+        <field name="view_mode">tree,graph,form</field>
+        <field name="context">{'search_default_group_partner': 1}</field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menus                                         -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_fiscal_risk"
+        name="Analyse de Risque"
+        parent="menu_fiscal_root"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_fiscal_risk_clients"
+        name="Clients à Risque"
+        parent="menu_fiscal_risk"
+        action="action_partners_at_risk"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_fiscal_risk_dashboard"
+        name="Dashboard Risque"
+        parent="menu_fiscal_risk"
+        action="action_fiscal_risk_dashboard"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_fiscal_risk_history"
+        name="Historique"
+        parent="menu_fiscal_risk"
+        action="action_fiscal_risk_history"
+        sequence="30"/>
+
+</odoo>

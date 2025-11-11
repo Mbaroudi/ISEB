@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Obligation Fiscale           -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_form" model="ir.ui.view">
+        <field name="name">fiscal.obligation.form</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <form string="Obligation Fiscale">
+                <header>
+                    <button name="action_start"
+                            string="Démarrer"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'todo')]}"/>
+                    <button name="action_submit_for_validation"
+                            string="Soumettre"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'in_progress')]}"/>
+                    <button name="action_mark_paid"
+                            string="Marquer payé"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', 'not in', ['in_progress', 'waiting'])]}"/>
+                    <button name="action_cancel"
+                            string="Annuler"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['paid', 'cancelled'])]}"/>
+                    <button name="action_set_late"
+                            string="Marquer en retard"
+                            type="object"
+                            attrs="{'invisible': ['|', ('state', 'in', ['paid', 'cancelled', 'late']), ('is_overdue', '=', False)]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="todo,in_progress,waiting,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_delegation"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-handshake-o"
+                                attrs="{'invisible': [('payment_responsible', '!=', 'accountant')]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Voir</span>
+                                <span class="o_stat_text">Délégation</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Type et Période">
+                            <field name="obligation_type"/>
+                            <field name="periodicity"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="period_name"/>
+                        </group>
+                        <group string="Échéance et Priorité">
+                            <field name="due_date"/>
+                            <field name="days_until_due" attrs="{'invisible': [('is_overdue', '=', True)]}"/>
+                            <field name="is_overdue" invisible="1"/>
+                            <label for="is_overdue" string="État échéance"
+                                   attrs="{'invisible': [('is_overdue', '=', False)]}"/>
+                            <div attrs="{'invisible': [('is_overdue', '=', False)]}">
+                                <span class="badge badge-danger">EN RETARD</span>
+                            </div>
+                            <field name="priority" widget="priority"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Montants" name="amounts">
+                            <group>
+                                <group string="Estimations">
+                                    <field name="estimated_amount" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                                <group string="Montants Réels">
+                                    <field name="actual_amount" widget="monetary"/>
+                                    <field name="penalty_amount" widget="monetary"
+                                           attrs="{'invisible': [('penalty_amount', '=', 0)]}"/>
+                                    <field name="total_amount" widget="monetary"
+                                           class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Responsabilité" name="responsibility">
+                            <group>
+                                <group string="Client">
+                                    <field name="partner_id"/>
+                                    <field name="company_id" groups="base.group_multi_company"/>
+                                </group>
+                                <group string="Gestion">
+                                    <field name="responsible_user_id"/>
+                                    <field name="payment_responsible"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Paiement" name="payment"
+                              attrs="{'invisible': [('state', 'not in', ['paid', 'waiting'])]}">
+                            <group>
+                                <group string="Informations Paiement">
+                                    <field name="payment_date"/>
+                                    <field name="payment_reference"/>
+                                    <field name="payment_method"/>
+                                </group>
+                                <group string="Documents">
+                                    <field name="document_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                            <field name="payment_notes" placeholder="Notes de paiement..."/>
+                        </page>
+
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes et commentaires..."/>
+                        </page>
+
+                        <page string="Historique" name="history">
+                            <group>
+                                <field name="auto_generated" readonly="1"/>
+                                <field name="generation_rule_id" readonly="1"
+                                       attrs="{'invisible': [('auto_generated', '=', False)]}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Obligations Fiscales              -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_tree" model="ir.ui.view">
+        <field name="name">fiscal.obligation.tree</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <tree string="Obligations Fiscales"
+                  decoration-success="state == 'paid'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-danger="state == 'late' or is_overdue"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="obligation_type"/>
+                <field name="period_name"/>
+                <field name="partner_id"/>
+                <field name="due_date"/>
+                <field name="days_until_due" attrs="{'invisible': [('is_overdue', '=', True)]}"/>
+                <field name="is_overdue" invisible="1"/>
+                <field name="estimated_amount" sum="Total estimé"/>
+                <field name="actual_amount" sum="Total réel"/>
+                <field name="total_amount" sum="Total avec pénalités"/>
+                <field name="payment_responsible" widget="badge"/>
+                <field name="priority" widget="priority"/>
+                <field name="state"
+                       decoration-success="state == 'paid'"
+                       decoration-warning="state in ['in_progress', 'waiting']"
+                       decoration-danger="state == 'late'"
+                       widget="badge"/>
+                <field name="responsible_user_id" widget="many2one_avatar_user"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Kanban - Obligations Fiscales             -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_kanban" model="ir.ui.view">
+        <field name="name">fiscal.obligation.kanban</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column"
+                    quick_create="false">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="obligation_type"/>
+                <field name="partner_id"/>
+                <field name="due_date"/>
+                <field name="is_overdue"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="currency_id"/>
+                <progressbar field="priority" colors='{"0": "muted", "1": "success", "2": "warning", "3": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click #{record.is_overdue.raw_value ? 'oe_kanban_color_2' : ''}">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="obligation_type"/>
+                                    </strong>
+                                    <br/>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="partner_id"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_top_right">
+                                    <field name="priority" widget="priority"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>
+                                    <strong>Échéance :</strong>
+                                    <field name="due_date" widget="date"/>
+                                    <span t-if="record.is_overdue.raw_value" class="badge badge-danger">
+                                        EN RETARD
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Montant :</strong>
+                                    <field name="total_amount" widget="monetary"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <img t-att-src="kanban_image('res.users', 'avatar_128', record.responsible_user_id.raw_value)"
+                                         t-att-title="record.responsible_user_id.value"
+                                         t-att-alt="record.responsible_user_id.value"
+                                         class="oe_avatar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Calendrier - Échéances                    -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_calendar" model="ir.ui.view">
+        <field name="name">fiscal.obligation.calendar</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <calendar string="Échéances Fiscales"
+                      date_start="due_date"
+                      color="obligation_type"
+                      quick_add="False"
+                      mode="month">
+                <field name="obligation_type"/>
+                <field name="partner_id"/>
+                <field name="total_amount"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Pivot - Dashboard                         -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_pivot" model="ir.ui.view">
+        <field name="name">fiscal.obligation.pivot</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse Obligations">
+                <field name="obligation_type" type="row"/>
+                <field name="state" type="col"/>
+                <field name="total_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Graphique - Dashboard                     -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_graph" model="ir.ui.view">
+        <field name="name">fiscal.obligation.graph</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <graph string="Obligations Fiscales" type="bar" stacked="True">
+                <field name="obligation_type"/>
+                <field name="total_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Obligations                   -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_obligation_search" model="ir.ui.view">
+        <field name="name">fiscal.obligation.search</field>
+        <field name="model">fiscal.obligation</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Obligations">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="obligation_type"/>
+                <field name="responsible_user_id"/>
+                <separator/>
+                <filter name="filter_todo" string="À faire"
+                        domain="[('state', '=', 'todo')]"/>
+                <filter name="filter_in_progress" string="En cours"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_waiting" string="En attente"
+                        domain="[('state', '=', 'waiting')]"/>
+                <filter name="filter_paid" string="Payé"
+                        domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="filter_overdue" string="En retard"
+                        domain="[('is_overdue', '=', True)]"/>
+                <filter name="filter_due_soon" string="Échéance 7 jours"
+                        domain="[('days_until_due', '&lt;=', 7), ('days_until_due', '>=', 0)]"/>
+                <filter name="filter_urgent" string="Urgent"
+                        domain="[('priority', '=', '3')]"/>
+                <separator/>
+                <filter name="filter_tva" string="TVA"
+                        domain="[('obligation_type', '=', 'tva')]"/>
+                <filter name="filter_urssaf" string="URSSAF"
+                        domain="[('obligation_type', '=', 'urssaf')]"/>
+                <filter name="filter_is" string="IS"
+                        domain="[('obligation_type', '=', 'is')]"/>
+                <separator/>
+                <filter name="filter_client_payment" string="Paiement client"
+                        domain="[('payment_responsible', '=', 'client')]"/>
+                <filter name="filter_delegation" string="Délégation"
+                        domain="[('payment_responsible', '=', 'accountant')]"/>
+                <separator/>
+                <filter name="filter_my_obligations" string="Mes obligations"
+                        domain="[('responsible_user_id', '=', uid)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_type" string="Type"
+                            context="{'group_by': 'obligation_type'}"/>
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_partner" string="Client"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_responsible" string="Responsable"
+                            context="{'group_by': 'responsible_user_id'}"/>
+                    <filter name="group_due_month" string="Mois échéance"
+                            context="{'group_by': 'due_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Actions                                       -->
+    <!-- ============================================== -->
+    <record id="action_fiscal_obligation" model="ir.actions.act_window">
+        <field name="name">Obligations Fiscales</field>
+        <field name="res_model">fiscal.obligation</field>
+        <field name="view_mode">tree,kanban,form,calendar,pivot,graph</field>
+        <field name="context">{
+            'search_default_filter_todo': 1,
+            'search_default_filter_in_progress': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle obligation fiscale
+            </p>
+            <p>
+                Gérez toutes vos obligations fiscales et sociales (TVA, URSSAF, IS, etc.)
+                avec suivi automatique des échéances.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_fiscal_obligation_overdue" model="ir.actions.act_window">
+        <field name="name">Obligations en retard</field>
+        <field name="res_model">fiscal.obligation</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="domain">[('is_overdue', '=', True), ('state', 'not in', ['paid', 'cancelled'])]</field>
+        <field name="context">{'search_default_filter_overdue': 1}</field>
+    </record>
+
+    <record id="action_fiscal_obligation_calendar" model="ir.actions.act_window">
+        <field name="name">Calendrier Fiscal</field>
+        <field name="res_model">fiscal.obligation</field>
+        <field name="view_mode">calendar,tree,form</field>
+    </record>
+
+    <record id="action_fiscal_obligation_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard Fiscal</field>
+        <field name="res_model">fiscal.obligation</field>
+        <field name="view_mode">graph,pivot,tree</field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menus                                         -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_fiscal_root"
+        name="Fiscal"
+        parent="menu_client_portal_root"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_fiscal_obligations"
+        name="Obligations"
+        parent="menu_fiscal_root"
+        action="action_fiscal_obligation"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_fiscal_calendar"
+        name="Calendrier"
+        parent="menu_fiscal_root"
+        action="action_fiscal_obligation_calendar"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_fiscal_overdue"
+        name="En retard"
+        parent="menu_fiscal_root"
+        action="action_fiscal_obligation_overdue"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_fiscal_dashboard"
+        name="Dashboard"
+        parent="menu_fiscal_root"
+        action="action_fiscal_obligation_dashboard"
+        sequence="5"/>
+
+</odoo>

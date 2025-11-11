@@ -80,12 +80,21 @@ AGPL-3
         # Data
         'data/document_data.xml',
         'data/fiscal_data.xml',
-        # Views
+        # Views - Core
         'views/client_dashboard_views.xml',
         'views/client_document_views.xml',
         'views/expense_note_views.xml',
         'views/res_config_settings_views.xml',
         'views/menu_views.xml',
+        # Views - OCR & Documents
+        'views/document_ocr_views.xml',
+        'views/document_workflow_views.xml',
+        'views/document_share_views.xml',
+        'views/document_tag_views.xml',
+        # Views - Fiscal
+        'views/fiscal_obligation_views.xml',
+        'views/fiscal_delegation_views.xml',
+        'views/fiscal_risk_score_views.xml',
         # Portal Templates
         'views/portal_templates.xml',
         'views/portal_templates_enhanced.xml',
