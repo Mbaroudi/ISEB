@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Délégation Paiement          -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_payment_delegation_form" model="ir.ui.view">
+        <field name="name">fiscal.payment.delegation.form</field>
+        <field name="model">fiscal.payment.delegation</field>
+        <field name="arch" type="xml">
+            <form string="Délégation de Paiement">
+                <header>
+                    <button name="action_submit_for_signature"
+                            string="Soumettre pour signature"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                    <button name="action_sign"
+                            string="Signer"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+                    <button name="action_activate"
+                            string="Activer"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+                    <button name="action_suspend"
+                            string="Suspendre"
+                            type="object"
+                            attrs="{'invisible': [('state', '!=', 'active')]}"/>
+                    <button name="action_reactivate"
+                            string="Réactiver"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'suspended')]}"/>
+                    <button name="action_revoke"
+                            string="Révoquer"
+                            type="object"
+                            class="btn-danger"
+                            confirm="Êtes-vous sûr de vouloir révoquer cette délégation ?"
+                            attrs="{'invisible': [('state', 'in', ['revoked', 'expired', 'draft'])]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_payments"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-money">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="payment_count" widget="statinfo"/>
+                                </span>
+                                <span class="o_stat_text">Paiements</span>
+                            </div>
+                        </button>
+                        <button name="action_view_obligations"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="obligation_count" widget="statinfo"/>
+                                </span>
+                                <span class="o_stat_text">Obligations</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="alert alert-success" role="alert"
+                         attrs="{'invisible': [('is_active', '=', False)]}">
+                        <i class="fa fa-check-circle"/> Cette délégation est actuellement active.
+                    </div>
+
+                    <div class="alert alert-warning" role="alert"
+                         attrs="{'invisible': [('state', '!=', 'suspended')]}">
+                        <i class="fa fa-pause-circle"/> Cette délégation est suspendue.
+                    </div>
+
+                    <div class="alert alert-danger" role="alert"
+                         attrs="{'invisible': [('state', '!=', 'revoked')]}">
+                        <i class="fa fa-ban"/> Cette délégation a été révoquée.
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Client">
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Période">
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="is_active" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <group string="Types d'Obligations Déléguées">
+                                <field name="delegated_types" widget="many2many_tags" nolabel="1"/>
+                            </group>
+
+                            <group>
+                                <group string="Limites de Sécurité">
+                                    <field name="max_amount_per_payment" widget="monetary"/>
+                                    <field name="max_amount_per_month" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="current_month_total" widget="monetary" readonly="1"/>
+                                </group>
+                                <group string="Méthode de Paiement">
+                                    <field name="payment_method"/>
+                                    <field name="bank_account_id"
+                                           attrs="{'invisible': [('payment_method', '=', 'transfer')],
+                                                   'required': [('payment_method', 'in', ['direct_debit', 'client_account'])]}"/>
+                                </group>
+                            </group>
+
+                            <group>
+                                <group string="Validation Client">
+                                    <field name="require_client_validation"/>
+                                    <field name="validation_delay_hours"
+                                           attrs="{'invisible': [('require_client_validation', '=', False)],
+                                                   'required': [('require_client_validation', '=', True)]}"/>
+                                </group>
+                                <group string="Notifications">
+                                    <field name="send_preview_notification"/>
+                                    <field name="send_confirmation_notification"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Signature Électronique" name="signature"
+                              attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <group>
+                                <group string="Client">
+                                    <field name="client_signature_date" readonly="1"/>
+                                    <field name="client_signature_ip" readonly="1"/>
+                                    <field name="client_signature" widget="signature" readonly="1"/>
+                                </group>
+                                <group string="Comptable">
+                                    <field name="accountant_user_id"/>
+                                    <field name="accountant_signature_date" readonly="1"/>
+                                    <field name="accountant_signature" widget="signature" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Documents" name="documents">
+                            <field name="document_ids" nolabel="1">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="document_type"/>
+                                    <field name="upload_date"/>
+                                    <button name="action_download" string="Télécharger" type="object" icon="fa-download"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Historique Paiements" name="payments">
+                            <field name="delegated_payment_ids" nolabel="1">
+                                <tree decoration-success="state == 'paid'"
+                                      decoration-warning="state == 'pending'"
+                                      decoration-info="state == 'scheduled'">
+                                    <field name="scheduled_date"/>
+                                    <field name="obligation_id"/>
+                                    <field name="amount" sum="Total"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="payment_date"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Termes et Conditions" name="terms">
+                            <field name="terms_and_conditions" widget="html"
+                                   placeholder="Termes et conditions de la délégation..."/>
+                            <group attrs="{'invisible': [('state', '=', 'draft')]}">
+                                <field name="terms_accepted"/>
+                                <field name="terms_accepted_date" readonly="1"/>
+                            </group>
+                        </page>
+
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes et commentaires..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Délégations                       -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_payment_delegation_tree" model="ir.ui.view">
+        <field name="name">fiscal.payment.delegation.tree</field>
+        <field name="model">fiscal.payment.delegation</field>
+        <field name="arch" type="xml">
+            <tree string="Délégations de Paiement"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state in ['pending', 'suspended']"
+                  decoration-danger="state == 'revoked'"
+                  decoration-muted="state == 'expired'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="is_active" invisible="1"/>
+                <field name="max_amount_per_payment"/>
+                <field name="max_amount_per_month"/>
+                <field name="current_month_total" sum="Total mois"/>
+                <field name="payment_method"/>
+                <field name="payment_count"/>
+                <field name="state"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state in ['pending', 'suspended']"
+                       decoration-danger="state == 'revoked'"
+                       widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Kanban - Délégations                      -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_payment_delegation_kanban" model="ir.ui.view">
+        <field name="name">fiscal.payment.delegation.kanban</field>
+        <field name="model">fiscal.payment.delegation</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="state"/>
+                <field name="is_active"/>
+                <field name="payment_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click #{record.state.raw_value === 'active' ? 'oe_kanban_color_5' : ''}">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="partner_id"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_top_right">
+                                    <span t-attf-class="badge badge-#{record.state.raw_value === 'active' ? 'success' : record.state.raw_value === 'pending' ? 'warning' : 'secondary'}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div>
+                                    <strong>Période :</strong>
+                                    <field name="start_date" widget="date"/>
+                                    <span t-if="record.end_date.raw_value">
+                                        - <field name="end_date" widget="date"/>
+                                    </span>
+                                </div>
+                                <div>
+                                    <strong>Paiements :</strong>
+                                    <field name="payment_count"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Délégations                   -->
+    <!-- ============================================== -->
+    <record id="view_fiscal_payment_delegation_search" model="ir.ui.view">
+        <field name="name">fiscal.payment.delegation.search</field>
+        <field name="model">fiscal.payment.delegation</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Délégations">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <separator/>
+                <filter name="filter_active" string="Actives"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_pending" string="En attente"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter name="filter_suspended" string="Suspendues"
+                        domain="[('state', '=', 'suspended')]"/>
+                <filter name="filter_revoked" string="Révoquées"
+                        domain="[('state', '=', 'revoked')]"/>
+                <separator/>
+                <filter name="filter_my_delegations" string="Mes clients"
+                        domain="[('accountant_user_id', '=', uid)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_partner" string="Client"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_state" string="État"
+                            context="{'group_by': 'state'}"/>
+                    <filter name="group_method" string="Méthode paiement"
+                            context="{'group_by': 'payment_method'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Actions                                       -->
+    <!-- ============================================== -->
+    <record id="action_fiscal_payment_delegation" model="ir.actions.act_window">
+        <field name="name">Délégations de Paiement</field>
+        <field name="res_model">fiscal.payment.delegation</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{
+            'search_default_filter_active': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle délégation
+            </p>
+            <p>
+                Les délégations permettent aux comptables de gérer les paiements
+                d'obligations fiscales au nom de leurs clients.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menus                                         -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_fiscal_delegations"
+        name="Délégations de Paiement"
+        parent="menu_fiscal_root"
+        action="action_fiscal_payment_delegation"
+        sequence="40"/>
+
+</odoo>

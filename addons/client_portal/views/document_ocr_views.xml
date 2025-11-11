@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Résultat OCR                 -->
+    <!-- ============================================== -->
+    <record id="view_client_document_ocr_form" model="ir.ui.view">
+        <field name="name">client.document.ocr.form</field>
+        <field name="model">client.document.ocr</field>
+        <field name="arch" type="xml">
+            <form string="Résultat OCR">
+                <header>
+                    <button name="action_apply_to_document"
+                            string="Appliquer au document"
+                            type="object"
+                            class="oe_highlight"
+                            attrs="{'invisible': [('state', '!=', 'extracted')]}"/>
+                    <button name="action_mark_as_error"
+                            string="Marquer comme erreur"
+                            type="object"
+                            attrs="{'invisible': [('state', 'in', ['error', 'validated'])]}"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,extracted,validated"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_client_documents)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                context="{'search_default_document_id': document_id}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Voir</span>
+                                <span class="o_stat_text">Document</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="invoice_number" placeholder="Numéro de facture..."/>
+                        </h1>
+                        <h3>
+                            <field name="supplier_name" placeholder="Nom du fournisseur..."/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <group name="document_info" string="Document">
+                            <field name="document_id"/>
+                            <field name="create_date" readonly="1"/>
+                            <field name="extraction_method"/>
+                            <field name="processing_time" widget="float_time"/>
+                        </group>
+                        <group name="confidence" string="Qualité">
+                            <field name="confidence_score" widget="progressbar"/>
+                            <field name="error_message"
+                                   attrs="{'invisible': [('error_message', '=', False)]}"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Données Facture" name="invoice_data">
+                            <group>
+                                <group string="Informations Facture">
+                                    <field name="invoice_number"/>
+                                    <field name="invoice_date"/>
+                                    <field name="due_date"/>
+                                    <field name="currency"/>
+                                </group>
+                                <group string="Montants">
+                                    <field name="amount_untaxed" widget="monetary"
+                                           options="{'currency_field': 'currency'}"/>
+                                    <field name="amount_tax" widget="monetary"
+                                           options="{'currency_field': 'currency'}"/>
+                                    <field name="amount_total" widget="monetary"
+                                           options="{'currency_field': 'currency'}"
+                                           class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                            <group string="TVA">
+                                <field name="tax_lines" widget="text"/>
+                            </group>
+                        </page>
+
+                        <page string="Fournisseur" name="supplier_data">
+                            <group>
+                                <field name="supplier_name"/>
+                                <field name="supplier_vat"/>
+                                <field name="supplier_address"/>
+                            </group>
+                        </page>
+
+                        <page string="Texte Brut OCR" name="raw_text">
+                            <field name="raw_text" widget="text" placeholder="Texte extrait par OCR..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Résultats OCR                     -->
+    <!-- ============================================== -->
+    <record id="view_client_document_ocr_tree" model="ir.ui.view">
+        <field name="name">client.document.ocr.tree</field>
+        <field name="model">client.document.ocr</field>
+        <field name="arch" type="xml">
+            <tree string="Résultats OCR"
+                  decoration-success="state == 'validated'"
+                  decoration-info="state == 'extracted'"
+                  decoration-danger="state == 'error'"
+                  decoration-muted="state == 'draft'">
+                <field name="create_date"/>
+                <field name="document_id"/>
+                <field name="invoice_number"/>
+                <field name="supplier_name"/>
+                <field name="invoice_date"/>
+                <field name="amount_total" sum="Total"/>
+                <field name="confidence_score" widget="progressbar"/>
+                <field name="extraction_method"/>
+                <field name="state"
+                       decoration-success="state == 'validated'"
+                       decoration-info="state == 'extracted'"
+                       decoration-danger="state == 'error'"
+                       widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Résultats OCR                 -->
+    <!-- ============================================== -->
+    <record id="view_client_document_ocr_search" model="ir.ui.view">
+        <field name="name">client.document.ocr.search</field>
+        <field name="model">client.document.ocr</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Résultats OCR">
+                <field name="invoice_number"/>
+                <field name="supplier_name"/>
+                <field name="document_id"/>
+                <field name="invoice_date"/>
+                <separator/>
+                <filter name="filter_extracted" string="Extraits"
+                        domain="[('state', '=', 'extracted')]"/>
+                <filter name="filter_validated" string="Validés"
+                        domain="[('state', '=', 'validated')]"/>
+                <filter name="filter_error" string="Erreurs"
+                        domain="[('state', '=', 'error')]"/>
+                <separator/>
+                <filter name="filter_high_confidence" string="Haute confiance (>80%)"
+                        domain="[('confidence_score', '>', 80)]"/>
+                <filter name="filter_low_confidence" string="Faible confiance (<60%)"
+                        domain="[('confidence_score', '<', 60)]"/>
+                <separator/>
+                <filter name="filter_today" string="Aujourd'hui"
+                        domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_this_week" string="Cette semaine"
+                        domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_state" string="État" context="{'group_by': 'state'}"/>
+                    <filter name="group_method" string="Méthode" context="{'group_by': 'extraction_method'}"/>
+                    <filter name="group_document" string="Document" context="{'group_by': 'document_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Résultats OCR                        -->
+    <!-- ============================================== -->
+    <record id="action_client_document_ocr" model="ir.actions.act_window">
+        <field name="name">Résultats OCR</field>
+        <field name="res_model">client.document.ocr</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{
+            'search_default_filter_extracted': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun résultat OCR
+            </p>
+            <p>
+                Les résultats d'extraction OCR apparaîtront ici après traitement des documents.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Extension Vue Document - Bouton OCR           -->
+    <!-- ============================================== -->
+    <record id="view_client_document_form_ocr" model="ir.ui.view">
+        <field name="name">client.document.form.ocr</field>
+        <field name="model">client.document</field>
+        <field name="inherit_id" ref="client_portal.view_client_document_form"/>
+        <field name="arch" type="xml">
+            <!-- Ajouter bouton OCR dans button_box -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_extract_ocr"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-scanner"
+                        attrs="{'invisible': [('filename', 'not ilike', '.pdf|.png|.jpg|.jpeg|.tiff')]}">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="ocr_result_ids" widget="statinfo" nolabel="1"/>
+                        </span>
+                        <span class="o_stat_text">Extractions</span>
+                        <span class="o_stat_text">OCR</span>
+                    </div>
+                </button>
+                <button name="%(action_client_document_ocr)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-check-circle"
+                        attrs="{'invisible': [('has_ocr_data', '=', False)]}"
+                        context="{'search_default_document_id': id}">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Voir</span>
+                        <span class="o_stat_text">Résultats OCR</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Ajouter section OCR dans formulaire -->
+            <xpath expr="//field[@name='notes']" position="after">
+                <group string="Données OCR" attrs="{'invisible': [('has_ocr_data', '=', False)]}">
+                    <field name="has_ocr_data" invisible="1"/>
+                    <field name="ocr_result_id" invisible="1"/>
+                    <field name="ocr_state" widget="badge"/>
+                </group>
+            </xpath>
+
+            <!-- Ajouter page OCR dans notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="OCR" name="ocr_page" attrs="{'invisible': [('has_ocr_data', '=', False)]}">
+                    <field name="ocr_result_ids" nolabel="1">
+                        <tree decoration-success="state == 'validated'"
+                              decoration-info="state == 'extracted'"
+                              decoration-danger="state == 'error'">
+                            <field name="create_date"/>
+                            <field name="invoice_number"/>
+                            <field name="supplier_name"/>
+                            <field name="amount_total"/>
+                            <field name="confidence_score" widget="progressbar"/>
+                            <field name="state" widget="badge"/>
+                            <button name="action_apply_to_document"
+                                    string="Appliquer"
+                                    type="object"
+                                    icon="fa-check"
+                                    attrs="{'invisible': [('state', '!=', 'extracted')]}"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menu - OCR                                     -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_client_document_ocr"
+        name="Extraction OCR"
+        parent="menu_client_documents_root"
+        action="action_client_document_ocr"
+        sequence="15"/>
+
+</odoo>

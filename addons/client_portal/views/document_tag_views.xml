@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Tag Document                 -->
+    <!-- ============================================== -->
+    <record id="view_document_tag_form" model="ir.ui.view">
+        <field name="name">client.document.tag.form</field>
+        <field name="model">client.document.tag</field>
+        <field name="arch" type="xml">
+            <form string="Tag">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color_picker"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Tags                              -->
+    <!-- ============================================== -->
+    <record id="view_document_tag_tree" model="ir.ui.view">
+        <field name="name">client.document.tag.tree</field>
+        <field name="model">client.document.tag</field>
+        <field name="arch" type="xml">
+            <tree string="Tags" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Tags                          -->
+    <!-- ============================================== -->
+    <record id="view_document_tag_search" model="ir.ui.view">
+        <field name="name">client.document.tag.search</field>
+        <field name="model">client.document.tag</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Tags">
+                <field name="name"/>
+                <separator/>
+                <filter name="filter_active" string="Actif"
+                        domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archivé"
+                        domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Tags                                 -->
+    <!-- ============================================== -->
+    <record id="action_document_tags" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">client.document.tag</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer un nouveau tag
+            </p>
+            <p>
+                Les tags permettent d'organiser et filtrer vos documents.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Catégorie Document           -->
+    <!-- ============================================== -->
+    <record id="view_document_category_form" model="ir.ui.view">
+        <field name="name">client.document.category.form</field>
+        <field name="model">client.document.category</field>
+        <field name="arch" type="xml">
+            <form string="Catégorie">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                        <button name="action_view_documents"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="document_count" widget="statinfo"/>
+                                </span>
+                                <span class="o_stat_text">Documents</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="ex: Factures Fournisseurs"/>
+                        </h1>
+                        <h3>
+                            <field name="complete_name" readonly="1"/>
+                        </h3>
+                    </div>
+
+                    <group>
+                        <field name="parent_id"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Sous-catégories" name="children">
+                            <field name="child_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="document_count"/>
+                                    <field name="active" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Catégories                        -->
+    <!-- ============================================== -->
+    <record id="view_document_category_tree" model="ir.ui.view">
+        <field name="name">client.document.category.tree</field>
+        <field name="model">client.document.category</field>
+        <field name="arch" type="xml">
+            <tree string="Catégories">
+                <field name="complete_name"/>
+                <field name="document_count"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Hiérarchique - Catégories                 -->
+    <!-- ============================================== -->
+    <record id="view_document_category_hierarchy" model="ir.ui.view">
+        <field name="name">client.document.category.hierarchy</field>
+        <field name="model">client.document.category</field>
+        <field name="arch" type="xml">
+            <tree string="Hiérarchie Catégories">
+                <field name="name"/>
+                <field name="document_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Catégories                    -->
+    <!-- ============================================== -->
+    <record id="view_document_category_search" model="ir.ui.view">
+        <field name="name">client.document.category.search</field>
+        <field name="model">client.document.category</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Catégories">
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('complete_name', 'ilike', self)]"/>
+                <field name="parent_id"/>
+                <separator/>
+                <filter name="filter_active" string="Actif"
+                        domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archivé"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="filter_root" string="Catégories racine"
+                        domain="[('parent_id', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_parent" string="Catégorie parente"
+                            context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Catégories                           -->
+    <!-- ============================================== -->
+    <record id="action_document_categories" model="ir.actions.act_window">
+        <field name="name">Catégories</field>
+        <field name="res_model">client.document.category</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle catégorie
+            </p>
+            <p>
+                Les catégories permettent d'organiser vos documents de manière hiérarchique.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Extension Vue Document - Tags et Catégories   -->
+    <!-- ============================================== -->
+    <record id="view_client_document_form_tags" model="ir.ui.view">
+        <field name="name">client.document.form.tags</field>
+        <field name="model">client.document</field>
+        <field name="inherit_id" ref="client_portal.view_client_document_form"/>
+        <field name="arch" type="xml">
+            <!-- Ajouter champs tags et catégorie après document_type -->
+            <xpath expr="//field[@name='document_type']" position="after">
+                <field name="category_id"/>
+                <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Ajouter filtres dans la vue recherche documents -->
+    <record id="view_client_document_search_tags" model="ir.ui.view">
+        <field name="name">client.document.search.tags</field>
+        <field name="model">client.document</field>
+        <field name="inherit_id" ref="client_portal.view_client_document_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <field name="tag_ids"/>
+                <field name="category_id"/>
+                <separator/>
+                <filter name="filter_by_category" string="Par catégorie"
+                        context="{'group_by': 'category_id'}"/>
+                <filter name="filter_no_category" string="Sans catégorie"
+                        domain="[('category_id', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menus                                         -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_document_configuration"
+        name="Configuration"
+        parent="menu_client_documents_root"
+        sequence="100"
+        groups="base.group_system"/>
+
+    <menuitem
+        id="menu_document_tags"
+        name="Tags"
+        parent="menu_document_configuration"
+        action="action_document_tags"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_document_categories"
+        name="Catégories"
+        parent="menu_document_configuration"
+        action="action_document_categories"
+        sequence="20"/>
+
+</odoo>

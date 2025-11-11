@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================== -->
+    <!-- Vue Formulaire - Transition Workflow          -->
+    <!-- ============================================== -->
+    <record id="view_document_workflow_transition_form" model="ir.ui.view">
+        <field name="name">client.document.workflow.transition.form</field>
+        <field name="model">client.document.workflow.transition</field>
+        <field name="arch" type="xml">
+            <form string="Transition Workflow">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="ex: Soumission pour validation"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Configuration Transition">
+                            <field name="document_type"/>
+                            <field name="state_from"/>
+                            <field name="state_to"/>
+                            <field name="sequence"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Conditions Requises">
+                            <field name="require_ocr"/>
+                            <field name="require_amount"/>
+                            <field name="require_supplier"/>
+                            <field name="require_category"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Actions Automatiques" name="actions">
+                            <group>
+                                <group string="Notifications">
+                                    <field name="send_email_notification"/>
+                                    <field name="email_template_id"
+                                           attrs="{'invisible': [('send_email_notification', '=', False)],
+                                                   'required': [('send_email_notification', '=', True)]}"/>
+                                </group>
+                                <group string="Actions">
+                                    <field name="create_invoice"/>
+                                    <field name="archive_document"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes et instructions pour cette transition..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Liste - Transitions Workflow              -->
+    <!-- ============================================== -->
+    <record id="view_document_workflow_transition_tree" model="ir.ui.view">
+        <field name="name">client.document.workflow.transition.tree</field>
+        <field name="model">client.document.workflow.transition</field>
+        <field name="arch" type="xml">
+            <tree string="Transitions Workflow" default_order="sequence,name">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="state_from" widget="badge"
+                       decoration-muted="state_from == 'draft'"
+                       decoration-warning="state_from == 'pending'"
+                       decoration-success="state_from == 'validated'"
+                       decoration-danger="state_from == 'rejected'"/>
+                <field name="state_to" widget="badge"
+                       decoration-muted="state_to == 'draft'"
+                       decoration-warning="state_to == 'pending'"
+                       decoration-success="state_to == 'validated'"
+                       decoration-danger="state_to == 'rejected'"/>
+                <field name="require_ocr" widget="boolean_toggle"/>
+                <field name="send_email_notification" widget="boolean_toggle"/>
+                <field name="create_invoice" widget="boolean_toggle"/>
+                <field name="active" widget="boolean_toggle"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Kanban - Documents par État                -->
+    <!-- ============================================== -->
+    <record id="view_client_document_kanban_workflow" model="ir.ui.view">
+        <field name="name">client.document.kanban.workflow</field>
+        <field name="model">client.document</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column"
+                    quick_create="false"
+                    on_create="quick_create">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="document_type"/>
+                <field name="upload_date"/>
+                <field name="state"/>
+                <field name="filename"/>
+                <field name="has_ocr_data"/>
+                <progressbar field="state" colors='{"draft": "muted", "pending": "warning", "validated": "success", "rejected": "danger"}'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <br/>
+                                    <span class="o_kanban_record_subtitle">
+                                        <field name="partner_id"/>
+                                    </span>
+                                </div>
+                                <div class="o_kanban_record_top_right">
+                                    <span t-attf-class="badge badge-pill #{record.document_type.raw_value === 'invoice' ? 'badge-info' : 'badge-secondary'}">
+                                        <field name="document_type"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <field name="filename" widget="filename"/>
+                                <div class="text-muted">
+                                    <i class="fa fa-clock-o"/> <field name="upload_date" widget="date"/>
+                                </div>
+                                <div t-if="record.has_ocr_data.raw_value">
+                                    <span class="badge badge-success">
+                                        <i class="fa fa-check"/> OCR
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="activity_ids" widget="kanban_activity"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <img t-att-src="kanban_image('res.partner', 'avatar_128', record.partner_id.raw_value)"
+                                         t-att-title="record.partner_id.value"
+                                         t-att-alt="record.partner_id.value"
+                                         class="oe_avatar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Vue Recherche - Transitions                   -->
+    <!-- ============================================== -->
+    <record id="view_document_workflow_transition_search" model="ir.ui.view">
+        <field name="name">client.document.workflow.transition.search</field>
+        <field name="model">client.document.workflow.transition</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Transitions">
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="state_from"/>
+                <field name="state_to"/>
+                <separator/>
+                <filter name="filter_active" string="Actif"
+                        domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archivé"
+                        domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter name="filter_invoice" string="Factures"
+                        domain="[('document_type', '=', 'invoice')]"/>
+                <filter name="filter_contract" string="Contrats"
+                        domain="[('document_type', '=', 'contract')]"/>
+                <separator/>
+                <filter name="filter_validation" string="Vers validation"
+                        domain="[('state_to', '=', 'validated')]"/>
+                <filter name="filter_ocr_required" string="OCR requis"
+                        domain="[('require_ocr', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_type" string="Type document"
+                            context="{'group_by': 'document_type'}"/>
+                    <filter name="group_from" string="État de départ"
+                            context="{'group_by': 'state_from'}"/>
+                    <filter name="group_to" string="État d'arrivée"
+                            context="{'group_by': 'state_to'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Transitions Workflow                 -->
+    <!-- ============================================== -->
+    <record id="action_document_workflow_transitions" model="ir.actions.act_window">
+        <field name="name">Transitions Workflow</field>
+        <field name="res_model">client.document.workflow.transition</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer une nouvelle transition workflow
+            </p>
+            <p>
+                Les transitions définissent comment les documents passent d'un état à un autre,
+                avec des conditions et des actions automatiques.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Action - Vue Kanban Workflow Documents        -->
+    <!-- ============================================== -->
+    <record id="action_client_documents_kanban_workflow" model="ir.actions.act_window">
+        <field name="name">Workflow Documents</field>
+        <field name="res_model">client.document</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_client_document_kanban_workflow"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun document
+            </p>
+            <p>
+                Glissez-déposez les documents entre les colonnes pour changer leur état.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Extension Vue Document - Timeline Workflow     -->
+    <!-- ============================================== -->
+    <record id="view_client_document_form_workflow" model="ir.ui.view">
+        <field name="name">client.document.form.workflow</field>
+        <field name="model">client.document</field>
+        <field name="inherit_id" ref="client_portal.view_client_document_form"/>
+        <field name="arch" type="xml">
+            <!-- Ajouter badge état workflow dans header -->
+            <xpath expr="//header" position="inside">
+                <field name="state" widget="statusbar"
+                       statusbar_visible="draft,pending,validated"
+                       clickable="True"/>
+            </xpath>
+
+            <!-- Ajouter boutons de transition -->
+            <xpath expr="//header" position="inside">
+                <button name="action_submit"
+                        string="Soumettre"
+                        type="object"
+                        class="oe_highlight"
+                        attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                <button name="action_validate"
+                        string="Valider"
+                        type="object"
+                        class="oe_highlight"
+                        groups="client_portal.group_client_portal_manager"
+                        attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+                <button name="action_reject"
+                        string="Rejeter"
+                        type="object"
+                        groups="client_portal.group_client_portal_manager"
+                        attrs="{'invisible': [('state', 'not in', ['pending', 'validated'])]}"/>
+                <button name="action_reset_draft"
+                        string="Remettre en brouillon"
+                        type="object"
+                        attrs="{'invisible': [('state', '=', 'draft')]}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================== -->
+    <!-- Menus                                         -->
+    <!-- ============================================== -->
+    <menuitem
+        id="menu_document_workflow"
+        name="Workflow"
+        parent="menu_client_documents_root"
+        sequence="40"/>
+
+    <menuitem
+        id="menu_document_workflow_kanban"
+        name="Vue Kanban"
+        parent="menu_document_workflow"
+        action="action_client_documents_kanban_workflow"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_document_workflow_transitions"
+        name="Configuration Transitions"
+        parent="menu_document_workflow"
+        action="action_document_workflow_transitions"
+        groups="base.group_system"
+        sequence="20"/>
+
+</odoo>
