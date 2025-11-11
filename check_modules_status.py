@@ -33,15 +33,20 @@ def check_modules():
         print(f"✓ Connecté à Odoo (Database: {DB_NAME})")
         print()
 
-        # Liste des modules à vérifier
+        # Liste des modules à vérifier (tous les 11 modules)
         modules_to_check = [
             'french_accounting',
             'website',
+            'web_cors',
             'client_portal',
             'cabinet_portal',
+            'invoice_ocr_config',
+            'accounting_collaboration',
+            'account_import_export',
             'bank_sync',
             'e_invoicing',
-            'reporting'
+            'reporting',
+            'integrations'
         ]
 
         installed_count = 0

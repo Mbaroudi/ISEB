@@ -16,15 +16,20 @@ DB_NAME = 'iseb_prod'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 
-# Modules to install in order
+# Modules to install in order (matching install_all_modules.sh)
 MODULES = [
     ('french_accounting', 'Comptabilité Française'),
-    ('website', 'Website (requis pour client_portal frontend assets)'),  # Dependency for client_portal
-    ('client_portal', 'Portail Client'),
+    ('website', 'Website (requis pour client_portal frontend assets)'),
+    ('web_cors', 'CORS Configuration pour Next.js'),
+    ('client_portal', 'Portail Client avec OCR, Documents, Fiscal'),
     ('cabinet_portal', 'Portail Cabinet'),
+    ('invoice_ocr_config', 'Configuration OCR (Google Vision, AWS Textract, Azure)'),
+    ('accounting_collaboration', 'Questions & Messaging'),
+    ('account_import_export', 'Import/Export FEC/XIMPORT'),
     ('bank_sync', 'Synchronisation Bancaire'),
-    ('e_invoicing', 'Facturation Électronique'),
+    ('e_invoicing', 'Facturation Électronique - Chorus Pro, Factur-X'),
     ('reporting', 'Rapports Personnalisés'),
+    ('integrations', 'Intégrations tierces'),
 ]
 
 
