@@ -35,8 +35,8 @@ export default function LoginPage() {
 
     try {
       await login(formData.username, formData.password);
-      // Redirect to dashboard on success
-      router.push("/dashboard");
+      // Redirect to cabinet portal on success
+      router.push("/cabinet");
     } catch (err: any) {
       setFormError(err.message || "Identifiants incorrects");
     }
