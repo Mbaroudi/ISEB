@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const domain: any[] = [["move_type", "in", ["out_invoice", "out_refund"]]];
 
     if (partnerId) domain.push(["partner_id", "=", parseInt(partnerId)]);
-    if (einvoicingStatus) domain.push(["einvoicing_status", "=", einvoicing Status]);
+    if (einvoicingStatus) domain.push(["einvoicing_status", "=", einvoicingStatus]);
     if (startDate) domain.push(["invoice_date", ">=", startDate]);
     if (endDate) domain.push(["invoice_date", "<=", endDate]);
 

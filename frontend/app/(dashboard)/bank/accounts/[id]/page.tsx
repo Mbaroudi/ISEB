@@ -4,7 +4,7 @@ import { useBankAccount, useBankTransactions, useSyncLogs } from "@/lib/hooks/us
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, RefreshCw, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { Building2, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Link from "next/link";
 
 export default function BankAccountDetailPage({ params }: { params: { id: string } }) {
